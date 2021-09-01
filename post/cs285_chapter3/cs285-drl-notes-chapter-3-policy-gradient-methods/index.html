@@ -1,0 +1,341 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
+<title>cs285 DRL notes chapter 3: policy gradient methods - RuChen Xu's Blog</title>
+<meta name=renderer content="webkit">
+<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta http-equiv=cache-control content="no-transform">
+<meta http-equiv=cache-control content="no-siteapp">
+<meta name=theme-color content="#f8f5ec">
+<meta name=msapplication-navbutton-color content="#f8f5ec">
+<meta name=apple-mobile-web-app-capable content="yes">
+<meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec">
+<meta name=author content="Ruchen Xu"><meta name=description content="回顾强化学习的目标，我们希望获得策略的最优参数$\theta^$， $$ \theta^=\underset{\theta}{argmax}\mathbb{E}{\tau\sim p{\theta}(\tau)}[\sum_{t=1}^{t=T}r(s_t, a_t)] $$ 这实际上是一个优化问题，因此我们可以使用多种优化方法来优化这个目"><meta name=keywords content="Hugo,theme,even">
+<meta name=generator content="Hugo 0.87.0 with theme even">
+<link rel=canonical href=http://localhost:1313/post/cs285_chapter3/cs285-drl-notes-chapter-3-policy-gradient-methods/>
+<link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png>
+<link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
+<link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png>
+<link rel=manifest href=/manifest.json>
+<link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5>
+<script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<link href=/sass/main.min.2e81bbed97b8b282c1aeb57488cc71c8d8c8ec559f3931531bd396bf31e0d4dd.css rel=stylesheet>
+<link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin=anonymous>
+<meta property="og:title" content="cs285 DRL notes chapter 3: policy gradient methods">
+<meta property="og:description" content="回顾强化学习的目标，我们希望获得策略的最优参数$\theta^$， $$ \theta^=\underset{\theta}{argmax}\mathbb{E}{\tau\sim p{\theta}(\tau)}[\sum_{t=1}^{t=T}r(s_t, a_t)] $$ 这实际上是一个优化问题，因此我们可以使用多种优化方法来优化这个目">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://localhost:1313/post/cs285_chapter3/cs285-drl-notes-chapter-3-policy-gradient-methods/"><meta property="article:section" content="post">
+<meta property="article:published_time" content="2020-08-24T16:00:06+00:00">
+<meta property="article:modified_time" content="2020-08-24T16:00:06+00:00">
+<meta itemprop=name content="cs285 DRL notes chapter 3: policy gradient methods">
+<meta itemprop=description content="回顾强化学习的目标，我们希望获得策略的最优参数$\theta^$， $$ \theta^=\underset{\theta}{argmax}\mathbb{E}{\tau\sim p{\theta}(\tau)}[\sum_{t=1}^{t=T}r(s_t, a_t)] $$ 这实际上是一个优化问题，因此我们可以使用多种优化方法来优化这个目"><meta itemprop=datePublished content="2020-08-24T16:00:06+00:00">
+<meta itemprop=dateModified content="2020-08-24T16:00:06+00:00">
+<meta itemprop=wordCount content="1867">
+<meta itemprop=keywords content="reinforcement learning,cs285,"><meta name=twitter:card content="summary">
+<meta name=twitter:title content="cs285 DRL notes chapter 3: policy gradient methods">
+<meta name=twitter:description content="回顾强化学习的目标，我们希望获得策略的最优参数$\theta^$， $$ \theta^=\underset{\theta}{argmax}\mathbb{E}{\tau\sim p{\theta}(\tau)}[\sum_{t=1}^{t=T}r(s_t, a_t)] $$ 这实际上是一个优化问题，因此我们可以使用多种优化方法来优化这个目"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
+<script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]-->
+</head>
+<body>
+<div id=mobile-navbar class=mobile-navbar>
+<div class=mobile-header-logo>
+<a href=/ class=logo>Blog</a>
+</div>
+<div class=mobile-navbar-icon>
+<span></span>
+<span></span>
+<span></span>
+</div>
+</div>
+<nav id=mobile-menu class="mobile-menu slideout-menu">
+<ul class=mobile-menu-list>
+<a href=/>
+<li class=mobile-menu-item>Home</li>
+</a><a href=/post/>
+<li class=mobile-menu-item>Archives</li>
+</a><a href=/tags/>
+<li class=mobile-menu-item>Tags</li>
+</a><a href=/categories/>
+<li class=mobile-menu-item>Categories</li>
+</a>
+</ul>
+</nav>
+<div class=container id=mobile-panel>
+<header id=header class=header>
+<div class=logo-wrapper>
+<a href=/ class=logo>Blog</a>
+</div>
+<nav class=site-navbar>
+<ul id=menu class=menu>
+<li class=menu-item>
+<a class=menu-item-link href=/>Home</a>
+</li><li class=menu-item>
+<a class=menu-item-link href=/post/>Archives</a>
+</li><li class=menu-item>
+<a class=menu-item-link href=/tags/>Tags</a>
+</li><li class=menu-item>
+<a class=menu-item-link href=/categories/>Categories</a>
+</li>
+</ul>
+</nav>
+</header>
+<main id=main class=main>
+<div class=content-wrapper>
+<div id=content class=content>
+<article class=post>
+<header class=post-header>
+<h1 class=post-title>cs285 DRL notes chapter 3: policy gradient methods</h1>
+<div class=post-meta>
+<span class=post-time> 2020-08-24 </span>
+<span id=busuanzi_container_page_pv class=more-meta> <span id=busuanzi_value_page_pv><img src=/img/spinner.svg alt=spinner.svg></span> times read </span>
+</div>
+</header>
+<div class=post-toc id=post-toc>
+<h2 class=post-toc-title>Contents</h2>
+<div class="post-toc-content always-active">
+<nav id=TableOfContents>
+<ul>
+<li>
+<ul>
+<li><a href=#策略梯度定理policy-gradient-theorem>策略梯度定理(Policy Gradient Theorem)</a></li>
+<li><a href=#策略梯度评估>策略梯度评估</a></li>
+<li><a href=#策略梯度背后>策略梯度背后</a></li>
+<li><a href=#策略梯度的高方差>策略梯度的高方差</a></li>
+<li><a href=#减少策略梯度算法的方差>减少策略梯度算法的方差</a>
+<ul>
+<li><a href=#因果关系>因果关系</a></li>
+<li><a href=#基线>基线</a></li>
+<li><a href=#方差分析>方差分析</a></li>
+</ul>
+</li>
+<li><a href=#on-policy-vs-off-policy>on-policy vs off-policy</a>
+<ul>
+<li><a href=#重要性采样importance-sampling>重要性采样（Importance Sampling）</a></li>
+</ul>
+</li>
+<li><a href=#trpo>TRPO</a></li>
+<li><a href=#ppo>PPO</a></li>
+</ul>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+<div class=post-content>
+<p>回顾强化学习的目标，我们希望获得策略的最优参数$\theta^<em>$，
+$$
+\theta^</em>=\underset{\theta}{argmax}\mathbb{E}<em>{\tau\sim p</em>{\theta}(\tau)}[\sum_{t=1}^{t=T}r(s_t, a_t)]
+$$
+这实际上是一个优化问题，因此我们可以使用多种优化方法来优化这个目标，例如梯度下降。我们将优化的目标函数定义为$J(\theta)$：
+$$J(\theta) = \mathbb{E}_{\tau\sim \pi_\theta(\tau)}[r(\tau)]$$
+其中，$r(\tau)$是轨迹累积奖励, 等价于$\sum_{t=1}^T r(s_t,a_t)$。$J$进一步写作：$J(\theta) = \int\pi_\theta r(\tau)d\tau$。</p>
+<h2 id=策略梯度定理policy-gradient-theorem>策略梯度定理(Policy Gradient Theorem)</h2>
+<p>一个小技巧，
+$$\pi_\theta(\tau)\nabla_\theta \log \pi_\theta(\tau) = \pi_\theta(\tau)\frac{\nabla_\theta \pi_\theta(\tau)}{\pi_\theta(\tau)}=\nabla_\theta \pi_\theta (\tau)$$</p>
+<p>利用上式，$J(\theta)$的梯度可以表示为
+$$
+\begin{aligned}
+\nabla_\theta J(\theta) = \int \nabla_\theta \pi_\theta r(\tau)d\tau\<br>
+=\int\pi_\theta(\tau)\nabla_\theta \log \pi_\theta(\tau) r(\tau) d\tau\<br>
+= \mathbb{E}_{\tau\sim \pi_\theta(\tau)}[\nabla_\theta \log \pi_\theta (\tau)r(\tau)]
+\end{aligned}
+$$</p>
+<p>轨迹$\tau$是状态、动作的时间序列，因此由$\pi_\theta$得到的轨迹概率，根据贝叶斯定理为$\pi_\theta(s_1,a_1,&mldr;,s_T,a_T) = p(s_1)\prod_{t=1}^T\pi_\theta (a_t|s_t)p(s_{t+1}|s_t,a_t)$。</p>
+<p>两边取对数， $\log\pi_\theta(\tau) = \log p(s_1) + \sum_{t=1}^T \log\pi_\theta(a_t|s_t)+\log p(s_{t+1}|s_t,a_t)$.</p>
+<p>将其带入策略梯度计算中，
+$$
+\begin{aligned}
+\nabla_\theta J(\theta) &= \mathbb{E}_{\tau\sim \pi_\theta(\tau)}\left[\nabla_\theta\left(\log p(s_1) + \sum_{t=1}^T \log \pi_\theta(a_t|s_t)+\log p(s_{t+1}|s_t,a_t)\right)r(\tau)\right]\<br>
+&= \mathbb{E}_{\tau\sim \pi_\theta(\tau)}\left[ \left(\sum_{t=1}^T\nabla_\theta \log\pi_\theta(a_t|s_t)\right)\left(\sum_{t=1}^T r(s_t,a_t)\right)\right]
+\end{aligned}
+$$</p>
+<h2 id=策略梯度评估>策略梯度评估</h2>
+<p>从上式可以看出，策略梯度计算是轨迹$\tau$的梯度的期望，然而轨迹空间极大，难以计算。这时，我们使用近似的方法来求解，具体地可以使用Monte-Carlo近似，即计算N个样本的平均值作为策略梯度的近似。
+$$\nabla_\theta J(\theta) \simeq \frac{1}{N}\sum_{i=1}^N\left(\sum_{t=1}^T\nabla_\theta \log\pi_\theta(a_{i,t}|s_{i,t})\right)\left(\sum_{t=1}^T r(s_{i,t},a_{i,t})\right)$$
+其中$i, t$分别代表轨$i$i和时间步$t$。</p>
+<p>可以看出，上式中并没有出现转移概率函数，即没有用到马尔可夫性质，因此适用于POMDP。</p>
+<p>基于上式，我们可以使用梯度上升算法来优化参数$\theta$
+$\theta \leftarrow \theta + \alpha\nabla_\theta J(\theta)$</p>
+<p>此类依赖蒙特卡洛近似方法的策略梯度算法（vanilla policy gradient）称为ReinForce算法。</p>
+<p>Base policy $\pi_\theta(a_t|s_t)$, sample trajectories $\tau^i$
+WHILE{true}
+$\quad$ Sample ${\tau^i}$ from $\pi_\theta(a_t|s_t)$
+$\quad$ $\nabla_\theta J(\theta) \simeq \frac{1}{N}\sum_i\left(\sum_t\nabla_\theta \log\pi_\theta(a_{i,t}|s_{i,t})\right)\left(\sum_t r(s_{i,t},a_{i,t})\right)$
+$\quad$ Improve policy by $\theta \leftarrow \theta + \alpha\nabla_\theta J(\theta)$
+RETURN optimal trajectory from gradient ascent as $\tau^{return}$</p>
+<h2 id=策略梯度背后>策略梯度背后</h2>
+<p>策略的最大似然定义为
+$$\nabla_\theta J(\theta) \simeq \frac{1}{N}\sum_{i=1}^N\nabla_\theta \log\pi_\theta(\tau_i)$$
+而策略梯度为
+$$\nabla_\theta J(\theta) \simeq \frac{1}{N}\sum_{i=1}^N\nabla_\theta \log\pi_\theta(\tau_i)r(\tau_i)$$</p>
+<p>直观上来说，我们不断优化策略，分配回报高的轨迹更大的权重，因而发生的概率更大。</p>
+<h2 id=策略梯度的高方差>策略梯度的高方差</h2>
+<p>1）对于两条轨迹，轨迹回报分别为1和-1，两条轨迹的概率会相应增加和减少。但如果为两条轨迹同时加上一个常数，并不会影响轨迹的奖励分布，但两条轨迹的概率都增大了。这体现了策略梯度算法的高方差。
+2）假设环境具有正的回报，对于采样的动作，其发生概率会增大，间接减少了其他动作的发生概率，而这些动作可能是好的动作。</p>
+<h2 id=减少策略梯度算法的方差>减少策略梯度算法的方差</h2>
+<h3 id=因果关系>因果关系</h3>
+<p>实际上，智能体更关心做出动作后的回报，而不是轨迹的回报，因为之前的奖励和当前动作没有因果关系。我们定义在当前时刻t之后的回报为reward-to-go，
+$$
+R_t=\sum_{t=t'}^{T}r(s_t, a_t, s_{t+1})
+$$
+策略梯度为
+$$\nabla_\theta J(\theta) \simeq \frac{1}{N}\sum_{i=1}^N\left(\sum_{t=1}^T\nabla_\theta \log\pi_\theta(a_{i,t}|s_{i,t})\right)\left(\sum_{t'=t}^T r(s_{i,t'},a_{i,t'}, s_{i,t'+1})\right)$$</p>
+<p>方差由于奖励累加项的减少而减小。</p>
+<h3 id=基线>基线</h3>
+<p>我们并不会让所有回报大于0的动作都去增大它的概率，而是设立一个基线，对回报大于基线的动作才增大它的概率。自然地，可以将平均回报最为基线。
+$$
+b=1/N\sum_{i=1}^{N}r(\tau)
+$$
+策略梯度为
+$$\nabla_\theta J(\theta) \simeq \frac{1}{N}\sum_{i=1}^N\nabla_\theta \log\pi_\theta(\tau_i)[r(\tau_i)-b]$$</p>
+<p>由于
+$$
+\begin{aligned}
+\mathbb{E}<em>{\pi</em>\theta(\tau)}\left[\nabla_\theta\log \pi_\theta(\tau)b\right]&=
+\int \pi_\theta(\tau)\nabla \log\pi_\theta(\tau)b;d\tau\<br>
+&=\int \nabla_\theta \pi_\theta(\tau)b;d\tau\<br>
+&=b\nabla_\theta\int\pi_\theta(\tau);d\tau\<br>
+&=b\nabla_\theta 1\<br>
+&=0
+\end{aligned}
+$$
+因此，加上baseline之后，策略梯度仍然是无偏的。</p>
+<h3 id=方差分析>方差分析</h3>
+<p>方差定义为
+$$\mathrm{Var}[x] = \mathbb{E}[x^2]-\mathbb{E}[x]^2$$
+具有基线的策略梯度为
+$$\nabla_\theta J(\theta) \simeq \mathbb{E}_{\tau\sim\pi_\theta(\tau)}\left[\nabla_\theta \log\pi_\theta(\tau)\left(r(\tau)-b\right)\right]$$
+因此，方差为
+$$\mathrm{Var} = \mathbb{E}_{\tau\sim\pi_\theta(\tau)}\left[\left(\nabla_\theta \log\pi_\theta(\tau)\left(r(\tau)-b\right)\right)^2\right] - \mathbb{E}_{\tau\sim\pi_\theta(\tau)}\left[\nabla_\theta \log\pi_\theta(\tau)\left(r(\tau)-b\right) \right]^2$$
+因为加上基线也是无偏的，上式第二项可以写作
+$$\mathbb{E}_{\tau\sim\pi_\theta(\tau)}\left[\nabla_\theta \log\pi_\theta(\tau)r(\tau) \right]^2$$</p>
+<p>这里我们计算方差关于b的导数，以求解最优的b
+$$
+\begin{aligned}
+\frac{d\mathrm{Var}}{db} &= \frac{d}{db}\mathbb{E}\left[g(\tau)^2(r(\tau)-b)^2\right]\ &=\frac{d}{db}\mathbb{E}\left[g(\tau)^2r(\tau)^2\right] - 2\mathbb{E}\left[g(\tau)^2r(\tau)b\right] + b^2\mathbb{E}\left[g(\tau)^2\right]\<br>
+&=-2\mathbb{E}\left[ g(\tau)^2r(\tau)\right]+2b\mathbb{E}\left[g(\tau)^2\right]\<br>
+&=0
+\end{aligned}
+$$
+得到
+$$b^{opt} = \frac{\mathbb{E}\left[g(\tau)^2r(\tau)\right]}{\mathbb{E}\left[g(\tau)^2\right]}$$</p>
+<h2 id=on-policy-vs-off-policy>on-policy vs off-policy</h2>
+<p>on-policy指同策略，只从当前策略采样得到额数据中学习。off-policy指异策略，不仅从当前策略，还从其他策略采样得到的数据学习。策略梯度算法是同策略的学习方法，每次更新策略后，旧的样本就要丢弃，无疑是低效的。这里，我们可以使用异策略学习方法。</p>
+<h3 id=重要性采样importance-sampling>重要性采样（Importance Sampling）</h3>
+<p>给定分布$p(x)$，如何计算从分布$q(x)$得到的样本的期望? 重要性采样的思想是使用重要性权重，计算另一个分布的期望，因而能够进行异策略的学习。
+重要性采样中
+$$
+\begin{aligned}
+\mathbb{E}<em>{x\sim p(x)}\left[f(x)\right] &= \int p(x)f(x);dx\<br>
+&=\int \frac{q(x)}{q(x)}p(x)f(x);dx\<br>
+&=\mathbb{E}</em>{x\sim q(x)}\left[\frac{p(x)}{q(x)}f(x)\right]
+\end{aligned}
+$$
+假设学习的策略是$\pi_\theta(\tau)$，行为策略是 $\bar{\pi}(\tau)$，使用从$\bar{\pi}(\tau)$采样得到的样本来计算$J(\theta)$
+$$
+\begin{aligned}
+J(\theta) &= \mathbb{E}_{\tau\sim\pi_\theta(\tau)}\left[r(\tau)\right]\<br>
+&= \mathbb{E}_{\tau\sim\bar{\pi}(\tau)}\left[ \frac{\pi_\theta(\tau)}{\bar{\pi}(\tau)} r(\tau)\right]
+\end{aligned}
+$$
+回顾$\pi_\theta(\tau) = p(s_1)\prod_{t=1}^T\pi_\theta(a_t|s_t)p(s_{t+1}|s_t,a_t)$. 得到
+$$
+\begin{aligned}
+\frac{\pi_\theta(\tau)}{\bar{\pi}(\tau)} &=\frac{p(s_1)\prod_{t=1}^T\pi_\theta(a_t|s_t)p(s_{t+1}|s_t,a_t)}{p(s_1)\prod_{t=1}^T\bar{\pi}(a_t|s_t)p(s_{t+1}|s_t,a_t)}\<br>
+&= \frac{\prod_{t=1}^T\pi_\theta(a_t|s_t)}{\prod_{t=1}^T\bar{\pi}(a_t|s_t)}
+\end{aligned}
+$$</p>
+<p>如果我们想要从旧的策略$\pi_\theta$采样数据中学习新的参数$\theta'$，使用重要性采样
+$$J(\theta') = \mathbb{E}_{\tau\sim\pi_\theta(\tau)}\left[\frac{\pi_{\theta'}(\tau)}{\pi_\theta(\tau)}r(\tau)\right]$$
+策略梯度为：
+$$
+\begin{aligned}
+\nabla_{\theta'}J(\theta')&=\mathbb{E}_{\tau\sim\pi_\theta(\tau)}\left[\frac{\pi_{\theta'}(\tau)}{\pi_\theta(\tau)}\nabla_{\theta'}\log\pi_{\theta'}(\tau)r(\tau)\right]\<br>
+&= \mathbb{E}_{\tau\sim\pi_\theta(\tau)}\left[ \left( \frac{\prod_{t=1}^T\pi_{\theta'}(a_t|s_t)}{\prod_{t=1}^T\pi_{\theta}(a_t|s_t)} \right)\left( \sum_{t=1}^T\nabla_{\theta'}\log\pi_{\theta'}(a_t|s_t) \right)\left(\sum_{t=1}^Tr(s_t,a_t)\right) \right]
+\end{aligned}
+$$
+当T相当大时，连乘的结果可能极大或极小，增大方差。参考上文reward-to-go，将来的动作并不影响现在的重要性权重，因此可以将其截断。
+$$
+\begin{aligned}
+\nabla_{\theta'}J(\theta')=\mathbb{E}_{\tau\sim\pi_\theta(\tau)}\left[ \sum_{t=1}^T\nabla_{\theta'}\log\pi_{\theta'}(a_t|s_t) \left(\prod_{t'=1}^t \frac{\pi_{\theta'}(a_{t'}|s_{t'}) }{\pi_{\theta}(a_{t'}|s_{t'})}\right) \left( \sum_{t'=t}^Tr(s_{t'},a_{t'})) \right)\right]
+\end{aligned}
+$$</p>
+<h2 id=trpo>TRPO</h2>
+<p>TODO</p>
+<h2 id=ppo>PPO</h2>
+<p>TODO</p>
+</div>
+<div class=post-copyright>
+<p class=copyright-item>
+<span class=item-title>Author</span>
+<span class=item-content>Ruchen Xu</span>
+</p>
+<p class=copyright-item>
+<span class=item-title>LastMod</span>
+<span class=item-content>
+2020-08-24
+</span>
+</p>
+</div>
+<footer class=post-footer>
+<div class=post-tags>
+<a href=/tags/reinforcement-learning/>reinforcement learning</a>
+<a href=/tags/cs285/>cs285</a>
+</div>
+<nav class=post-nav>
+<a class=prev href=/post/cs285_chapter4/cs285-drl-notes-chapter-4-actor-critic-methods/>
+<i class="iconfont icon-left"></i>
+<span class="prev-text nav-default">cs285 DRL notes chapter 4: Actor-Critic methods</span>
+<span class="prev-text nav-mobile">Prev</span>
+</a>
+<a class=next href=/post/cs285_chapter2/cs285-drl-notes-chapter-2-imitation-learning/>
+<span class="next-text nav-default">cs285 DRL notes chapter 2: imitation learning</span>
+<span class="next-text nav-mobile">Next</span>
+<i class="iconfont icon-right"></i>
+</a>
+</nav>
+</footer>
+</article>
+</div>
+</div>
+</main>
+<footer id=footer class=footer>
+<div class=social-links>
+<a href=mailto:ruchenxucs@gmail.com class="iconfont icon-email" title=email></a>
+<a href=https://github.com/FireLandDS class="iconfont icon-github" title=github></a>
+<a href=http://localhost:1313/index.xml type=application/rss+xml class="iconfont icon-rss" title=rss></a>
+</div>
+<div class=copyright>
+<span class=power-by>
+Powered by <a class=hexo-link href=https://gohugo.io>Hugo</a>
+</span>
+<span class=division>|</span>
+<span class=theme-info>
+Theme -
+<a class=theme-link href=https://github.com/olOwOlo/hugo-theme-even>Even</a>
+</span>
+<div class=busuanzi-footer>
+<span id=busuanzi_container_site_pv> site pv: <span id=busuanzi_value_site_pv><img src=/img/spinner.svg alt=spinner.svg></span> </span>
+<span class=division>|</span>
+<span id=busuanzi_container_site_uv> site uv: <span id=busuanzi_value_site_uv><img src=/img/spinner.svg alt=spinner.svg></span> </span>
+</div>
+<span class=copyright-year>
+&copy;
+2017 -
+2021<span class=heart><i class="iconfont icon-heart"></i></span><span>Ruchen Xu</span>
+</span>
+</div>
+</footer>
+<div class=back-to-top id=back-to-top>
+<i class="iconfont icon-up"></i>
+</div>
+</div>
+<script src=https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin=anonymous></script>
+<script type=text/javascript src=/js/main.min.c99b103c33d1539acf3025e1913697534542c4a5aa5af0ccc20475ed2863603b.js></script>
+<script type=text/javascript>window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']],tags:'ams'}}</script>
+<script async src=https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin=anonymous></script>
+</body>
+</html>

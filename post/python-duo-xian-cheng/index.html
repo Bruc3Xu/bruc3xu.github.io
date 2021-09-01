@@ -1,0 +1,323 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
+<title>python多线程 - RuChen Xu's Blog</title>
+<meta name=renderer content="webkit">
+<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta http-equiv=cache-control content="no-transform">
+<meta http-equiv=cache-control content="no-siteapp">
+<meta name=theme-color content="#f8f5ec">
+<meta name=msapplication-navbutton-color content="#f8f5ec">
+<meta name=apple-mobile-web-app-capable content="yes">
+<meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec">
+<meta name=author content="Ruchen Xu"><meta name=description content="由于GIL的存在，Python的多线程实际上是伪多线程，在同一时刻只有一个线程。因此Python的多线程适用于IO密集型任务（文件读写，网络"><meta name=keywords content="Hugo,theme,even">
+<meta name=generator content="Hugo 0.87.0 with theme even">
+<link rel=canonical href=http://localhost:1313/post/python-duo-xian-cheng/>
+<link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png>
+<link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
+<link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png>
+<link rel=manifest href=/manifest.json>
+<link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5>
+<script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<link href=/sass/main.min.2e81bbed97b8b282c1aeb57488cc71c8d8c8ec559f3931531bd396bf31e0d4dd.css rel=stylesheet>
+<link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin=anonymous>
+<meta property="og:title" content="python多线程">
+<meta property="og:description" content="由于GIL的存在，Python的多线程实际上是伪多线程，在同一时刻只有一个线程。因此Python的多线程适用于IO密集型任务（文件读写，网络">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://localhost:1313/post/python-duo-xian-cheng/"><meta property="article:section" content="post">
+<meta property="article:published_time" content="2019-11-24T17:04:39+00:00">
+<meta property="article:modified_time" content="2019-11-24T17:04:39+00:00">
+<meta itemprop=name content="python多线程">
+<meta itemprop=description content="由于GIL的存在，Python的多线程实际上是伪多线程，在同一时刻只有一个线程。因此Python的多线程适用于IO密集型任务（文件读写，网络"><meta itemprop=datePublished content="2019-11-24T17:04:39+00:00">
+<meta itemprop=dateModified content="2019-11-24T17:04:39+00:00">
+<meta itemprop=wordCount content="705">
+<meta itemprop=keywords content="Python,"><meta name=twitter:card content="summary">
+<meta name=twitter:title content="python多线程">
+<meta name=twitter:description content="由于GIL的存在，Python的多线程实际上是伪多线程，在同一时刻只有一个线程。因此Python的多线程适用于IO密集型任务（文件读写，网络"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
+<script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]-->
+</head>
+<body>
+<div id=mobile-navbar class=mobile-navbar>
+<div class=mobile-header-logo>
+<a href=/ class=logo>Blog</a>
+</div>
+<div class=mobile-navbar-icon>
+<span></span>
+<span></span>
+<span></span>
+</div>
+</div>
+<nav id=mobile-menu class="mobile-menu slideout-menu">
+<ul class=mobile-menu-list>
+<a href=/>
+<li class=mobile-menu-item>Home</li>
+</a><a href=/post/>
+<li class=mobile-menu-item>Archives</li>
+</a><a href=/tags/>
+<li class=mobile-menu-item>Tags</li>
+</a><a href=/categories/>
+<li class=mobile-menu-item>Categories</li>
+</a>
+</ul>
+</nav>
+<div class=container id=mobile-panel>
+<header id=header class=header>
+<div class=logo-wrapper>
+<a href=/ class=logo>Blog</a>
+</div>
+<nav class=site-navbar>
+<ul id=menu class=menu>
+<li class=menu-item>
+<a class=menu-item-link href=/>Home</a>
+</li><li class=menu-item>
+<a class=menu-item-link href=/post/>Archives</a>
+</li><li class=menu-item>
+<a class=menu-item-link href=/tags/>Tags</a>
+</li><li class=menu-item>
+<a class=menu-item-link href=/categories/>Categories</a>
+</li>
+</ul>
+</nav>
+</header>
+<main id=main class=main>
+<div class=content-wrapper>
+<div id=content class=content>
+<article class=post>
+<header class=post-header>
+<h1 class=post-title>python多线程</h1>
+<div class=post-meta>
+<span class=post-time> 2019-11-24 </span>
+<span id=busuanzi_container_page_pv class=more-meta> <span id=busuanzi_value_page_pv><img src=/img/spinner.svg alt=spinner.svg></span> times read </span>
+</div>
+</header>
+<div class=post-toc id=post-toc>
+<h2 class=post-toc-title>Contents</h2>
+<div class="post-toc-content always-active">
+<nav id=TableOfContents>
+<ul>
+<li>
+<ul>
+<li><a href=#多线程>多线程</a>
+<ul>
+<li><a href=#直接调用>直接调用</a></li>
+<li><a href=#继承调用>继承调用</a></li>
+<li><a href=#阻塞和守护线程>阻塞和守护线程</a></li>
+<li><a href=#线程锁>线程锁</a></li>
+<li><a href=#信号量>信号量</a></li>
+<li><a href=#线程池>线程池</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+<div class=post-content>
+<p>由于GIL的存在，Python的多线程实际上是伪多线程，在同一时刻只有一个线程。因此Python的多线程适用于IO密集型任务（文件读写，网络请求等），至于计算密集型任务考虑使用多进程。</p>
+<h2 id=多线程>多线程</h2>
+<h3 id=直接调用>直接调用</h3>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=kn>import</span> <span class=nn>threading</span>
+
+<span class=k>def</span> <span class=nf>run</span><span class=p>(</span><span class=n>i</span><span class=p>):</span>
+  <span class=nb>print</span><span class=p>(</span><span class=n>i</span><span class=p>)</span>
+<span class=n>thread</span> <span class=o>=</span> <span class=n>threading</span><span class=o>.</span><span class=n>Thread</span><span class=p>(</span><span class=n>target</span><span class=o>=</span><span class=n>run</span><span class=p>,</span> <span class=n>args</span><span class=o>=</span><span class=p>[</span><span class=mi>1</span><span class=p>,])</span>
+<span class=n>thread</span><span class=o>.</span><span class=n>start</span><span class=p>()</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id=继承调用>继承调用</h3>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=k>class</span> <span class=nc>MyThread</span><span class=p>(</span><span class=n>threading</span><span class=o>.</span><span class=n>Thread</span><span class=p>):</span>
+  <span class=k>def</span> <span class=fm>__init__</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
+      <span class=nb>super</span><span class=p>()</span><span class=o>.</span><span class=fm>__init__</span><span class=p>()</span>
+
+  <span class=k>def</span> <span class=nf>run</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
+      <span class=c1># run方法必须实现，这里放置自定义的内容</span>
+      <span class=k>pass</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id=阻塞和守护线程>阻塞和守护线程</h3>
+<p>thread.join()方法在该线程对象启动了之后调用线程的join()方法之后，那么主线程将会阻塞在当前位置直到子线程执行完成才继续往下走，如果所有子线程对象都调用了join()方法，那么主线程将会在等待所有子线程都执行完之后再往下执行。</p>
+<p>setDaemon(True)方法在子线程对象调用start()方法(启动该线程)之前就调用的话，将会将该子线程设置成守护模式启动。当子线程还在运行的时候,父线程已经执行完了，如果这个子线程设置是以守护模式启动的，那么随着主线程执行完成退出时，子线程立马也退出,如果没有设置守护启动子线程(也就是正常情况下)的话，主线程执行完成之后,进程会等待所有子线程执行完成之后才退出。</p>
+<h3 id=线程锁>线程锁</h3>
+<p>由于多线程共享同一块内存空间，可以访问其中的变量。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=n>lock</span> <span class=o>=</span> <span class=n>threading</span><span class=o>.</span><span class=n>Lock</span><span class=p>()</span>
+<span class=n>lock</span><span class=o>.</span><span class=n>aquire</span><span class=p>()</span>
+<span class=c1># do something</span>
+<span class=n>lock</span><span class=o>.</span><span class=n>release</span><span class=p>()</span>
+
+<span class=c1># or using with， 锁会自动释放</span>
+<span class=k>with</span> <span class=n>lock</span><span class=p>:</span>
+  <span class=c1># do something</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><p>死锁发生的情况：<br>
+1）叠加锁：连续调用同一把锁</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-python data-lang=python>     <span class=n>lock</span><span class=o>.</span><span class=n>aquire</span><span class=p>()</span>
+     <span class=n>lock</span><span class=o>.</span><span class=n>aquire</span><span class=p>()</span>
+     <span class=n>lock</span><span class=o>.</span><span class=n>release</span><span class=p>()</span>
+     <span class=n>lock</span><span class=o>.</span><span class=n>release</span><span class=p>()</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>python引入RLock来解决这个问题。
+2）相互调用锁</p>
+<h3 id=信号量>信号量</h3>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=n>sem</span> <span class=o>=</span> <span class=n>threading</span><span class=o>.</span><span class=n>Semaphore</span><span class=p>(</span><span class=mi>4</span><span class=p>)</span>
+<span class=c1># 只有4把锁</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><h3 id=线程池>线程池</h3>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=kn>from</span> <span class=nn>concurrent.future</span> <span class=kn>import</span> <span class=n>ThreadPoolExeutor</span>
+
+<span class=n>p</span> <span class=o>=</span> <span class=n>ThreadPoolExecutor</span><span class=p>(</span><span class=n>max_workers</span><span class=o>=</span><span class=mi>10</span><span class=p>)</span>
+
+<span class=n>future</span> <span class=o>=</span> <span class=n>p</span><span class=o>.</span><span class=n>submit</span><span class=p>(</span><span class=n>fn</span><span class=p>,</span> <span class=n>args</span><span class=p>)</span>
+<span class=n>data</span> <span class=o>=</span> <span class=n>future</span><span class=o>.</span><span class=n>result</span><span class=p>()</span>
+<span class=n>deal_with</span><span class=p>(</span><span class=n>data</span><span class=p>)</span>
+<span class=c1># or async deal with data</span>
+<span class=n>p</span><span class=o>.</span><span class=n>submit</span><span class=p>(</span><span class=n>fn</span><span class=p>,</span> <span class=n>args</span><span class=p>)</span><span class=o>.</span><span class=n>add_done_callback</span><span class=p>(</span><span class=n>deal_with</span><span class=p>)</span>
+
+<span class=n>future_list</span> <span class=o>=</span> <span class=n>p</span><span class=o>.</span><span class=n>map</span><span class=p>(</span><span class=n>fn</span><span class=p>,</span> <span class=o>*</span><span class=n>iterables</span><span class=p>)</span>
+
+<span class=n>p</span><span class=o>.</span><span class=n>shutdown</span><span class=p>()</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><p>对于进程池，只需将ThreadPoolExecuator改为ProcessPoolExecuator即可。</p>
+</div>
+<div class=post-copyright>
+<p class=copyright-item>
+<span class=item-title>Author</span>
+<span class=item-content>Ruchen Xu</span>
+</p>
+<p class=copyright-item>
+<span class=item-title>LastMod</span>
+<span class=item-content>
+2019-11-24
+</span>
+</p>
+</div>
+<footer class=post-footer>
+<div class=post-tags>
+<a href=/tags/python/>Python</a>
+</div>
+<nav class=post-nav>
+<a class=prev href=/post/cs285_chapter1/cs285-drl-notes-chapter-1-introduction/>
+<i class="iconfont icon-left"></i>
+<span class="prev-text nav-default">cs285 DRL notes chapter 1: introduction</span>
+<span class="prev-text nav-mobile">Prev</span>
+</a>
+</nav>
+</footer>
+</article>
+</div>
+</div>
+</main>
+<footer id=footer class=footer>
+<div class=social-links>
+<a href=mailto:ruchenxucs@gmail.com class="iconfont icon-email" title=email></a>
+<a href=https://github.com/FireLandDS class="iconfont icon-github" title=github></a>
+<a href=http://localhost:1313/index.xml type=application/rss+xml class="iconfont icon-rss" title=rss></a>
+</div>
+<div class=copyright>
+<span class=power-by>
+Powered by <a class=hexo-link href=https://gohugo.io>Hugo</a>
+</span>
+<span class=division>|</span>
+<span class=theme-info>
+Theme -
+<a class=theme-link href=https://github.com/olOwOlo/hugo-theme-even>Even</a>
+</span>
+<div class=busuanzi-footer>
+<span id=busuanzi_container_site_pv> site pv: <span id=busuanzi_value_site_pv><img src=/img/spinner.svg alt=spinner.svg></span> </span>
+<span class=division>|</span>
+<span id=busuanzi_container_site_uv> site uv: <span id=busuanzi_value_site_uv><img src=/img/spinner.svg alt=spinner.svg></span> </span>
+</div>
+<span class=copyright-year>
+&copy;
+2017 -
+2021<span class=heart><i class="iconfont icon-heart"></i></span><span>Ruchen Xu</span>
+</span>
+</div>
+</footer>
+<div class=back-to-top id=back-to-top>
+<i class="iconfont icon-up"></i>
+</div>
+</div>
+<script src=https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin=anonymous></script>
+<script type=text/javascript src=/js/main.min.c99b103c33d1539acf3025e1913697534542c4a5aa5af0ccc20475ed2863603b.js></script>
+<script type=text/javascript>window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']],tags:'ams'}}</script>
+<script async src=https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin=anonymous></script>
+</body>
+</html>
