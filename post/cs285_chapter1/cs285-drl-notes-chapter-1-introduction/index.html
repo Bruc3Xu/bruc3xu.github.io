@@ -116,7 +116,7 @@
 <p>强化学习是一种目标导向的学习方法，通过不断试错，奖励或惩罚智能体从而使其未来更容易重复或者放弃某一动作。</p>
 <h2 id=强化学习中的术语介绍>强化学习中的术语介绍。</h2>
 <p>强化学习的主要角色是智能体和环境，环境是智能体存在和互动的世界。智能体在每一步的交互中，如图所示，
-<img src=rl_diagram.png alt="RL diagram">
+<img src=/post/cs285_chapter1/rl_diagram.png alt="RL diagram">
 都会获得对于所处环境状态的观察（可能只是部分环境状态），
 然后决定下一步要执行的动作。环境的状态会在智能体执行动作后发生变化，但也可能会自行发生改变。
 智能体还感知来自环境的奖励信号，奖励信号告诉了智能体当前环境状态的好坏。智能体的目标是最大化其累积奖励，称为回报(return)。</p>
@@ -127,14 +127,14 @@
 奖励函数需要人工设计或者逆强化学习学习得到。</p>
 <p>在大部分强化学习环境中，认为状态转换具有马尔可夫性质{Markovian}，即在$t+1$时刻的状态只依赖于$t$时刻的状态。
 如图解释了马尔可夫链，箭头代表着因果关系。
-<img src=./markov_chain.png alt="Markov Chain"></p>
+<img src=/post/cs285_chapter1/markov_chain.png alt="Markov Chain"></p>
 <p>强化学习的目标是最大化累计奖励值。定义轨迹概率分布为$p_\theta(\tau)$，根据贝叶斯定理：
 $$ p(\tau)= p(s_1,a_1,&mldr;,s_T,a_T) = p(s_1)\prod_{t=1}^T\pi_\theta(a_t|s_t)p(s_{t+1}|s_t,a_t)$$
 其中，$T$是回合的长度。</p>
 <p>根据上式，可以计算出轨迹累计奖励期望值为</p>
-<p>$$\mathbb{E}<em>{\tau\sim p</em>\theta(\tau)}\left[\sum_t r(s_t,a_t)\right]$$</p>
+<p>$$\mathbb{E}_{\tau\sim p_\theta(\tau)}\left[\sum_t r(s_t,a_t)\right]$$</p>
 <p>为了最大化累计奖励期望值，需要优化$\theta$，直到得到$\theta$满足下式：</p>
-<p>$$ \theta = \underset{\theta}{argmax}\mathbb{E}<em>{\tau\sim p</em>\theta(\tau)}\left[\sum_t r(s_t,a_t)\right] $$</p>
+<p>$$ \theta = \underset{\theta}{argmax}\mathbb{E}_{\tau\sim p_\theta(\tau)}\left[\sum_t r(s_t,a_t)\right] $$</p>
 <h2 id=状态值函数和q函数>状态值函数和Q函数</h2>
 <p>为了简化形式，引入两个函数。状态动作价值函数即Q函数和状态价值函数V。在DRL中，这两个函数一般是需要使用神经网络建模的对象。</p>
 <h3 id=q函数>Q函数</h3>
@@ -147,7 +147,7 @@ $$Q^\pi(s_t,a_t) = \sum_{t'=t}^T{\mathbb{E}_{\pi_\theta}[r(s_t',a_t')|s_t,a_t]}$
 $\mathbb{E}_{s_1\sim p(s_1)}[V^\pi(s_1)]$，其中$p(s_1)$代表所有可能的初始状态。</p>
 <h2 id=reinforcement-learning-anatomy>Reinforcement Learning Anatomy</h2>
 <p>如图，强化学习过程主要分为3个步骤：1）生成数据：根据不同的算法可以使用各种策略；2）估计回报，模型回归（DRL中的神经网络模型）；3）改进当前策略；
-<img src=rl_anatomy.png alt="RL anatomy">
+<img src=/post/cs285_chapter1/rl_anatomy.png alt="RL anatomy">
 强化学习的关键就在于正确高效地完成这三个步骤。</p>
 </div>
 <div class=post-copyright>

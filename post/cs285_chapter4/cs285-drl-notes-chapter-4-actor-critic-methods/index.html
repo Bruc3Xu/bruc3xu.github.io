@@ -31,8 +31,8 @@
 <meta itemprop=name content="cs285 DRL notes chapter 4: Actor-Critic methods">
 <meta itemprop=description content="回顾策略梯度算法， $$\nabla_\theta J(\theta) \simeq \frac{1}{N}\sum_{i=1}^N\left(\sum_{t=1}^T\nabla_\theta \log\pi_\theta(a_{i,t}|s_{i,t})\right)\left(\sum_{t'=t}^T r(s_{i,t'},a_{i,t'})\right)$$ 我们使用``reward-to-go'' 来近似在状态$s_{i,t}$采取动作 $a_{i,t}$的回报。上一章"><meta itemprop=datePublished content="2021-08-24T17:18:48+00:00">
 <meta itemprop=dateModified content="2021-08-24T17:18:48+00:00">
-<meta itemprop=wordCount content="431">
-<meta itemprop=keywords content><meta name=twitter:card content="summary">
+<meta itemprop=wordCount content="429">
+<meta itemprop=keywords content="reinforcement learning,cs285,"><meta name=twitter:card content="summary">
 <meta name=twitter:title content="cs285 DRL notes chapter 4: Actor-Critic methods">
 <meta name=twitter:description content="回顾策略梯度算法， $$\nabla_\theta J(\theta) \simeq \frac{1}{N}\sum_{i=1}^N\left(\sum_{t=1}^T\nabla_\theta \log\pi_\theta(a_{i,t}|s_{i,t})\right)\left(\sum_{t'=t}^T r(s_{i,t'},a_{i,t'})\right)$$ 我们使用``reward-to-go'' 来近似在状态$s_{i,t}$采取动作 $a_{i,t}$的回报。上一章"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
 <script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]-->
@@ -120,21 +120,21 @@ $$
 <p>$$\nabla_\theta J(\theta) \simeq \frac{1}{N}\sum_{i=1}^N\sum_{t=1}^T\nabla_{\theta}\log \pi_\theta (a_{i,t}|s_{i,t})\left(Q(s_{i,t},a_{i,t}) - V(s_{i,t})\right)$$
 and the value function we used is a better approximation of the baseline $b_t = \frac{1}{N}\sum_i Q(s_{i,t},a_{i,t})$.</p>
 <h2 id=值函数拟合>值函数拟合</h2>
-<p>我们使用监督学习来拟合值函数，损失函数
-$$
-L(\phi)=1/2\sum_i||\hat{V}<em>\phi^\pi(s_i)-y_i||^2
-$$
-$y_i$是当前状态的期望价值，使用bootstrap（自举）方法可以得到
-$$
+<p>我们使用监督学习来拟合值函数，损失函数</p>
+<p>$$
+L(\phi)=1/2\sum_i||\hat{V}_\phi^\pi(s_i)-y_i||^2
+$$</p>
+<p>$y_i$是当前状态的期望价值，使用bootstrap（自举）方法可以得到</p>
+<div>
 \begin{aligned}
-y</em>{i,t} &= \sum_{t'=t}^{T}\mathbb{E}_{\pi_\theta}[r(s_{t'}, a_{t'})|s_{i,t}]\<br>
-&\simeq r(s_{i,t}, a_{i,t})+\sum_{t'=t+1}^T[r(s_{t'}, a_{t'})|s_{i,t+1}]\<br>
-&\simeq r(s_{i,t}, a_{i,t})+V^\pi(s_{i,t+1})\<br>
+y_{i,t} &= \sum_{t'=t}^{T}\mathbb{E}_{\pi_\theta}[r(s_{t'}, a_{t'})|s_{i,t}]\\
+&\simeq r(s_{i,t}, a_{i,t})+\sum_{t'=t+1}^T[r(s_{t'}, a_{t'})|s_{i,t+1}]\\
+&\simeq r(s_{i,t}, a_{i,t})+V^\pi(s_{i,t+1})\\
 \end{aligned}
-$$
-尽管上式对状态价值的估计是有偏的，但具有较低的方差。
-最终的MSE损失形式为
-$$
+</div>
+<p>尽管上式对状态价值的估计是有偏的，但具有较低的方差。
+最终的MSE损失形式为</p>
+<p>$$
 L(\phi)=1/2\sum_i||\hat{V}_\phi^\pi(s_i)-(r(s_{i,t}, a_{i,t})+\hat{V}_\phi^\pi(s_{i+1}))||^2
 $$</p>
 <h2 id=策略评估>策略评估</h2>
@@ -152,6 +152,10 @@ $$</p>
 </p>
 </div>
 <footer class=post-footer>
+<div class=post-tags>
+<a href=/tags/reinforcement-learning/>reinforcement learning</a>
+<a href=/tags/cs285/>cs285</a>
+</div>
 <nav class=post-nav>
 <a class=next href=/post/cs285_chapter3/cs285-drl-notes-chapter-3-policy-gradient-methods/>
 <span class="next-text nav-default">cs285 DRL notes chapter 3: policy gradient methods</span>

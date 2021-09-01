@@ -31,7 +31,7 @@
 <meta itemprop=name content="cs285 DRL notes chapter 2: imitation learning">
 <meta itemprop=description content="模仿学习是一种监督学习方法，行为克隆是其中的一类方法。其基本思想是从专家演示数据中学习到一个尽可能接近专家策略的行为策略。我们的数据集是依据"><meta itemprop=datePublished content="2020-08-23T15:13:48+00:00">
 <meta itemprop=dateModified content="2020-08-23T15:13:48+00:00">
-<meta itemprop=wordCount content="1754">
+<meta itemprop=wordCount content="1730">
 <meta itemprop=keywords content="reinforcement learning,cs285,"><meta name=twitter:card content="summary">
 <meta name=twitter:title content="cs285 DRL notes chapter 2: imitation learning">
 <meta name=twitter:description content="模仿学习是一种监督学习方法，行为克隆是其中的一类方法。其基本思想是从专家演示数据中学习到一个尽可能接近专家策略的行为策略。我们的数据集是依据"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
@@ -117,39 +117,25 @@
 <div class=post-content>
 <p>模仿学习是一种监督学习方法，行为克隆是其中的一类方法。其基本思想是从专家演示数据中学习到一个尽可能接近专家策略的行为策略。我们的数据集是依据专家策略采样得到的$o_t, a_t$，可以认为是输入和标签。</p>
 <p>模仿学习的一个问题是泛化能力差。例如，在状态$s_t$，智能体做出了一个错误决策（因为学习得到的策略分布与专家策略分布不能完全相同，这个问题是无法避免的），到达一个新的状态$s_t'$。这个状态对于智能体来说是没有见过的，即没有学习到的，那么智能体就会选择一个随机的动作，偏离学习到的轨迹。整个过程如下图所示。
-<img src=./distribution_shift.png alt></p>
+<img src=/post/cs285_chapter2/distribution_shift.png alt></p>
 <h2 id=daggerdataset-aggregation>DAgger(Dataset Aggregation)</h2>
 <p>DAgger的思想是：既然没有见过的状态不在原有分布之内，那么我们使用专家策略对这个状态进行动作选择，并将其加入数据集进行训练，那么就可以解决上文提到的分布偏移问题。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span><span class=lnt>4
-</span><span class=lnt>5
-</span><span class=lnt>6
-</span><span class=lnt>7
-</span><span class=lnt>8
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>Human data D = {o_1,a_1,...,o_N,a_N}
-While not Converged
-    Train $\pi_\theta(a_t|o_t)$ from human data \mathcal{D} = {o_1,a_1,...,o_N,a_N}
-    Run \pi_\theta(a_t|o_t) to get dataset \mathcal{D}_\pi = {o_1,...,o_M}
-    Ask human to label \mathcal{D}_\pi with actions a_t
-    Aggregate \mathcal{D} \leftarrow \mathcal{D} \cup \mathcal{D_\pi}
-Return optimal imitation-learned trajectory as \tau^{return}
-
-</code></pre></td></tr></table>
-</div>
-</div><p>DAgger算法存在的问题：</p>
+<p>Human data D = {o_1,a_1,&mldr;,o_N,a_N}<br>
+While not Converged<br>
+$\quad$ Train $\pi_\theta(a_t|o_t)$ from human data $\mathcal{D} = {o_1,a_1,&mldr;,o_N,a_N}$<br>
+$\quad$ Run $\pi_\theta(a_t|o_t)$ to get dataset $\mathcal{D}_\pi = {o_1,&mldr;,o_M}$<br>
+$\quad$ Ask human to label $\mathcal{D}_\pi$ with actions $a_t$<br>
+$\quad$ Aggregate $\mathcal{D} \leftarrow \mathcal{D} \cup \mathcal{D_\pi}$<br>
+Return optimal imitation-learned trajectory as $\tau^{return}$</p>
+<p>DAgger算法存在的问题：</p>
 <ol>
 <li>无法保证人类标记数据的可靠性</li>
 <li>人类做出决策不仅依赖当前状态，还依赖历史状态（并不一定指上一个状态），不满足马尔可夫性质。</li>
 </ol>
 <h2 id=模仿学习存在的为题和解决方法>模仿学习存在的为题和解决方法</h2>
 <h3 id=行为不具有马尔可夫性质>行为不具有马尔可夫性质</h3>
-<p>这个问题即DAgger算法的第二个问题。在这种情况下，策略学习由$\pi_{\theta}(a_t|o_t$变为$\pi_{\theta}(a_t|o_t, o_{t-1}, &mldr;}$。</p>
+<p>这个问题即DAgger算法的第二个问题。在这种情况下，策略学习由$\pi_{\theta}(a_t|o_t)$变为
+$\pi_{\theta}(a_t|o_t, o_{t-1}, &mldr;)$。</p>
 <p>一种解决方法是将历史状态堆叠起来作为新的状态。</p>
 <div class=highlight><div class=chroma>
 <table class=lntable><tr><td class=lntd>
