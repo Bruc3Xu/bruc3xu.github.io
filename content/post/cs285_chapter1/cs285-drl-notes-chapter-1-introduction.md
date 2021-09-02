@@ -57,6 +57,6 @@ $$Q^\pi(s_t,a_t) = \sum_{t'=t}^T{\mathbb{E}_{\pi_\theta}[r(s_t',a_t')|s_t,a_t]}$
 $\mathbb{E}_{s_1\sim p(s_1)}[V^\pi(s_1)]$，其中$p(s_1)$代表所有可能的初始状态。
 
 ## Reinforcement Learning Anatomy
-如图，强化学习过程主要分为3个步骤：1）生成数据：根据不同的算法可以使用各种策略；2）估计回报，模型回归（DRL中的神经网络模型）；3）改进当前策略；
+如图，强化学习过程主要分为3个步骤：1）生成数据：根据不同的算法可以使用各种策略与环境交互；2）估计回报或者拟合环境模型（model based）；3）改进当前策略；
 ![RL anatomy](/post/cs285_chapter1/rl_anatomy.png)
 强化学习的关键就在于正确高效地完成这三个步骤。

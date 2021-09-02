@@ -5,18 +5,16 @@ tags: [reinforcement learning,cs285]
 published: true
 hideInList: false
 isTop: false
-markup: mmark
-math: true
 ---
-回顾强化学习的目标，我们希望获得策略的最优参数$\theta^\*$，
+回顾强化学习的目标，我们希望获得策略的最优参数$\theta^*$，
 
 $$
-\theta^*=\underset{\theta}{argmax}\mathbb{E}_{\tau\sim p_{\theta}(\tau)}[\sum_{t=1}^{t=T}r(s_t, a_t)]
+\theta^*=\underset{\theta}{argmax}\mathbb{E}\_{\tau\sim p_{\theta}(\tau)}[\sum_{t=1}^{t=T}r(s_t, a_t)]
 $$
 
 这实际上是一个优化问题，因此我们可以使用多种优化方法来优化这个目标，例如梯度下降。我们将优化的目标函数定义为$J(\theta)$：
 $$
-J(\theta) = \mathbb{E}_{\tau\sim \pi_\theta(\tau)}[r(\tau)]
+J(\theta) = \mathbb{E}\_{\tau\sim \pi_\theta(\tau)}[r(\tau)]
 $$
 其中，$r(\tau)$是轨迹累积奖励, 等价于$$\sum_{t=1}^{T} r(s_t,a_t)$$。$J$进一步写作：
 
@@ -33,8 +31,8 @@ $$
 利用上式，$J(\theta)$的梯度可以表示为
 
 $$
-\begin{aligned} \nabla_\theta J(\theta) &= \int \nabla_\theta \pi_\theta r(\tau)d\tau \\
-&= \int\pi_\theta(\tau)\nabla_\theta \log \pi_\theta(\tau) r(\tau) d\tau \\
+\begin{aligned} \nabla_\theta J(\theta) &= \int \nabla_\theta \pi_\theta r(\tau)d\tau \\\\
+&= \int\pi_\theta(\tau)\nabla_\theta \log \pi_\theta(\tau) r(\tau) d\tau \\\\
 &= \mathbb{E}\_{\tau\sim \pi_\theta(\tau)}[\nabla_\theta \log \pi_\theta (\tau)r(\tau)] 
 \end{aligned}
 $$
@@ -47,7 +45,7 @@ $$
 将其带入策略梯度计算中，
 
 $$
-\begin{aligned} \nabla_\theta J(\theta) &= \mathbb{E}_{\tau\sim \pi_\theta(\tau)}\left[\nabla_\theta\left(\log p(s_1) + \sum_{t=1}^T \log \pi_\theta(a_t|s_t)+\log p(s_{t+1}|s_t,a_t)\right)r(\tau)\right] \\
+\begin{aligned} \nabla_\theta J(\theta) &= \mathbb{E}_{\tau\sim \pi_\theta(\tau)}\left[\nabla_\theta\left(\log p(s_1) + \sum_{t=1}^T \log \pi_\theta(a_t|s_t)+\log p(s_{t+1}|s_t,a_t)\right)r(\tau)\right] \\\\
 &= \mathbb{E}_{\tau\sim \pi_\theta(\tau)}\left[ \left(\sum_{t=1}^T\nabla_\theta \log\pi_\theta(a_t|s_t)\right)\left(\sum_{t=1}^T r(s_t,a_t)\right)\right]
 \end{aligned}
 $$
@@ -65,14 +63,14 @@ $$\nabla_\theta J(\theta) \simeq \frac{1}{N}\sum_{i=1}^N\left(\sum_{t=1}^T\nabla
 $\theta \leftarrow \theta + \alpha\nabla_\theta J(\theta)$
 
 此类依赖蒙特卡洛近似方法的策略梯度算法（vanilla policy gradient）称为ReinForce算法。
-
-Base policy $$\pi_\theta(a_t|s_t)$$, sample trajectories $$\tau^i$$\\
-WHILE\
-$\quad$ Sample ${\tau^i}$ from $$\pi_\theta(a_t|s_t)$$\
-$$\quad \nabla_\theta J(\theta) \simeq \frac{1}{N}\sum_i\left(\sum_t\nabla_\theta \log\pi_\theta(a_{i,t}|s_{i,t})\right)\left(\sum_t r(s_{i,t},a_{i,t})\right)$$ \
-$\quad$ Improve policy by $\theta \leftarrow \theta + \alpha\nabla_\theta J(\theta)$\\
+***
+Base policy $\pi_\theta(a_t|s_t)$, sample trajectories $\tau^i$\
+WHILE True\
+$\quad$ Sample ${\tau^i}$ from $\pi_\theta(a_t|s_t)$\
+$\quad \nabla_\theta J(\theta) \simeq \frac{1}{N}\sum_i\left(\sum_t\nabla_\theta \log\pi_\theta(a_{i,t}|s_{i,t})\right)\left(\sum_t r(s_{i,t},a_{i,t})\right)$ \
+$\quad$ Improve policy by $\theta \leftarrow \theta + \alpha\nabla_\theta J(\theta)$\
 Return optimal trajectory from gradient ascent as $\tau^{return}$
-
+***
 
 ## 策略梯度背后
 策略的最大似然定义为
@@ -115,11 +113,10 @@ $$\nabla_\theta J(\theta) \simeq \frac{1}{N}\sum_{i=1}^N\nabla_\theta \log\pi_\t
 
 $$
 \begin{aligned}
-\mathbb{E}_{\pi_\theta(\tau)}\left[\nabla_\theta\log \pi_\theta(\tau)b\right]&=
-\int \pi_\theta(\tau)\nabla \log\pi_\theta(\tau)b\;d\tau\\
-&=\int \nabla_\theta \pi_\theta(\tau)b\;d\tau\\
-&=b\nabla_\theta\int\pi_\theta(\tau)\;d\tau\\
-&=b\nabla_\theta 1\\
+\mathbb{E}\_{\pi_\theta(\tau)}[\nabla_\theta\log \pi_\theta(\tau)b]&=\int \pi_\theta(\tau)\nabla \log\pi_\theta(\tau)bd\tau\\\\
+&=\int \nabla_\theta \pi_\theta(\tau)bd\tau\\\\
+&=b\nabla_\theta\int\pi_\theta(\tau)d\tau\\\\
+&=b\nabla_\theta 1\\\\
 &=0
 \end{aligned}
 $$
@@ -133,17 +130,18 @@ $$\mathrm{Var}[x] = \mathbb{E}[x^2]-\mathbb{E}[x]^2$$
 $$\nabla_\theta J(\theta) \simeq \mathbb{E}_{\tau\sim\pi_\theta(\tau)}\left[\nabla_\theta \log\pi_\theta(\tau)\left(r(\tau)-b\right)\right]$$
 
 因此，方差为
-$$\mathrm{Var} = \mathbb{E}_{\tau\sim\pi_\theta(\tau)}\left[\left(\nabla_\theta \log\pi_\theta(\tau)\left(r(\tau)-b\right)\right)^2\right] - \mathbb{E}_{\tau\sim\pi_\theta(\tau)}\left[\nabla_\theta \log\pi_\theta(\tau)\left(r(\tau)-b\right) \right]^2$$
+$$\mathrm{Var} = \mathbb{E}\_{\tau\sim\pi_\theta(\tau)}\left[\left(\nabla_\theta \log\pi_\theta(\tau)\left(r(\tau)-b\right)\right)^2\right] - \mathbb{E}_{\tau\sim\pi_\theta(\tau)}\left[\nabla_\theta \log\pi_\theta(\tau)\left(r(\tau)-b\right) \right]^2$$
 
 因为加上基线也是无偏的，上式第二项可以写作
- $$\mathbb{E}_{\tau\sim\pi_\theta(\tau)}\left[\nabla_\theta \log\pi_\theta(\tau)r(\tau) \right]^2$$
+ $$\mathbb{E}\_{\tau\sim\pi_\theta(\tau)}\left[\nabla_\theta \log\pi_\theta(\tau)r(\tau) \right]^2$$
 
 这里我们计算方差关于b的导数，以求解最优的b
 
 $$
 \begin{aligned}
-\frac{d\mathrm{Var}}{db} &= \frac{d}{db}\mathbb{E}\left[g(\tau)^2(r(\tau)-b)^2\right]\\ &=\frac{d}{db}\mathbb{E}\left[g(\tau)^2r(\tau)^2\right] - 2\mathbb{E}\left[g(\tau)^2r(\tau)b\right] + b^2\mathbb{E}\left[g(\tau)^2\right]\\
-&=-2\mathbb{E}\left[ g(\tau)^2r(\tau)\right]+2b\mathbb{E}\left[g(\tau)^2\right]\\
+\frac{d\mathrm{Var}}{db} &= \frac{d}{db}\mathbb{E}\left[g(\tau)^2(r(\tau)-b)^2\right]\\\\ 
+&=\frac{d}{db}\mathbb{E}\left[g(\tau)^2r(\tau)^2\right] - 2\mathbb{E}\left[g(\tau)^2r(\tau)b\right] + b^2\mathbb{E}\left[g(\tau)^2\right]\\\\
+&=-2\mathbb{E}\left[ g(\tau)^2r(\tau)\right]+2b\mathbb{E}\left[g(\tau)^2\right]\\\\
 &=0
 \end{aligned}
 $$
@@ -151,6 +149,17 @@ $$
 得到
 
 $$b^{opt} = \frac{\mathbb{E}\left[g(\tau)^2r(\tau)\right]}{\mathbb{E}\left[g(\tau)^2\right]}$$
+
+## 伪代码实现
+```python
+traj = policy.explore()
+logits = policy.predict(traj.states)
+negative_likelihood = torch.SoftMax(logits).gather(1, traj.actions)
+loss = (traj.q_vals * negative_likelihood).mean()
+optimizer.zero_grad()
+loss.backward()
+optimizer.step()
+```
 
 ## on-policy vs off-policy
 on-policy指同策略，只从当前策略采样得到额数据中学习。off-policy指异策略，不仅从当前策略，还从其他策略采样得到的数据学习。策略梯度算法是同策略的学习方法，每次更新策略后，旧的样本就要丢弃，无疑是低效的。这里，我们可以使用异策略学习方法。
@@ -161,8 +170,8 @@ on-policy指同策略，只从当前策略采样得到额数据中学习。off-p
 
 $$
 \begin{aligned}
-\mathbb{E}_{x\sim p(x)}\left[f(x)\right] &= \int p(x)f(x)\;dx\\
-&=\int \frac{q(x)}{q(x)}p(x)f(x)\;dx\\
+\mathbb{E}\_{x\sim p(x)}\left[f(x)\right] &= \int p(x)f(x)\;dx\\\\
+&=\int \frac{q(x)}{q(x)}p(x)f(x)\;dx\\\\
 &=\mathbb{E}_{x\sim q(x)}\left[\frac{p(x)}{q(x)}f(x)\right]
 \end{aligned}
 $$
@@ -171,7 +180,7 @@ $$
 
 $$
 \begin{aligned}
-J(\theta) &= \mathbb{E}_{\tau\sim\pi_\theta(\tau)}\left[r(\tau)\right]\\
+J(\theta) &= \mathbb{E}\_{\tau\sim\pi_\theta(\tau)}\left[r(\tau)\right]\\\\
 &= \mathbb{E}_{\tau\sim\bar{\pi}(\tau)}\left[ \frac{\pi_\theta(\tau)}{\bar{\pi}(\tau)} r(\tau)\right]
 \end{aligned}
 $$
@@ -191,13 +200,13 @@ $$
 
 如果我们想要从旧的策略$\pi_\theta$采样数据中学习新的参数$\theta'$，使用重要性采样
 
-$$J(\theta') = \mathbb{E}_{\tau\sim\pi_\theta(\tau)}\left[\frac{\pi_{\theta'}(\tau)}{\pi_\theta(\tau)}r(\tau)\right]$$
+$$J(\theta') = \mathbb{E}\_{\tau\sim\pi_\theta(\tau)}\left[\frac{\pi_{\theta'}(\tau)}{\pi_\theta(\tau)}r(\tau)\right]$$
 
 策略梯度为：
 
 $$
 \begin{aligned}
-\nabla_{\theta'}J(\theta')&=\mathbb{E}_{\tau\sim\pi_\theta(\tau)}\left[\frac{\pi_{\theta'}(\tau)}{\pi_\theta(\tau)}\nabla_{\theta'}\log\pi_{\theta'}(\tau)r(\tau)\right]\\
+\nabla_{\theta'}J(\theta')&=\mathbb{E}_{\tau\sim\pi_\theta(\tau)}\left[\frac{\pi_{\theta'}(\tau)}{\pi_\theta(\tau)}\nabla_{\theta'}\log\pi_{\theta'}(\tau)r(\tau)\right]\\\\
 &= \mathbb{E}_{\tau\sim\pi_\theta(\tau)}\left[  \left(  \frac{\prod_{t=1}^T\pi_{\theta'}(a_t|s_t)}{\prod_{t=1}^T\pi_{\theta}(a_t|s_t)} \right)\left( \sum_{t=1}^T\nabla_{\theta'}\log\pi_{\theta'}(a_t|s_t)  \right)\left(\sum_{t=1}^Tr(s_t,a_t)\right)  \right]
 \end{aligned}
 $$

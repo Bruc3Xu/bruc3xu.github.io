@@ -8,12 +8,16 @@ isTop: false
 ---
 模仿学习是一种监督学习方法，行为克隆是其中的一类方法。其基本思想是从专家演示数据中学习到一个尽可能接近专家策略的行为策略。我们的数据集是依据专家策略采样得到的$o_t, a_t$，可以认为是输入和标签。
 
+强化学习与监督学习的区别在于：
+1. 强化学习中，数据并不是独立同分布的（i.i.d）。
+2. 强化学习并没有准确的标签，只有奖励值这一弱监督信号。
+
 模仿学习的一个问题是泛化能力差。例如，在状态$s_t$，智能体做出了一个错误决策（因为学习得到的策略分布与专家策略分布不能完全相同，这个问题是无法避免的），到达一个新的状态$s_t'$。这个状态对于智能体来说是没有见过的，即没有学习到的，那么智能体就会选择一个随机的动作，偏离学习到的轨迹。整个过程如下图所示。
 ![](/post/cs285_chapter2/distribution_shift.png)
 
 ## DAgger(Dataset Aggregation)
 DAgger的思想是：既然没有见过的状态不在原有分布之内，那么我们使用专家策略对这个状态进行动作选择，并将其加入数据集进行训练，那么就可以解决上文提到的分布偏移问题。
-
+***
 Human data D = {o_1,a_1,...,o_N,a_N}\
 While not Converged\
     $\quad$ Train $\pi_\theta(a_t|o_t)$ from human data $\mathcal{D} = {o_1,a_1,...,o_N,a_N}$\
@@ -21,7 +25,7 @@ While not Converged\
     $\quad$ Ask human to label $\mathcal{D}_\pi$ with actions $a_t$\
     $\quad$ Aggregate $\mathcal{D} \leftarrow \mathcal{D} \cup \mathcal{D_\pi}$\
 Return optimal imitation-learned trajectory as $\tau^{return}$
-
+***
 DAgger算法存在的问题：
 1. 无法保证人类标记数据的可靠性
 2. 人类做出决策不仅依赖当前状态，还依赖历史状态（并不一定指上一个状态），不满足马尔可夫性质。
