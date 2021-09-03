@@ -154,45 +154,12 @@ $$
 \nabla_\theta J(\theta)\simeq {1 \over N}\sum_i^N\sum_t^T\nabla_\theta \log\pi_\theta(a_{i,t}|s_{i,t})((\sum_{t'=t}^T\gamma^{t'-t} r(s_{i,t'},a_{i,t'})) - \hat{V}_\phi^\pi(s_{i,t}))
 $$
 
-### control variate: action dependent baseline
-
-背景知识：
+## control variate: action dependent baseline
 控制变量法（英语：control variates）是在蒙特卡洛方法中用于减少方差的一种技术方法。该方法通过对已知量的了解来减少对未知量估计的误差。
 
-假设要估计的参数为$\mu$。同时对于统计m，其期望值为$\mu ：\mathbb {E} \left[m\right]=\mu$，即m是$\mu$的无偏差估计。此时，对于另一个统计t，已知$\mathbb {E} \left[t\right]=\tau$。于是，
-$m^{\star }=m+c\left(t-\tau \right)$
-也是$\mu$的无偏差估计，c为任一给定系数。$m^{\star}$的方差为
+强化学习中，QProp算法采用了control variate的思想，在无偏的情况下来减少策略梯度中的方差。
 
-$$
-\textrm{Var}\left(m^{\star}\right)=\textrm{Var}\left(m\right)+c^2\textrm {Var}\left(t\right)+2c\textrm{Cov}\left(m,t\right);
-$$
-
-可以证明，使得方差最小的系数c为
-
-$$
-c^{\star }=-{\frac {{\textrm {Cov}}\left(m,t\right)}{{\textrm {Var}}\left(t\right)}};
-$$
-
-此时，对应的方差则为
-
-$$
-\begin{aligned}
-{\textrm {Var}}\left(m^{\star }\right)&={\textrm {Var}}\left(m\right)-{\frac {\left[{\textrm {Cov}}\left(m,t\right)\right]^{2}}{{\textrm {Var}}\left(t\right)}}\\\\
-&=\left(1-\rho _{m,t}^{2}\right){\textrm {Var}}\left(m\right);
-\end{aligned}
-$$
-
-其中
-$\rho_{m,t}={\textrm {Corr}}\left(m,t\right)\,$
-为m与t之间的相关系数。$\rho_{m,t}$越大时，方差越小。
-
-当$\textrm{Cov}\left(m,t\right),\textrm{Var}\left(t\right)或\rho_{m,t}$未知时，可以通过蒙特卡洛模拟进行估计。由于该方法相当于一个最小二乘法系统，又被称为回归抽样（regression sampling）。
-
-QProp采用了control variate的思想，
-
-
-
-### Eligibility traces & n-step returns
+## Eligibility traces & n-step returns
 eligibility trace称为资格迹，最先在$TD(\lambda)$中使用。$e_t$表示第t步资格迹，是值函数的优化微分值。
 其优化的技术称为(backward view)。仔细观察公式可以发现$e_t$的算法中包含了以前的微分值，考虑了过去的价值梯度对更新参数$\theta$的影响。
 
@@ -200,12 +167,106 @@ $$
 \begin{aligned}
 e_0&\doteq 0\\\\
 e_t&\doteq \nabla\hat{V}\_{\theta}(s_t) + \lambda\gamma e_{t-1}\\\\
-\theta &\leftarrow \theta + \alpha (r_{t+1}+\gamma\hat{V}_{theta}(s_{t+1})-\hat{V}_{\theta}(s_t))e_t    
+\theta &\leftarrow \theta + \alpha (r_{t+1}+\gamma\hat{V}_{\theta}(s_{t+1})-\hat{V}_{\theta}(s_t))e_t    
 \end{aligned}
 $$
 
-### GAE
+对比两种方法计算的策略梯度：
+- Monte-Carlo方法：无偏，高方差。
+- actor-critic方法：有偏，低方差。
 
+我们希望结合这两种方法，使用Monte-Carlo方法来计算近期的值估计，使用actor-critic方法来计算将来的值估计。结合下图，我们希望在方差变的过大之前截断轨迹，只使用
+n步数据。
+![traj_Var](/post/cs285_chapter4/traj_var.png)
+
+$$
+\begin{aligned}
+ Q&=\mathbb{E}[r_0+\gamma r_1+...+\gamma^{n}r_n]\quad\text{Monte-Carlo}   \\\\
+ &=\mathbb{E}[r_0+\gamma V^\pi(s_1)]\quad \text{1 step TD}  \\\\
+ &=\mathbb{E}[r_0+\gamma r_1+\gamma^2 V^\pi(s_2)]\quad \text{2 step TD}  \\\\
+ &=\mathbb{E}[r_0+\gamma r_1+...+\gamma^{n}r_n+\gamma^n V^\pi(s_n)]\quad \text{n step TD} \\\\
+\end{aligned}
+$$
+
+n-step优势函数为：
+<div>
+$$
+\hat{A}_n^\pi(s_t,a_t)=[\sum_{t'=t}^{t+n}\gamma^{t'-t}r(s_{t'},a_{t'})]+\gamma^n\hat{V}_\phi^\pi(s_{t+n})-\hat{V}_\phi^\pi(s_t)
+$$
+</div>
+
+## GAE
+GAE(Generalized Advantage Estimator，通用优势估计)。
+
+上一小节我们介绍了n-step return，但我们不一定只能选择一个n，可以将所有n对应优势估计进行加权求和。
+<div>
+$$
+\hat{A}_{GAE}^\pi(s_t,a_t)=\sum_{n=1}^\infty w_n\hat{A}_{n}^\pi(s_t,a_t)
+$$
+</div>
+
+权重的选择是
+<div>
+$$
+\begin{aligned}
+\sum_{i=1}^Nw_i&=1\\
+w_n&\propto\lambda^{n-1}\\
+\lambda+\lambda^1+\lambda^2+...+\lambda^n &= {1\over 1-\lambda}\\
+\Rightarrow w_n &= \lambda^{n-1} (1 - \lambda)
+\end{aligned}
+$$
+</div>
+
+由
+
+$$
+\begin{aligned}
+\hat{A}\_1^\pi(s_t,a_t)&=\delta_t=r(s_{t},a_{t})+\gamma^1\hat{V}\_\phi^\pi(s_{t+1})-\hat{V}\_\phi^\pi(s_t)\\\\
+\hat{A}\_2^\pi(s_t,a_t)&=r(s_t,a_t)+\gamma r(s_{t+1},a_{t+1})+\gamma^2\hat{V}\_\phi^\pi(s_{t+2})-\hat{V}\_\phi^\pi(s_{t+1})\\\\
+&=\delta_t+\gamma\delta_{t+1}\\\\
+\hat{A}\_n^\pi(s_t,a_t)&=\sum_{i=0}^{n-1}\gamma^i\delta_{t+i}\\\\
+\end{aligned}
+$$
+
+因此，
+<div>
+$$
+\begin{aligned}
+\hat{A}_{GAE}^\pi&=(1-\lambda)(\hat{A}_{1}^\pi+\lambda\hat{A}_{2}^\pi...\lambda^{n-1}\hat{A}_{n}^\pi)\\
+&=(1-\lambda)(\delta_t+\lambda(\delta_t+\gamma\delta_{t+1})+\lambda^2(\delta_t+\gamma\delta_{t+1}+\gamma^2\delta_{t+2})...)\\    
+&=(1-\lambda)[\delta_t(1+\lambda+\lambda^2+...)+\gamma\delta_{t+1}(\lambda+\lambda^2+...)+\gamma^2\delta_{t+2}(\lambda^2+...)]\\    
+&=(1-\lambda)[{\delta_t\over1-\lambda}+{\gamma\delta_{t+1}\lambda\over1-\lambda}+{\gamma^2\delta_{t+2}\lambda^2\over1-\lambda}+...]\\    
+&=\sum_{i=0}^{\infty}\delta_{t+i}(\lambda\gamma)^i
+\end{aligned}
+$$
+</div>
+
+当$\lambda=0$时，$\hat{A}_{GAE}^\pi=\delta_t$，即TD Error。
+
+当$\lambda=1$时，$\hat{A}\_{GAE}^\pi=\sum_{i=0}^{\infty}\delta_{t+i}\gamma^i=\sum_{i=0}^{\infty}r_{t+i}\gamma^i - V(s_t)$，即Monte-Carlo Advantage。
+
+***
+初始化gae=0\
+$\delta=r_t+\gamma V(s_{t+1})m_t-V(s_t)$\
+更新gae $gae_t=\delta + \gamma\ast\lambda \ast m_t\ast gae_{t+1}$\
+计算returns $R_t(s_t,a_t)=gae_t+V(s_t)$
+***
+
+```python
+def get_advantages(values, masks, rewards):
+    """
+    masks: 表示回合是否结束
+    """
+    returns = []
+    gae = 0
+    for i in reversed(range(len(rewards))):
+        delta = rewards[i] + gamma * values[i + 1] * masks[i] - values[i]
+        gae = delta + gamma * lmbda * masks[i] * gae
+        returns.append(gae + values[i])
+    returns = list(reversed(returns))
+    adv = np.array(returns) - values[:-1]
+    return returns, (adv - np.mean(adv)) / (np.std(adv) + 1e-10)
+```
 
 <div id="refer-anchor"></div>
-[1] P. Thomas, “Bias in natural actor-critic algorithms,” inInternational conference onmachine learning, 2014, pp. 441–448.
+[1] P. Thomas, “Bias in natural actor-critic algorithms,” in International conference onmachine learning, 2014, pp. 441–448.
