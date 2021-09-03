@@ -12,7 +12,7 @@
 <meta name=apple-mobile-web-app-capable content="yes">
 <meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec">
 <meta name=author content="Ruchen Xu"><meta name=description content="回顾策略梯度算法， $$\nabla_\theta J(\theta) \simeq \frac{1}{N}\sum_{i=1}^N\left(\sum_{t=1}^T\nabla_\theta \log\pi_\theta(a_{i,t}|s_{i,t})\right)\left(\sum_{t'=t}^T r(s_{i,t'},a_{i,t'})\right)$$ 我们使用'&amp;lsquo;reward-to-go&amp;rsquo;' 来近似在状态$s_{i,t}$采取动作 $a_{"><meta name=keywords content="Hugo,theme,even">
-<meta name=generator content="Hugo 0.87.0 with theme even">
+<meta name=generator content="Hugo 0.88.0 with theme even">
 <link rel=canonical href=http://localhost:1313/post/cs285_chapter4/cs285-drl-notes-chapter-4-actor-critic-methods/>
 <link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png>
 <link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
@@ -31,7 +31,7 @@
 <meta itemprop=name content="cs285 DRL notes chapter 4: Actor-Critic methods">
 <meta itemprop=description content="回顾策略梯度算法， $$\nabla_\theta J(\theta) \simeq \frac{1}{N}\sum_{i=1}^N\left(\sum_{t=1}^T\nabla_\theta \log\pi_\theta(a_{i,t}|s_{i,t})\right)\left(\sum_{t'=t}^T r(s_{i,t'},a_{i,t'})\right)$$ 我们使用'&lsquo;reward-to-go&rsquo;' 来近似在状态$s_{i,t}$采取动作 $a_{"><meta itemprop=datePublished content="2021-08-24T17:18:48+00:00">
 <meta itemprop=dateModified content="2021-08-24T17:18:48+00:00">
-<meta itemprop=wordCount content="2684">
+<meta itemprop=wordCount content="2940">
 <meta itemprop=keywords content="reinforcement learning,cs285,"><meta name=twitter:card content="summary">
 <meta name=twitter:title content="cs285 DRL notes chapter 4: Actor-Critic methods">
 <meta name=twitter:description content="回顾策略梯度算法， $$\nabla_\theta J(\theta) \simeq \frac{1}{N}\sum_{i=1}^N\left(\sum_{t=1}^T\nabla_\theta \log\pi_\theta(a_{i,t}|s_{i,t})\right)\left(\sum_{t'=t}^T r(s_{i,t'},a_{i,t'})\right)$$ 我们使用'&lsquo;reward-to-go&rsquo;' 来近似在状态$s_{i,t}$采取动作 $a_{"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
@@ -107,13 +107,10 @@
 </ul>
 </li>
 <li><a href=#actor-critic算法结构设计>actor-critic算法结构设计</a></li>
-<li><a href=#critic作为baseline>critic作为baseline</a>
-<ul>
+<li><a href=#critic作为baseline>critic作为baseline</a></li>
 <li><a href=#control-variate-action-dependent-baseline>control variate: action dependent baseline</a></li>
 <li><a href=#eligibility-traces--n-step-returns>Eligibility traces & n-step returns</a></li>
 <li><a href=#gae>GAE</a></li>
-</ul>
-</li>
 </ul>
 </li>
 </ul>
@@ -237,44 +234,123 @@ $$</p>
 <p>$$
 \nabla_\theta J(\theta)\simeq {1 \over N}\sum_i^N\sum_t^T\nabla_\theta \log\pi_\theta(a_{i,t}|s_{i,t})((\sum_{t'=t}^T\gamma^{t'-t} r(s_{i,t'},a_{i,t'})) - \hat{V}_\phi^\pi(s_{i,t}))
 $$</p>
-<h3 id=control-variate-action-dependent-baseline>control variate: action dependent baseline</h3>
-<p>背景知识：
-控制变量法（英语：control variates）是在蒙特卡洛方法中用于减少方差的一种技术方法。该方法通过对已知量的了解来减少对未知量估计的误差。</p>
-<p>假设要估计的参数为$\mu$。同时对于统计m，其期望值为$\mu ：\mathbb {E} \left[m\right]=\mu$，即m是$\mu$的无偏差估计。此时，对于另一个统计t，已知$\mathbb {E} \left[t\right]=\tau$。于是，
-$m^{\star }=m+c\left(t-\tau \right)$
-也是$\mu$的无偏差估计，c为任一给定系数。$m^{\star}$的方差为</p>
-<p>$$
-\textrm{Var}\left(m^{\star}\right)=\textrm{Var}\left(m\right)+c^2\textrm {Var}\left(t\right)+2c\textrm{Cov}\left(m,t\right);
-$$</p>
-<p>可以证明，使得方差最小的系数c为</p>
-<p>$$
-c^{\star }=-{\frac {{\textrm {Cov}}\left(m,t\right)}{{\textrm {Var}}\left(t\right)}};
-$$</p>
-<p>此时，对应的方差则为</p>
-<p>$$
-\begin{aligned}
-{\textrm {Var}}\left(m^{\star }\right)&={\textrm {Var}}\left(m\right)-{\frac {\left[{\textrm {Cov}}\left(m,t\right)\right]^{2}}{{\textrm {Var}}\left(t\right)}}\\<br>
-&=\left(1-\rho _{m,t}^{2}\right){\textrm {Var}}\left(m\right);
-\end{aligned}
-$$</p>
-<p>其中
-$\rho_{m,t}={\textrm {Corr}}\left(m,t\right),$
-为m与t之间的相关系数。$\rho_{m,t}$越大时，方差越小。</p>
-<p>当$\textrm{Cov}\left(m,t\right),\textrm{Var}\left(t\right)或\rho_{m,t}$未知时，可以通过蒙特卡洛模拟进行估计。由于该方法相当于一个最小二乘法系统，又被称为回归抽样（regression sampling）。</p>
-<p>QProp采用了control variate的思想，</p>
-<h3 id=eligibility-traces--n-step-returns>Eligibility traces & n-step returns</h3>
+<h2 id=control-variate-action-dependent-baseline>control variate: action dependent baseline</h2>
+<p>控制变量法（英语：control variates）是在蒙特卡洛方法中用于减少方差的一种技术方法。该方法通过对已知量的了解来减少对未知量估计的误差。</p>
+<p>强化学习中，QProp算法采用了control variate的思想，在无偏的情况下来减少策略梯度中的方差。</p>
+<h2 id=eligibility-traces--n-step-returns>Eligibility traces & n-step returns</h2>
 <p>eligibility trace称为资格迹，最先在$TD(\lambda)$中使用。$e_t$表示第t步资格迹，是值函数的优化微分值。
 其优化的技术称为(backward view)。仔细观察公式可以发现$e_t$的算法中包含了以前的微分值，考虑了过去的价值梯度对更新参数$\theta$的影响。</p>
 <p>$$
 \begin{aligned}
 e_0&\doteq 0\\<br>
 e_t&\doteq \nabla\hat{V}_{\theta}(s_t) + \lambda\gamma e_{t-1}\\<br>
-\theta &\leftarrow \theta + \alpha (r_{t+1}+\gamma\hat{V}_{theta}(s_{t+1})-\hat{V}_{\theta}(s_t))e_t <br>
+\theta &\leftarrow \theta + \alpha (r_{t+1}+\gamma\hat{V}_{\theta}(s_{t+1})-\hat{V}_{\theta}(s_t))e_t <br>
 \end{aligned}
 $$</p>
-<h3 id=gae>GAE</h3>
-<div id=refer-anchor></div>
-[1] P. Thomas, “Bias in natural actor-critic algorithms,” inInternational conference onmachine learning, 2014, pp. 441–448.
+<p>对比两种方法计算的策略梯度：</p>
+<ul>
+<li>Monte-Carlo方法：无偏，高方差。</li>
+<li>actor-critic方法：有偏，低方差。</li>
+</ul>
+<p>我们希望结合这两种方法，使用Monte-Carlo方法来计算近期的值估计，使用actor-critic方法来计算将来的值估计。结合下图，我们希望在方差变的过大之前截断轨迹，只使用
+n步数据。
+<img src=/post/cs285_chapter4/traj_var.png alt=traj_Var></p>
+<p>$$
+\begin{aligned}
+Q&=\mathbb{E}[r_0+\gamma r_1+&mldr;+\gamma^{n}r_n]\quad\text{Monte-Carlo} \\<br>
+&=\mathbb{E}[r_0+\gamma V^\pi(s_1)]\quad \text{1 step TD} \\<br>
+&=\mathbb{E}[r_0+\gamma r_1+\gamma^2 V^\pi(s_2)]\quad \text{2 step TD} \\<br>
+&=\mathbb{E}[r_0+\gamma r_1+&mldr;+\gamma^{n}r_n+\gamma^n V^\pi(s_n)]\quad \text{n step TD} \\<br>
+\end{aligned}
+$$</p>
+<p>n-step优势函数为：</p>
+<div>
+$$
+\hat{A}_n^\pi(s_t,a_t)=[\sum_{t'=t}^{t+n}\gamma^{t'-t}r(s_{t'},a_{t'})]+\gamma^n\hat{V}_\phi^\pi(s_{t+n})-\hat{V}_\phi^\pi(s_t)
+$$
+</div>
+<h2 id=gae>GAE</h2>
+<p>GAE(Generalized Advantage Estimator，通用优势估计)。</p>
+<p>上一小节我们介绍了n-step return，但我们不一定只能选择一个n，可以将所有n对应优势估计进行加权求和。</p>
+<div>
+$$
+\hat{A}_{GAE}^\pi(s_t,a_t)=\sum_{n=1}^\infty w_n\hat{A}_{n}^\pi(s_t,a_t)
+$$
+</div>
+<p>权重的选择是</p>
+<div>
+$$
+\begin{aligned}
+\sum_{i=1}^Nw_i&=1\\
+w_n&\propto\lambda^{n-1}\\
+\lambda+\lambda^1+\lambda^2+...+\lambda^n &= {1\over 1-\lambda}\\
+\Rightarrow w_n &= \lambda^{n-1} (1 - \lambda)
+\end{aligned}
+$$
+</div>
+<p>由</p>
+<p>$$
+\begin{aligned}
+\hat{A}_1^\pi(s_t,a_t)&=\delta_t=r(s_{t},a_{t})+\gamma^1\hat{V}_\phi^\pi(s_{t+1})-\hat{V}_\phi^\pi(s_t)\\<br>
+\hat{A}_2^\pi(s_t,a_t)&=r(s_t,a_t)+\gamma r(s_{t+1},a_{t+1})+\gamma^2\hat{V}_\phi^\pi(s_{t+2})-\hat{V}_\phi^\pi(s_{t+1})\\<br>
+&=\delta_t+\gamma\delta_{t+1}\\<br>
+\hat{A}_n^\pi(s_t,a_t)&=\sum_{i=0}^{n-1}\gamma^i\delta_{t+i}\\<br>
+\end{aligned}
+$$</p>
+<p>因此，</p>
+<div>
+$$
+\begin{aligned}
+\hat{A}_{GAE}^\pi&=(1-\lambda)(\hat{A}_{1}^\pi+\lambda\hat{A}_{2}^\pi...\lambda^{n-1}\hat{A}_{n}^\pi)\\
+&=(1-\lambda)(\delta_t+\lambda(\delta_t+\gamma\delta_{t+1})+\lambda^2(\delta_t+\gamma\delta_{t+1}+\gamma^2\delta_{t+2})...)\\
+&=(1-\lambda)[\delta_t(1+\lambda+\lambda^2+...)+\gamma\delta_{t+1}(\lambda+\lambda^2+...)+\gamma^2\delta_{t+2}(\lambda^2+...)]\\
+&=(1-\lambda)[{\delta_t\over1-\lambda}+{\gamma\delta_{t+1}\lambda\over1-\lambda}+{\gamma^2\delta_{t+2}\lambda^2\over1-\lambda}+...]\\
+&=\sum_{i=0}^{\infty}\delta_{t+i}(\lambda\gamma)^i
+\end{aligned}
+$$
+</div>
+<p>当$\lambda=0$时，$\hat{A}_{GAE}^\pi=\delta_t$，即TD Error。</p>
+<p>当$\lambda=1$时，$\hat{A}_{GAE}^\pi=\sum_{i=0}^{\infty}\delta_{t+i}\gamma^i=\sum_{i=0}^{\infty}r_{t+i}\gamma^i - V(s_t)$，即Monte-Carlo Advantage。</p>
+<hr>
+<p>初始化gae=0<br>
+$\delta=r_t+\gamma V(s_{t+1})m_t-V(s_t)$<br>
+更新gae $gae_t=\delta + \gamma\ast\lambda \ast m_t\ast gae_{t+1}$<br>
+计算returns $R_t(s_t,a_t)=gae_t+V(s_t)$</p>
+<hr>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=k>def</span> <span class=nf>get_advantages</span><span class=p>(</span><span class=n>values</span><span class=p>,</span> <span class=n>masks</span><span class=p>,</span> <span class=n>rewards</span><span class=p>):</span>
+    <span class=s2>&#34;&#34;&#34;
+</span><span class=s2>    masks: 表示回合是否结束
+</span><span class=s2>    &#34;&#34;&#34;</span>
+    <span class=n>returns</span> <span class=o>=</span> <span class=p>[]</span>
+    <span class=n>gae</span> <span class=o>=</span> <span class=mi>0</span>
+    <span class=k>for</span> <span class=n>i</span> <span class=ow>in</span> <span class=nb>reversed</span><span class=p>(</span><span class=nb>range</span><span class=p>(</span><span class=nb>len</span><span class=p>(</span><span class=n>rewards</span><span class=p>))):</span>
+        <span class=n>delta</span> <span class=o>=</span> <span class=n>rewards</span><span class=p>[</span><span class=n>i</span><span class=p>]</span> <span class=o>+</span> <span class=n>gamma</span> <span class=o>*</span> <span class=n>values</span><span class=p>[</span><span class=n>i</span> <span class=o>+</span> <span class=mi>1</span><span class=p>]</span> <span class=o>*</span> <span class=n>masks</span><span class=p>[</span><span class=n>i</span><span class=p>]</span> <span class=o>-</span> <span class=n>values</span><span class=p>[</span><span class=n>i</span><span class=p>]</span>
+        <span class=n>gae</span> <span class=o>=</span> <span class=n>delta</span> <span class=o>+</span> <span class=n>gamma</span> <span class=o>*</span> <span class=n>lmbda</span> <span class=o>*</span> <span class=n>masks</span><span class=p>[</span><span class=n>i</span><span class=p>]</span> <span class=o>*</span> <span class=n>gae</span>
+        <span class=n>returns</span><span class=o>.</span><span class=n>append</span><span class=p>(</span><span class=n>gae</span> <span class=o>+</span> <span class=n>values</span><span class=p>[</span><span class=n>i</span><span class=p>])</span>
+    <span class=n>returns</span> <span class=o>=</span> <span class=nb>list</span><span class=p>(</span><span class=nb>reversed</span><span class=p>(</span><span class=n>returns</span><span class=p>))</span>
+    <span class=n>adv</span> <span class=o>=</span> <span class=n>np</span><span class=o>.</span><span class=n>array</span><span class=p>(</span><span class=n>returns</span><span class=p>)</span> <span class=o>-</span> <span class=n>values</span><span class=p>[:</span><span class=o>-</span><span class=mi>1</span><span class=p>]</span>
+    <span class=k>return</span> <span class=n>returns</span><span class=p>,</span> <span class=p>(</span><span class=n>adv</span> <span class=o>-</span> <span class=n>np</span><span class=o>.</span><span class=n>mean</span><span class=p>(</span><span class=n>adv</span><span class=p>))</span> <span class=o>/</span> <span class=p>(</span><span class=n>np</span><span class=o>.</span><span class=n>std</span><span class=p>(</span><span class=n>adv</span><span class=p>)</span> <span class=o>+</span> <span class=mf>1e-10</span><span class=p>)</span>
+</code></pre></td></tr></table>
+</div>
+</div><div id=refer-anchor></div>
+[1] P. Thomas, “Bias in natural actor-critic algorithms,” in International conference onmachine learning, 2014, pp. 441–448.
 </div>
 <div class=post-copyright>
 <p class=copyright-item>
