@@ -159,7 +159,7 @@ $$\epsilon = \frac{1}{2}\mathbb{E}\_{(s,a)\sim\beta}\left[\left(Q_\phi(s,a) - \l
 >However, rather ironically, we do not know what we are optimizing in the previous steps, and this is a potential problem of the ﬁtted Q-learning algorithm, and most convergence guarantees are lost when we do not have the tabular case.
 
 ### online q iteration
-
+online q iteration即一般意义上的Q-Learning算法。
 ***
 1. 执行动作$a_i$，得到transition$(s_i,a_i,s'_i,r_i)$
 2. $y_i = r(s_i,a_i) + \gamma \max_{a'}Q_\phi(s_i,a_i,s'_i,r_i)$
