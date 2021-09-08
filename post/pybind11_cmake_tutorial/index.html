@@ -1,0 +1,504 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
+<title>Pybind11 Cmake tutorial - RuChen Xu's Blog</title>
+<meta name=renderer content="webkit">
+<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta http-equiv=cache-control content="no-transform">
+<meta http-equiv=cache-control content="no-siteapp">
+<meta name=theme-color content="#f8f5ec">
+<meta name=msapplication-navbutton-color content="#f8f5ec">
+<meta name=apple-mobile-web-app-capable content="yes">
+<meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec">
+<meta name=author content="Ruchen Xu"><meta name=description content><meta name=keywords content="Hugo,theme,even">
+<meta name=generator content="Hugo 0.88.1 with theme even">
+<link rel=canonical href=http://localhost:1313/post/pybind11_cmake_tutorial/>
+<link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png>
+<link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
+<link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png>
+<link rel=manifest href=/manifest.json>
+<link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5>
+<script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<link href=/sass/main.min.2e81bbed97b8b282c1aeb57488cc71c8d8c8ec559f3931531bd396bf31e0d4dd.css rel=stylesheet>
+<link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin=anonymous>
+<meta property="og:title" content="Pybind11 Cmake tutorial">
+<meta property="og:description" content>
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://localhost:1313/post/pybind11_cmake_tutorial/"><meta property="article:section" content="post">
+<meta property="article:published_time" content="2020-08-25T14:32:08+08:00">
+<meta property="article:modified_time" content="2020-09-08T14:32:08+08:00">
+<meta itemprop=name content="Pybind11 Cmake tutorial">
+<meta itemprop=description content><meta itemprop=datePublished content="2020-08-25T14:32:08+08:00">
+<meta itemprop=dateModified content="2020-09-08T14:32:08+08:00">
+<meta itemprop=wordCount content="1193">
+<meta itemprop=keywords content><meta name=twitter:card content="summary">
+<meta name=twitter:title content="Pybind11 Cmake tutorial">
+<meta name=twitter:description content><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
+<script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]-->
+</head>
+<body>
+<div id=mobile-navbar class=mobile-navbar>
+<div class=mobile-header-logo>
+<a href=/ class=logo>Blog</a>
+</div>
+<div class=mobile-navbar-icon>
+<span></span>
+<span></span>
+<span></span>
+</div>
+</div>
+<nav id=mobile-menu class="mobile-menu slideout-menu">
+<ul class=mobile-menu-list>
+<a href=/>
+<li class=mobile-menu-item>Home</li>
+</a><a href=/post/>
+<li class=mobile-menu-item>Archives</li>
+</a><a href=/tags/>
+<li class=mobile-menu-item>Tags</li>
+</a><a href=/categories/>
+<li class=mobile-menu-item>Categories</li>
+</a>
+</ul>
+</nav>
+<div class=container id=mobile-panel>
+<header id=header class=header>
+<div class=logo-wrapper>
+<a href=/ class=logo>Blog</a>
+</div>
+<nav class=site-navbar>
+<ul id=menu class=menu>
+<li class=menu-item>
+<a class=menu-item-link href=/>Home</a>
+</li><li class=menu-item>
+<a class=menu-item-link href=/post/>Archives</a>
+</li><li class=menu-item>
+<a class=menu-item-link href=/tags/>Tags</a>
+</li><li class=menu-item>
+<a class=menu-item-link href=/categories/>Categories</a>
+</li>
+</ul>
+</nav>
+</header>
+<main id=main class=main>
+<div class=content-wrapper>
+<div id=content class=content>
+<article class=post>
+<header class=post-header>
+<h1 class=post-title>Pybind11 Cmake tutorial</h1>
+<div class=post-meta>
+<span class=post-time> 2020-08-25 </span>
+<span id=busuanzi_container_page_pv class=more-meta> <span id=busuanzi_value_page_pv><img src=/img/spinner.svg alt=spinner.svg></span> times read </span>
+</div>
+</header>
+<div class=post-content>
+<h1 id=使用pybind11和cmake来构建cpython项目>使用pybind11和CMake来构建C++/Python项目</h1>
+<p>期望最终结果：</p>
+<ul>
+<li>独立于<code>pybind11</code>的<code>C++</code>项目。</li>
+<li>基于<code>C++</code> wrapper的<code>Python</code>库。</li>
+<li>都使用<code>CMake</code>来build项目。</li>
+</ul>
+<p>项目的整体结构如下</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-txt data-lang=txt>├── cmake_example
+│   └── __init__.py
+├── CMakeLists.txt
+├── cpp
+│   ├── a.cpp
+│   ├── CMakeLists.txt
+│   ├── include
+│   │   ├── a.h
+│   │   ├── b.h
+│   │   └── define.h
+│   ├── libs
+│   │   └── libb_lib.so
+│   └── third_party
+│       ├── b.cpp
+│       ├── build.sh
+│       └── CMakeLists.txt
+├── README.md
+├── setup.py
+├── src
+│   └── main.cpp
+└── tests
+    └── test.py
+</code></pre></td></tr></table>
+</div>
+</div><p>源码参见<a href=https://github.com/FireLandDS/pybind11_cmake_demo>https://github.com/FireLandDS/pybind11_cmake_demo</a>。</p>
+<p>这里我们需要wrap两个库a和b，假设库a源码已知，库b源码未知（通常第三方库）。</p>
+<p>首先我们需要生成a库，CMakeLists如下：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-CMake data-lang=CMake><span class=nb>cmake_minimum_required</span><span class=p>(</span><span class=s>VERSION</span> <span class=s>3.4...3.18</span><span class=p>)</span><span class=err>
+</span><span class=err></span><span class=nb>project</span><span class=p>(</span><span class=s>a</span> <span class=s>LANGUAGES</span> <span class=s>CXX</span><span class=p>)</span><span class=err>
+</span><span class=err>
+</span><span class=err></span><span class=nb>set</span><span class=p>(</span><span class=s>CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG</span> <span class=o>${</span><span class=nv>CMAKE_CURRENT_SOURCE_DIR</span><span class=o>}</span><span class=p>)</span><span class=err>
+</span><span class=err></span><span class=nb>set</span><span class=p>(</span><span class=s>CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE</span> <span class=o>${</span><span class=nv>CMAKE_CURRENT_SOURCE_DIR</span><span class=o>}</span><span class=p>)</span><span class=err>
+</span><span class=err></span><span class=nb>include_directories</span><span class=p>(</span><span class=s>include</span><span class=p>)</span><span class=err>
+</span><span class=err></span><span class=nb>add_library</span><span class=p>(</span><span class=s>a_lib</span> <span class=s>SHARED</span> <span class=s>a.cpp</span><span class=p>)</span><span class=err>
+</span></code></pre></td></tr></table>
+</div>
+</div><p>a的源码如下</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=c1>//define.h
+</span><span class=c1></span><span class=cp>#ifndef UTILS_H_
+</span><span class=cp>#define UTILS_H_
+</span><span class=cp>#define PI 3.1415926
+</span><span class=cp>#if defined(WIN32) || defined(_WIN64)
+</span><span class=cp></span>
+<span class=cp>#ifdef LIB_EXPORTS
+</span><span class=cp>#define LIB_API extern &#34;C&#34; __declspec(dllexport)
+</span><span class=cp>#else
+</span><span class=cp>#define LIB_API extern &#34;C&#34; __declspec(dllimport)
+</span><span class=cp>#endif </span><span class=c1>// LIB_EXPORTS
+</span><span class=c1></span>
+<span class=cp>#elif defined __linux__
+</span><span class=cp></span>
+<span class=cp>#ifndef LIB_API
+</span><span class=cp>#define LIB_API extern &#34;C&#34;
+</span><span class=cp>#endif </span><span class=c1>// LIB_API
+</span><span class=c1></span>
+<span class=cp>#endif </span><span class=c1>// defined (WIN32) || defined (_WIN64)
+</span><span class=c1></span>
+<span class=cp>#endif
+</span><span class=cp></span>
+
+<span class=c1>//a.h
+</span><span class=c1></span><span class=cp>#include</span> <span class=cpf>&#34;define.h&#34;</span><span class=cp>
+</span><span class=cp></span><span class=n>LIB_API</span> <span class=kt>double</span> <span class=nf>add_PI</span><span class=p>(</span><span class=kt>double</span> <span class=n>a</span><span class=p>,</span> <span class=kt>double</span> <span class=n>b</span><span class=p>);</span>
+
+<span class=c1>//a.cpp
+</span><span class=c1></span><span class=cp>#include</span> <span class=cpf>&#34;a.h&#34;</span><span class=cp>
+</span><span class=cp></span><span class=n>LIB_API</span> <span class=kt>double</span> <span class=nf>add_PI</span><span class=p>(</span><span class=kt>double</span> <span class=n>a</span><span class=p>,</span> <span class=kt>double</span> <span class=n>b</span><span class=p>)</span> <span class=p>{</span> <span class=k>return</span> <span class=n>a</span> <span class=o>+</span> <span class=n>b</span> <span class=o>+</span> <span class=n>PI</span><span class=p>;</span> <span class=p>}</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><p>b假设不知道源码，这里我们先生成动态库文件，然后放在cpp/libs中。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=c1>//b.h
+</span><span class=c1></span><span class=cp>#include</span> <span class=cpf>&#34;define.h&#34;</span><span class=cp>
+</span><span class=cp></span>
+<span class=n>LIB_API</span> <span class=kt>double</span> <span class=nf>divide</span><span class=p>(</span><span class=kt>double</span> <span class=n>a</span><span class=p>,</span> <span class=kt>double</span> <span class=n>b</span><span class=p>);</span>
+
+<span class=c1>//b.cpp
+</span><span class=c1></span><span class=cp>#include</span> <span class=cpf>&#34;../include/b.h&#34;</span><span class=cp>
+</span><span class=cp></span>
+
+<span class=n>LIB_API</span> <span class=kt>double</span> <span class=nf>divide</span><span class=p>(</span><span class=kt>double</span> <span class=n>a</span><span class=p>,</span> <span class=kt>double</span> <span class=n>b</span><span class=p>)</span>
+<span class=p>{</span>
+  <span class=k>if</span> <span class=p>(</span><span class=n>b</span> <span class=o>==</span> <span class=mf>0.0</span><span class=p>)</span>
+    <span class=k>return</span> <span class=o>-</span><span class=mf>1.0</span><span class=p>;</span>
+  <span class=k>return</span> <span class=n>a</span> <span class=o>/</span> <span class=n>b</span><span class=p>;</span>
+<span class=p>}</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><p>执行</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=nb>cd</span> cpp/third_party
+cmake -S . -B build
+cmake --build build
+</code></pre></td></tr></table>
+</div>
+</div><p>在build文件夹中得到libb_lib.so文件（或者dll）放置到libs中。</p>
+<p>然后我们来看如何wrap c++代码。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=cp>#include</span> <span class=cpf>&lt;pybind11/pybind11.h&gt;</span><span class=cp>
+</span><span class=cp>#include</span> <span class=cpf>&#34;a.h&#34;</span><span class=cp>
+</span><span class=cp>#include</span> <span class=cpf>&#34;b.h&#34;</span><span class=cp>
+</span><span class=cp></span>
+
+<span class=kt>int</span> <span class=nf>add</span><span class=p>(</span><span class=kt>int</span> <span class=n>i</span><span class=p>,</span> <span class=kt>int</span> <span class=n>j</span><span class=p>)</span>
+<span class=p>{</span>
+    <span class=k>return</span> <span class=n>i</span> <span class=o>+</span> <span class=n>j</span><span class=p>;</span>
+<span class=p>}</span>
+
+<span class=k>namespace</span> <span class=n>py</span> <span class=o>=</span> <span class=n>pybind11</span><span class=p>;</span>
+
+<span class=n>PYBIND11_MODULE</span><span class=p>(</span><span class=n>cmake_example</span><span class=p>,</span> <span class=n>m</span><span class=p>)</span>
+<span class=p>{</span>
+    <span class=n>m</span><span class=p>.</span><span class=n>doc</span><span class=p>()</span> <span class=o>=</span> <span class=n>R</span><span class=s>&#34;pbdoc(</span>
+        <span class=n>Pybind11</span> <span class=n>example</span> <span class=n>plugin</span>
+        <span class=o>-----------------------</span>
+
+        <span class=p>..</span> <span class=n>currentmodule</span><span class=o>::</span> <span class=n>cmake_example</span>
+
+        <span class=p>..</span> <span class=n>autosummary</span><span class=o>::</span>
+           <span class=o>:</span><span class=nl>toctree</span><span class=p>:</span> <span class=n>_generate</span>
+
+           <span class=n>add</span>
+           <span class=n>subtract</span>
+    <span class=p>)</span><span class=n>pbdoc</span><span class=s>&#34;;</span>
+
+    <span class=n>m</span><span class=p>.</span><span class=n>def</span><span class=p>(</span><span class=s>&#34;add&#34;</span><span class=p>,</span> <span class=o>&amp;</span><span class=n>add</span><span class=p>,</span> <span class=n>R</span><span class=s>&#34;pbdoc(</span>
+        <span class=n>Add</span> <span class=n>two</span> <span class=n>numbers</span>
+
+        <span class=n>Some</span> <span class=n>other</span> <span class=n>explanation</span> <span class=n>about</span> <span class=n>the</span> <span class=n>add</span> <span class=n>function</span><span class=p>.</span>
+    <span class=p>)</span><span class=n>pbdoc</span><span class=s>&#34;);</span>
+
+    <span class=n>m</span><span class=p>.</span><span class=n>def</span><span class=p>(</span><span class=s>&#34;add_pi&#34;</span><span class=p>,</span> <span class=o>&amp;</span><span class=n>add_PI</span><span class=p>);</span>
+    <span class=n>m</span><span class=p>.</span><span class=n>def</span><span class=p>(</span><span class=s>&#34;divide&#34;</span><span class=p>,</span> <span class=o>&amp;</span><span class=n>divide</span><span class=p>);</span>
+
+    <span class=n>m</span><span class=p>.</span><span class=n>def</span><span class=p>(</span>
+        <span class=s>&#34;subtract&#34;</span><span class=p>,</span> <span class=p>[](</span><span class=kt>int</span> <span class=n>i</span><span class=p>,</span> <span class=kt>int</span> <span class=n>j</span><span class=p>)</span> <span class=p>{</span> <span class=k>return</span> <span class=n>i</span> <span class=o>-</span> <span class=n>j</span><span class=p>;</span> <span class=p>},</span> <span class=n>R</span><span class=s>&#34;pbdoc(</span>
+        <span class=n>Subtract</span> <span class=n>two</span> <span class=n>numbers</span>
+
+        <span class=n>Some</span> <span class=n>other</span> <span class=n>explanation</span> <span class=n>about</span> <span class=n>the</span> <span class=n>subtract</span> <span class=n>function</span><span class=p>.</span>
+    <span class=p>)</span><span class=n>pbdoc</span><span class=s>&#34;);</span>
+
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>PYBIND11_MODULE是最重要的宏，定义了我们生成的python库。
+其中，cmake_example是库名，不需要引号。
+m可以理解成模块对象，任意命名，需要与内部的相对应，m.doc表示help说明，m.def用来注册函数，支持匿名函数。</p>
+<p>注意事项：c++中存在string引用，int引用等，而这在python中是无法实现的，因为这些类型在python中是常量值。</p>
+<p>最后，我们看一下主CMakeLists</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-cmake data-lang=cmake><span class=nb>cmake_minimum_required</span><span class=p>(</span><span class=s>VERSION</span> <span class=s>3.4...3.18</span><span class=p>)</span><span class=err>
+</span><span class=err></span><span class=nb>project</span><span class=p>(</span><span class=s>cmake_example</span><span class=p>)</span><span class=err>
+</span><span class=err>
+</span><span class=err></span><span class=nb>include_directories</span><span class=p>(</span><span class=o>${</span><span class=nv>CMAKE_SOURCE_DIR</span><span class=o>}</span><span class=s>/cpp/include</span><span class=p>)</span><span class=err>
+</span><span class=err>
+</span><span class=err></span><span class=nb>add_subdirectory</span><span class=p>(</span><span class=s>pybind11</span><span class=p>)</span><span class=err>
+</span><span class=err></span><span class=nb>add_subdirectory</span><span class=p>(</span><span class=s>cpp</span><span class=p>)</span><span class=err>
+</span><span class=err>
+</span><span class=err></span><span class=nb>pybind11_add_module</span><span class=p>(</span><span class=s>cmake_example</span> <span class=s>src/main.cpp</span><span class=p>)</span><span class=err>
+</span><span class=err>
+</span><span class=err></span><span class=nb>find_library</span><span class=p>(</span><span class=s>b</span> <span class=s>NAMES</span> <span class=s>libb_lib.so</span> <span class=s>HINTS</span> <span class=o>${</span><span class=nv>CMAKE_SOURCE_DIR</span><span class=o>}</span><span class=s>/cpp/libs</span><span class=p>)</span><span class=err>
+</span><span class=err></span><span class=nb>target_link_libraries</span><span class=p>(</span><span class=s>cmake_example</span> <span class=s>PRIVATE</span> <span class=o>${</span><span class=nv>b</span><span class=o>}</span><span class=p>)</span><span class=err>
+</span><span class=err></span><span class=nb>target_link_libraries</span><span class=p>(</span><span class=s>cmake_example</span> <span class=s>PRIVATE</span> <span class=s>a_lib</span><span class=p>)</span><span class=err>
+</span></code></pre></td></tr></table>
+</div>
+</div><p>在setup.py中，我们根据CMakeLists做到了自动打包，安装使用</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>python setup.py install
+或者
+pip install .
+</code></pre></td></tr></table>
+</div>
+</div><p>注意事项：</p>
+<ul>
+<li>setup.py中cmake参数有<code>DCMAKE_INSTALL_RPATH=$ORIGIN/</code>这一项，可以保证生成的库可以再当前目录找到依赖库。</li>
+<li>有些第三方库会依赖其他库，在其本身无rpath属性的情况下，可以使用<code>patchelf --set-rpath</code>来手动修改。</li>
+</ul>
+<p>测试是否正确可以在安装完成后尝试运行<code>python tests/test.py</code>.</p>
+</div>
+<footer class=post-footer>
+<nav class=post-nav>
+<a class=prev href=/post/cs285_chapter3/cs285-drl-notes-chapter-3-policy-gradient-methods/>
+<i class="iconfont icon-left"></i>
+<span class="prev-text nav-default">cs285 DRL notes chapter 3: policy gradient methods</span>
+<span class="prev-text nav-mobile">Prev</span>
+</a>
+<a class=next href=/post/cs285_chapter2/cs285-drl-notes-chapter-2-imitation-learning/>
+<span class="next-text nav-default">cs285 DRL notes chapter 2: imitation learning</span>
+<span class="next-text nav-mobile">Next</span>
+<i class="iconfont icon-right"></i>
+</a>
+</nav>
+</footer>
+</article>
+</div>
+</div>
+</main>
+<footer id=footer class=footer>
+<div class=social-links>
+<a href=mailto:ruchenxucs@gmail.com class="iconfont icon-email" title=email></a>
+<a href=https://github.com/FireLandDS class="iconfont icon-github" title=github></a>
+<a href=http://localhost:1313/index.xml type=application/rss+xml class="iconfont icon-rss" title=rss></a>
+</div>
+<div class=copyright>
+<span class=power-by>
+Powered by <a class=hexo-link href=https://gohugo.io>Hugo</a>
+</span>
+<span class=division>|</span>
+<span class=theme-info>
+Theme -
+<a class=theme-link href=https://github.com/olOwOlo/hugo-theme-even>Even</a>
+</span>
+<div class=busuanzi-footer>
+<span id=busuanzi_container_site_pv> site pv: <span id=busuanzi_value_site_pv><img src=/img/spinner.svg alt=spinner.svg></span> </span>
+<span class=division>|</span>
+<span id=busuanzi_container_site_uv> site uv: <span id=busuanzi_value_site_uv><img src=/img/spinner.svg alt=spinner.svg></span> </span>
+</div>
+<span class=copyright-year>
+&copy;
+2017 -
+2021<span class=heart><i class="iconfont icon-heart"></i></span><span>Ruchen Xu</span>
+</span>
+</div>
+</footer>
+<div class=back-to-top id=back-to-top>
+<i class="iconfont icon-up"></i>
+</div>
+</div>
+<script src=https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin=anonymous></script>
+<script type=text/javascript src=/js/main.min.c99b103c33d1539acf3025e1913697534542c4a5aa5af0ccc20475ed2863603b.js></script>
+</body>
+</html>
