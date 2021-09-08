@@ -216,8 +216,3 @@ $$
 $$
 \nabla_{\theta'}J(\theta')=\mathbb{E}_{\tau\sim\pi_\theta(\tau)}\left[\sum_{t=1}^T\nabla_{\theta'}\log\pi_{\theta'}(a_t|s_t) \left(\prod_{t'=1}^t \frac{\pi_{\theta'}(a_{t'}|s_{t'}) }{\pi_{\theta}(a_{t'}|s_{t'})}\right)    \left(  \sum_{t'=t}^Tr(s_{t'},a_{t'}))    \right)\right]
 $$
-
-## TRPO
-TODO
-## PPO
-TODO
