@@ -31,7 +31,7 @@
 <meta itemprop=name content="cs285 DRL notes chapter 3: policy gradient methods">
 <meta itemprop=description content="回顾强化学习的目标，我们希望获得策略的最优参数$\theta^*$， $$ \theta^*=\underset{\theta}{argmax}\mathbb{E}_{\tau\sim p_{\theta}(\tau)}[\sum_{t=1}^{t=T}r(s_t, a_t)] $$ 这实际上是一个优化问题，因此我们可以使用多种优化方法来优化这个"><meta itemprop=datePublished content="2020-08-29T16:00:06+00:00">
 <meta itemprop=dateModified content="2020-08-29T16:00:06+00:00">
-<meta itemprop=wordCount content="1873">
+<meta itemprop=wordCount content="1869">
 <meta itemprop=keywords content="reinforcement learning,cs285,"><meta name=twitter:card content="summary">
 <meta name=twitter:title content="cs285 DRL notes chapter 3: policy gradient methods">
 <meta name=twitter:description content="回顾强化学习的目标，我们希望获得策略的最优参数$\theta^*$， $$ \theta^*=\underset{\theta}{argmax}\mathbb{E}_{\tau\sim p_{\theta}(\tau)}[\sum_{t=1}^{t=T}r(s_t, a_t)] $$ 这实际上是一个优化问题，因此我们可以使用多种优化方法来优化这个"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
@@ -115,8 +115,6 @@
 <li><a href=#重要性采样importance-sampling>重要性采样（Importance Sampling）</a></li>
 </ul>
 </li>
-<li><a href=#trpo>TRPO</a></li>
-<li><a href=#ppo>PPO</a></li>
 </ul>
 </li>
 </ul>
@@ -290,10 +288,6 @@ $$</p>
 <p>$$
 \nabla_{\theta'}J(\theta')=\mathbb{E}_{\tau\sim\pi_\theta(\tau)}\left[\sum_{t=1}^T\nabla_{\theta'}\log\pi_{\theta'}(a_t|s_t) \left(\prod_{t'=1}^t \frac{\pi_{\theta'}(a_{t'}|s_{t'}) }{\pi_{\theta}(a_{t'}|s_{t'})}\right) \left( \sum_{t'=t}^Tr(s_{t'},a_{t'})) \right)\right]
 $$</p>
-<h2 id=trpo>TRPO</h2>
-<p>TODO</p>
-<h2 id=ppo>PPO</h2>
-<p>TODO</p>
 </div>
 <div class=post-copyright>
 <p class=copyright-item>
