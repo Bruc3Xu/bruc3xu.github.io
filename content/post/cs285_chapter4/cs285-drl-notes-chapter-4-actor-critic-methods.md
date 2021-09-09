@@ -1,7 +1,8 @@
 ---
 title: 'cs285 DRL notes chapter 4: Actor-Critic methods'
 date: 2020-09-08 17:18:48
-tags: [reinforcement learning,cs285]
+tags: [reinforcement learning]
+categories: [cs285]
 published: true
 hideInList: false
 feature: 

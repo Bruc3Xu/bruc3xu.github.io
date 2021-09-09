@@ -1,7 +1,8 @@
 ---
 title: 'cs285 DRL notes chapter 2: imitation learning'
 date: 2020-08-23 15:13:48
-tags: [reinforcement learning,cs285]
+tags: [reinforcement learning]
+categories: [cs285]
 published: true
 hideInList: false
 isTop: false

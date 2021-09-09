@@ -5,8 +5,8 @@ lastmod: 2020-09-18T15:46:38+08:00
 draft: false
 keywords: []
 description: ""
-tags: []
-categories: []
+tags: [reinforcement learning]
+categories: [cs285]
 author: ""
 
 # You can also close(false) or open(true) something for this content.

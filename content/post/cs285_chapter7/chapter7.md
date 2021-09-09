@@ -5,8 +5,8 @@ lastmod: 2020-09-23T09:34:56+08:00
 draft: false
 keywords: []
 description: ""
-tags: []
-categories: []
+tags: [reinforcement learning]
+categories: [cs285]
 author: ""
 
 # You can also close(false) or open(true) something for this content.
@@ -70,13 +70,6 @@ J(\theta') - J(\theta) = E_{\tau \sim p_{\theta'}(\tau)} \left[
 \sum_t \gamma^t A^{\pi_{\theta}}(s_t, a_t) \right]
 $$
 旧策略$\theta$的advantage关于新策略$\theta'$的trajectory的期望值。
-
-That is the expected total advantage with respect to the parameters  **under the
-distribution induced by the new parameters **. This is very important,
-because this improvement objective is the same of
-[Policy Iteration](/lectures/lecture7). If we can show that the gradient of this improvement
-is the same gradient of Policy Gradient, then we can show that Policy Gradient moves in the
-direction of improving the same thing as Policy Iteration.
 
 如果按照policy iteration的流程，在improvement中，也就只需要使得每步提升最大，找到新的parameter使得等式的右方最大化即可。但是improvement是计算新策略$\theta'$,
 的轨迹期望，而我们当前的样本都是基于旧策略$\theta$采集的。
@@ -283,12 +276,14 @@ TRPO主要针对NPG存在的两个问题提出了解决方案：第一个就是�
 
 ### Proximal Policy Optimization
 [Schulman et al., Proximal Policy Optimization](https://arxiv.org/pdf/1707.06347.pdf),
-proposes a way of enforcing the $D_{KL}$ constraint without the need of computing the
-Fischer Information Matrix or its approximation. This can obtained in two ways:
+提出了一种不要计算Fischer Information Matrix或者其近似值来满足$D_{KL}$限制的方法。
+
+有两种方式：
+- Clipping the surrogate objective
+- Adaptive KL Penalty Coefficient
 
 #### Clipping the surrogate objective
-Let $r(\theta)$ be the Importance Sampling ratio of the objective.
-Here, we maximize instead a clipped objective
+令$r(\theta)$为重要性采样权重，截断目标值为：
 $$
 L^{CLIP} = E_t \left[ \min\left(
 r_r(\theta)A_t,
@@ -296,20 +291,18 @@ clip(r_t(\theta), 1-\epsilon, 1+\epsilon)A_t
 \right) \right]
 $$ 
 
-The following figure shows a single term in $L^{CLIP}$ for positive and negative
-advantage.
+下图展示了$L^{CLIP}$在正的优势值和负优势值的情况。
 
 ![](/post/cs285_chapter7/ppo_objective.png)
 
-However, recent papers such as [Engstrom et al., Implementation Matters in Deep Policy Gradients](https://openreview.net/pdf?id=r1etN1rtPB)
-show how this clipping mechanism does not prevent the gradient steps to violate the KL
-constraint. Furthermore, they claim that the effectiveness that made PPO famous comes from its
-**code-level optimizations**, and TRPO above may actually be better if these are implemented.
+但最近的文章如[Engstrom et al., Implementation Matters in Deep Policy Gradients](https://openreview.net/pdf?id=r1etN1rtPB)
+截断机制并没有阻止梯度步进破坏KL限制，提升点主要来自于
+**code-level optimizations**，TRPO的表现其实更好。
 
 #### Adaptive KL Penalty Coefficient
-Another approach described by the PPO paper is similar to the dual gradient descent we described
-above. It consists in repeating the following steps in each policy update:
-- Using several epochs of minibatch SGD, optimize the KL-penalized objective
+将KL散度作为惩罚项加入目标函数。
+策略更新主要包含以下两步：
+- 使用minibatch SGD更新KL-penalized目标。
 
 $
 L^{KLPEN}(\theta) = E_t \left[ \frac{\pi_{\theta'}(a_t \vert s_t)}{\pi_{\theta}(a_t \vert s_t)}
@@ -318,9 +311,9 @@ A^{\pi_{\theta}}(s_t, a_t) - \beta D_{KL}(\pi_{\theta'}(. \vert s_t)\vert\vert
 \right]
 $
 
-- Compute $d = E_t \left[ D_{KL}(\pi_{\theta'}(. \vert s_t)\vert\vert 
+- 计算$d = E_t \left[ D_{KL}(\pi_{\theta'}(. \vert s_t)\vert\vert 
 \pi_{\theta}(. \vert s_t)) \right] $
     - If $d \lt d_{targ}/1.5$ then $\beta \leftarrow \beta/2$
     - If $d \gt 1.5 d_{targ}$ then $\beta \leftarrow 2\beta$
 
-Where $d_{targ}$ is the desired KL Divergence target value.
+其中$d_{targ}$是期望KL Divergence目标值。

@@ -1,7 +1,8 @@
 ---
 title: 'cs285 DRL notes chapter 3: policy gradient methods'
 date: 2020-08-29 16:00:06
-tags: [reinforcement learning,cs285]
+tags: [reinforcement learning]
+categories: [cs285]
 published: true
 hideInList: false
 isTop: false
