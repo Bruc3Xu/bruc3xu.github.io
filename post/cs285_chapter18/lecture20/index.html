@@ -1,0 +1,540 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
+<title>Meta-Reinforcement Learning - RuChen Xu's Blog</title>
+<meta name=renderer content="webkit">
+<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta http-equiv=cache-control content="no-transform">
+<meta http-equiv=cache-control content="no-siteapp">
+<meta name=theme-color content="#f8f5ec">
+<meta name=msapplication-navbutton-color content="#f8f5ec">
+<meta name=apple-mobile-web-app-capable content="yes">
+<meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec">
+<meta name=author content="Ruchen Xu"><meta name=description content="{% include start-row.html %}
+So far we&amp;rsquo;ve seen:  Standard RL: Learn an optimal policy (optimal action given a state) for a single task. I.e. fit network parameters for a given MDP:  {% include end-row.html %} {% include start-row.html %}
+  Forward Transfer: Train on one task, transfer to a new one.
+  Multi-task learning: Train on multiple tasks, transfer to a new one.
+  {% include annotation."><meta name=keywords content="Hugo,theme,even">
+<meta name=generator content="Hugo 0.88.1 with theme even">
+<link rel=canonical href=http://localhost:1313/post/cs285_chapter18/lecture20/>
+<link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png>
+<link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
+<link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png>
+<link rel=manifest href=/manifest.json>
+<link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5>
+<script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<link href=/sass/main.min.2e81bbed97b8b282c1aeb57488cc71c8d8c8ec559f3931531bd396bf31e0d4dd.css rel=stylesheet>
+<link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin=anonymous>
+<meta property="og:title" content="Meta-Reinforcement Learning">
+<meta property="og:description" content="{% include start-row.html %}
+So far we&rsquo;ve seen:  Standard RL: Learn an optimal policy (optimal action given a state) for a single task. I.e. fit network parameters for a given MDP:  {% include end-row.html %} {% include start-row.html %}
+  Forward Transfer: Train on one task, transfer to a new one.
+  Multi-task learning: Train on multiple tasks, transfer to a new one.
+  {% include annotation.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://localhost:1313/post/cs285_chapter18/lecture20/"><meta property="article:section" content="post">
+<meta itemprop=name content="Meta-Reinforcement Learning">
+<meta itemprop=description content="{% include start-row.html %}
+So far we&rsquo;ve seen:  Standard RL: Learn an optimal policy (optimal action given a state) for a single task. I.e. fit network parameters for a given MDP:  {% include end-row.html %} {% include start-row.html %}
+  Forward Transfer: Train on one task, transfer to a new one.
+  Multi-task learning: Train on multiple tasks, transfer to a new one.
+  {% include annotation.">
+<meta itemprop=wordCount content="2267">
+<meta itemprop=keywords content><meta name=twitter:card content="summary">
+<meta name=twitter:title content="Meta-Reinforcement Learning">
+<meta name=twitter:description content="{% include start-row.html %}
+So far we&rsquo;ve seen:  Standard RL: Learn an optimal policy (optimal action given a state) for a single task. I.e. fit network parameters for a given MDP:  {% include end-row.html %} {% include start-row.html %}
+  Forward Transfer: Train on one task, transfer to a new one.
+  Multi-task learning: Train on multiple tasks, transfer to a new one.
+  {% include annotation."><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
+<script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]-->
+</head>
+<body>
+<div id=mobile-navbar class=mobile-navbar>
+<div class=mobile-header-logo>
+<a href=/ class=logo>Blog</a>
+</div>
+<div class=mobile-navbar-icon>
+<span></span>
+<span></span>
+<span></span>
+</div>
+</div>
+<nav id=mobile-menu class="mobile-menu slideout-menu">
+<ul class=mobile-menu-list>
+<a href=/>
+<li class=mobile-menu-item>Home</li>
+</a><a href=/post/>
+<li class=mobile-menu-item>Archives</li>
+</a><a href=/tags/>
+<li class=mobile-menu-item>Tags</li>
+</a><a href=/categories/>
+<li class=mobile-menu-item>Categories</li>
+</a>
+</ul>
+</nav>
+<div class=container id=mobile-panel>
+<header id=header class=header>
+<div class=logo-wrapper>
+<a href=/ class=logo>Blog</a>
+</div>
+<nav class=site-navbar>
+<ul id=menu class=menu>
+<li class=menu-item>
+<a class=menu-item-link href=/>Home</a>
+</li><li class=menu-item>
+<a class=menu-item-link href=/post/>Archives</a>
+</li><li class=menu-item>
+<a class=menu-item-link href=/tags/>Tags</a>
+</li><li class=menu-item>
+<a class=menu-item-link href=/categories/>Categories</a>
+</li>
+</ul>
+</nav>
+</header>
+<main id=main class=main>
+<div class=content-wrapper>
+<div id=content class=content>
+<article class=post>
+<header class=post-header>
+<h1 class=post-title>Meta-Reinforcement Learning</h1>
+<div class=post-meta>
+<span class=post-time> 0001-01-01 </span>
+<span id=busuanzi_container_page_pv class=more-meta> <span id=busuanzi_value_page_pv><img src=/img/spinner.svg alt=spinner.svg></span> times read </span>
+</div>
+</header>
+<div class=post-toc id=post-toc>
+<h2 class=post-toc-title>Contents</h2>
+<div class="post-toc-content always-active">
+<nav id=TableOfContents>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href=#so-far-weve-seen>So far we&rsquo;ve seen:</a></li>
+<li><a href=#introducing-meta-learning>Introducing: Meta-Learning</a></li>
+</ul>
+</li>
+<li><a href=#meta-reinforcement-learning>Meta-Reinforcement Learning</a></li>
+<li><a href=#meta-rl-algorithms>Meta-RL algorithms</a>
+<ul>
+<li><a href=#recurrence-algorithm>Recurrence algorithm</a></li>
+<li><a href=#gradient-based-meta-learning>Gradient-Based Meta-Learning</a></li>
+</ul>
+</li>
+<li><a href=#meta-rl-as-an-pomdp>Meta-RL as an POMDP</a>
+<ul>
+<li><a href=#explicit-state-estimation>Explicit State Estimation</a></li>
+</ul>
+</li>
+<li><a href=#model-based-meta-rl>Model-Based Meta-RL</a>
+<ul>
+<li><a href=#adaptive-model-based-meta-rl>Adaptive Model-Based Meta-RL</a></li>
+</ul>
+</li>
+<li><a href=#discussion>Discussion</a></li>
+</ul>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+<div class=post-content>
+<p>{% include start-row.html %}</p>
+<h3 id=so-far-weve-seen>So far we&rsquo;ve seen:</h3>
+<ul>
+<li><strong>Standard RL</strong>: Learn an optimal policy (optimal action given a state) for a single task. I.e.
+fit network parameters for a given MDP:</li>
+</ul>
+<p>{% include end-row.html %}
+{% include start-row.html %}</p>
+<ul>
+<li>
+<p><strong>Forward Transfer</strong>: Train on one task, transfer to a new one.</p>
+</li>
+<li>
+<p><strong>Multi-task learning</strong>: Train on multiple tasks, transfer to a new one.</p>
+</li>
+</ul>
+<p>{% include annotation.html %}
+The more varied the training, the more likely the transfer is to succeed.
+{% include end-row.html %}
+{% include start-row.html %}</p>
+<p>These methods transfer knowledge either re-using a <strong>model</strong> of the environment (as we saw in model-based RL) or through a <strong>policy</strong> (requiring fine-tunning).
+What about transferring knowledge through <strong>learning methods</strong> though?</p>
+<h3 id=introducing-meta-learning>Introducing: Meta-Learning</h3>
+<p><strong>Meta-learning</strong> refers to a <em>learning to learn</em> framework that leverages past knowledge to solve novel tasks more efficiently.</p>
+<p>In <em>generic</em> <strong>supervised setting</strong> we have a single dataset $$\mathcal{D} = \left{ \mathcal{D}^{tr}, \mathcal{D}^{test}\right}$$:
+{% include end-row.html %}
+{% include start-row.html %}</p>
+<p>\begin{equation}
+\theta^\star = \arg \min_{\theta} \mathcal{L} (\theta, \mathcal{D}^{tr}) =: f_{\text{learn}} (\mathcal{D}^{tr})
+\end{equation}</p>
+<p>{% include annotation.html %}
+We can think of supervised training as a function $f_{\text{learn}} (\mathcal{D}^{tr})$ that, given a dataset, returns the parameters which minimize the functional form we assumed for our model on the **train** set.
+{% include end-row.html %}
+{% include start-row.html %}</p>
+<p>In <em>generic</em> <strong>supervised meta-learning setting</strong> we have a set of datasets: $$\mathcal{D}_1, &mldr;, \mathcal{D}_n$$</p>
+<p>\begin{equation}
+\theta^\star = \arg \min_{\theta} \sum_i \mathcal{L} (\phi_i, \mathcal{D}^{test}_i)
+\end{equation}</p>
+<p>Where</p>
+<p>\begin{equation}
+\phi_i = f_{\theta} ( \mathcal{D}^{tr}_i )
+\end{equation}</p>
+<p>So a meta-learner attempts to find the lowest average <strong>test</strong> loss over all the different datasets (tasks) wrt <strong>post-adaptation parameters</strong> $$\phi_i$$ obtained by running the <strong>learning adaptation procedure</strong> $$f_{\theta}$$.
+So, in essence, we are learning $$f_\theta$$, which is a way (a function) to learn model parameters for a given task.</p>
+<p>A common way to implement it, is by using RNNs:</p>
+<p>{% include figure.html url="/_rl/lecture_20/rnn_metalearning.png" description=&ldquo;Implementation of meta-learning using a RNN approach."%}</p>
+<p>If we try to express it as in the previous equations:
+the <strong>parameter vector</strong> produced by the adaptation process is the concatenation of the <strong>hidden state</strong> after seeing the dataset and the meta-learned weights.
+This means we can adapt to any new task by just computing the hidden state (RNN context) after running through that task training data.</p>
+<p>$$\phi_i = \left[ h_i, \phi_p \right]$$</p>
+<p>{% include figure.html url="/_rl/lecture_20/rnn_metalearning_2.png&rdquo; description=&ldquo;Main parameters of RNN as meta-learning technique."%}</p>
+<h2 id=meta-reinforcement-learning>Meta-Reinforcement Learning</h2>
+<p><strong>Why is it a good idea?</strong> Using its past experience, a meta-learned learner can:</p>
+<ul>
+<li>Explore more intelligently</li>
+<li>Avoid trying useless actions</li>
+<li>Acquire the right features more quickly</li>
+</ul>
+<p>Remember: In <strong>standard RL</strong> for an MDP: $$\mathcal{M} = { \mathcal{S}, \mathcal{A}, \mathcal{P}, r }$$ we learn the parameters of a model as:</p>
+<p>\begin{equation}
+\theta^\star = \arg \max_\theta E_{\pi_\theta (\tau)} [ R( \tau ) ] =: f_{\text{RL}} (\mathcal{M})
+\end{equation}</p>
+<p>In <strong>Meta-RL</strong>, again we want to learn an adaptation procedure.
+If we have a set of MDPs: $$\mathcal{M} = { \mathcal{M}_1, &mldr; \mathcal{M}_n }$$ that share some common structure (come from the same MDP prob distribution), we can learn some common parameters $$\theta$$.
+This algorithm step is known as <strong>Meta-training</strong> or <strong>Outer loop</strong>:</p>
+<p>\begin{equation}
+\theta^\star = \arg \max_\theta \sum_i E_{\pi_{\phi_i} (\tau)} [ R( \tau ) ]
+\end{equation}</p>
+<p>{% include end-row.html %}
+{% include start-row.html %}</p>
+<p>From those, we can fit any individual related task with few samples.
+This means that for $$\mathcal{M}_i$$, we will derive its optimal policy parameters $$\phi_i$$ from the meta-learned ones.
+This algorithm step is known as <strong>Adaptation</strong> or <strong>Inner loop</strong>:</p>
+<p>\begin{equation}
+\phi_i = f_\theta (\mathcal{M}_i)
+\end{equation}</p>
+<p>{% include annotation.html %}
+This is different from <strong>contextual policies</strong> (multi-task RL) in the sense that the task context is not given, but inferred from experience of $$\mathcal{M}_i$$
+{% include end-row.html %}
+{% include start-row.html %}</p>
+<p>The adaptation procedure has 2 main goals:</p>
+<ul>
+<li><strong>Exploration</strong>: Collect most informative data</li>
+<li><strong>Adaptation</strong>: Use that data to obtain the optimal policy.</li>
+</ul>
+<p>{% include annotation.html %}
+The adaptation policy (defined by params $$\theta$$) does not need to be good at any task, only to be easily adaptable to all of them. We can think of $$\theta$$ as a prior we&rsquo;ll use to learn a posterior for each task.
+{% include end-row.html %}
+{% include start-row.html %}</p>
+<p>In addition we are assuming all the train and test tasks are samples of some distribution of related MDPs: $$\mathcal{M}_i \sim p(\mathcal{M})$$.
+<em>In practice this is more of a technical assumption and its hard to proof until what degree it holds.</em></p>
+<h2 id=meta-rl-algorithms>Meta-RL algorithms</h2>
+<p>The most basic algorithm idea we can try is:</p>
+<blockquote markdown=1>
+While training:
+1. Sample task $$i$$, collect data $$\mathcal{D}_i$$
+2. Adapt policy by computing: $$\phi_i = f(\theta, \mathcal{D}_i)$$
+3. Collect data $$\mathcal{D}_i^\prime$$ using adapted policy $$\pi_{\phi_i}$$
+4. Update $$\theta$$ according to $$\mathcal{L} (D_i^\prime, \phi_i)$$
+</blockquote>
+<p><strong>Notice</strong>: Steps 1-3 belong to the <strong>adaptation</strong> step while step 4 belongs to the <strong>meta-training</strong> step.</p>
+<p><strong>Improvements</strong>:</p>
+<ul>
+<li>Run multiple rounds of the adaptation step</li>
+<li>Compute $$\theta$$ update (step 4) across a batch of tasks.</li>
+</ul>
+<p>From now on, we&rsquo;ll mainly be discussing different choices for function $$f$$ and loss $$\mathcal{L}$$.</p>
+<h3 id=recurrence-algorithm>Recurrence algorithm</h3>
+<p>We want to collect new information while recalling what we&rsquo;ve seen so far.
+Thus, it seems that encoding the policy as a <strong>RNN</strong> can be a good idea.
+Analogous as the RNN approach to supervised meta-learning, we can have the agent collect $$(s, a, r)$$ tuples as it interacts with the environment and use them to update its internal state:</p>
+<p>{% include end-row.html %}
+{% include start-row.html %}</p>
+<p>{% include figure.html url="/_rl/lecture_20/rnn_metarl.png&rdquo; description="."%}</p>
+<p>{% include annotation.html %}
+As before, we have that $$\phi_i = { h_i, \theta }$$
+{% include end-row.html %}
+{% include start-row.html %}</p>
+<p><strong>Crucially</strong> when training, we do <strong>not</strong> reset the internal state of the RNN between different episodes of the same MDP.
+Thus, the internal state is individual to each task but kept constant between different episodes of the same task.
+Optimizing the total reward of the entire meta-episode with an RNN policy automatically learns to explore.</p>
+<p>{% include figure.html url="/_rl/lecture_20/recurrent_alg_idea.png" description=&ldquo;Recurrent algorithm idea. In this case 2 meta-episodes are presented: One for MDP1 and one for MDP2.&rdquo; %}</p>
+<p>Then the basic algorithm becomes:</p>
+<p>{% include figure.html url="/_rl/lecture_20/recurrent_alg.png" description=&ldquo;Recurrent algorithm pseudocode.&rdquo; %}</p>
+<p><strong>Pros/Cons</strong>:</p>
+<ul>
+<li><span style=color:green>Conceptually simple.</span></li>
+<li><span style=color:green>It is <strong>general</strong> and <strong>expressive</strong>: There exists and RNN that can compute any function.</span></li>
+<li><span style=color:red>It is <strong>NOT consistent</strong>: There is no guarantee it will converge to the optimal policy.</span></li>
+<li><span style=color:red>Vulnerable to meta-overfitting (can&rsquo;t generalize to unseen tasks).</span></li>
+<li><span style=color:red>Challenging to optimize in practice.</span></li>
+</ul>
+<p>More on: <a href=https://arxiv.org/abs/1604.06778>Benchmarking Deep Reinforcement Learning for Continuous Control</a>, <a href=https://arxiv.org/abs/1611.05763>Learning to reinforcement learn</a>,
+<a href=https://arxiv.org/abs/1707.03141>A Simple Neural Attentive Meta-Learner</a> and <a href=https://arxiv.org/abs/1903.08254>Efficient Off-Policy Meta-Reinforcement Learning via Probabilistic Context Variables</a>.</p>
+<h3 id=gradient-based-meta-learning>Gradient-Based Meta-Learning</h3>
+<p>{% include end-row.html %}
+{% include start-row.html %}</p>
+<p>Gradient-Based Meta-Learning (aka Model-Agnostic Meta-Learning: MAML) main idea is to learn a parameter initialization from which fine-tunning for a new task works easily.</p>
+<p>{% include annotation.html %}
+This is similar to when we pre-train a CNN with ImageNet to find good feature extractors and fine-tune with our given data.
+{% include end-row.html %}
+{% include start-row.html %}</p>
+<p>Expressing it as in previous terms, we have that we are learning:</p>
+<p>\begin{equation}
+\theta^\star = \arg \max_\theta \sum_i E_{\pi_{\phi_i} (\tau)} [ R( \tau ) ]
+\end{equation}</p>
+<p>Where we define the <strong>adaptation parameters</strong> as a gradient step from the <strong>common parameters</strong>:</p>
+<p>{% include end-row.html %}
+{% include start-row.html %}</p>
+<p>$$\phi_i = f_\theta (\mathcal{M}_i) = \theta + \alpha \nabla_\theta J_i (\theta)$$</p>
+<p>{% include annotation.html %}
+Remember that $$J_i (\theta) = E_{\pi_\theta} (\tau) [ R(\tau) ]$$
+{% include end-row.html %}
+{% include start-row.html %}</p>
+<p>So, instead of learning the parameters that maximize the expected trajectory reward: $$\theta \leftarrow \theta + \alpha \nabla_\theta j(\theta)$$ (as we would do in standard RL),
+we are learning the parameters which maximize the expected return of taking a gradient step for each task:</p>
+<p>\begin{equation}
+\theta \leftarrow \theta + \beta \sum_i \nabla_\theta J_i \left[\theta + \alpha \nabla_\theta J_i (\theta)\right]
+\end{equation}</p>
+<p>I.e: We want to find the parameters from which taking a gradient step maximizes the reward of all the considered tasks.
+Intuitively, we are finding common parameters $$\theta$$ from which to branch out and easily adapt to a new task:</p>
+<p>{% include figure.html url="/_rl/lecture_20/optimization_idea_2.png" description=&ldquo;Optimization algorithm idea&rdquo; %}</p>
+<p>The algorithm can be written as:</p>
+<p>{% include end-row.html %}
+{% include start-row.html %}</p>
+<p>{% include figure.html url="/_rl/lecture_20/optimization_alg.png" description=&ldquo;Optimization algorithm idea&rdquo; %}</p>
+<p>{% include annotation.html %}
+Notice that $$\theta$$ receives credit for providing good exploration policies.
+{% include end-row.html %}
+{% include start-row.html %}</p>
+<p><strong>Pros/Cons</strong>:</p>
+<ul>
+<li><span style=color:green>Conceptually elegant.</span></li>
+<li><span style=color:green>It is <strong>consistent</strong> (good extrapolation): It is just gradient descent.</span></li>
+<li><span style=color:red>It is <strong>NOT as expressive</strong>: If no rewards are collected adaptation wil not change the policy, even when this data gives information about states to avoid.</span></li>
+<li><span style=color:red>Complex, requires a lot of samples.</span></li>
+</ul>
+<p>More on:</p>
+<ul>
+<li>
+<p>Papers on meta-policy gradient estimators: <a href=https://arxiv.org/abs/1703.03400>Model-Agnostic Meta-Learning for Fast Adaptation of Deep Networks</a>, <a href=https://arxiv.org/abs/1802.05098>DiCE: The Infinitely Differentiable Monte-Carlo Estimator</a>, <a href=https://arxiv.org/abs/1810.06784>ProMP: Proximal Meta-Policy Search</a>.</p>
+</li>
+<li>
+<p>Papers on improving exploration: <a href=https://arxiv.org/abs/1802.07245>Meta-Reinforcement Learning of Structured Exploration Strategies</a>, <a href=https://arxiv.org/abs/1803.01118>Some Considerations on Learning to Explore via Meta-Reinforcement Learning</a></p>
+</li>
+<li>
+<p>Hybrid algorithms: <a href=https://arxiv.org/abs/1802.04821>Evolved Policy Gradients</a>, <a href=https://arxiv.org/abs/1806.07917>MetaLearning by the Baldwin Effect</a></p>
+</li>
+</ul>
+<h2 id=meta-rl-as-an-pomdp>Meta-RL as an POMDP</h2>
+<p><strong>Idea:</strong> Meta-RL corresponds to regular RL but on a POMDP.
+In this case, we would define the policy to work on the observation-space instead of the state-space: $$\pi_\theta (a \mid o)$$.
+This requires either:</p>
+<ol>
+<li>Explicit state estimation: i.e. $$p(s_t \mid o_{1:t})$$</li>
+<li>Use policies which have memory: i.e. learning $$\pi_\theta (a \mid s, z)$$, where $$z$$ encapsulates the information a policy needs to solve the current task (as we saw in RNN-based Meta-RL)</li>
+</ol>
+<p>Let&rsquo;s now focus on <strong>explicit state estimation</strong> techniques.</p>
+<h3 id=explicit-state-estimation>Explicit State Estimation</h3>
+<p>Given some trajectory, we want to estimate an underlying state describing it: $$p(z_t \mid s_{1:t}, a_{1:t}, r_{1:t})$$.
+Then, we can explore via posterior sampling with some latent context:</p>
+<p>{% include end-row.html %}
+{% include start-row.html %}</p>
+<blockquote markdown=1>
+Repeat:
+1. Sample $$z \sim \hat p (z_t \mid s_{1:t}, a_{1:t}, r_{1:t})$$ (One can use a variational approach)
+2. Act according to $$\pi_\theta (a \mid s, z)$$ to collect more data
+</blockquote>
+<p>{% include annotation.html %}
+Check out <a href=https://arxiv.org/abs/1301.2609>Learning to Optimize Via Posterior Sampling</a>
+{% include end-row.html %}
+{% include start-row.html %}</p>
+<p>Which means we are finding the parameters $$\theta, \phi$$ (policy and inference network) that satisfy:</p>
+<p>\begin{equation}
+(\theta, \phi) = \arg \max_{\theta, \phi} \frac{1}{N} \sum_i E_{z \sim q_\phi, \tau \sim \pi_\theta} \left[ R_i(\tau) - D_{KL} (q(z \mid &mldr;) \Vert p(z))\right]
+\end{equation}</p>
+<p>Where $$p(z)$$ is the prior we picked for the $$z$$ distribution.
+$$\hat p (z_t \mid s_{1:t}, a_{1:t}, r_{1:t})$$ can be encoded by any architecture but one shown to present good results is **Probabilistic Embeddings for Actor-Critic RL** (PEARL) presented in <a href=https://arxiv.org/abs/1903.08254>Efficient Off-Policy Meta-Reinforcement Learning via Probabilistic Context Variables</a>, which is order-agnostic by exploiting the Markov Property.</p>
+<p><strong>Problem</strong>: <span style=color:red>This procedure does not resolve in information gathering actions.</span>
+When sampling, you sample from your hypothesis on what the task might be and them attempt to solve that task, but the thing you do to determine what task is, might be different from what you would do for that particular task.
+Nevertheless, in practice, it works pretty good.</p>
+<p><strong>Pros/Cons</strong>:</p>
+<ul>
+<li><span style=color:green>Simple and effective exploration via posterior sampling.</span></li>
+<li><span style=color:green>Elegant reduction to solving special POMDP.</span></li>
+<li><span style=color:green>It is <strong>consistent</strong> (good extrapolation): It is just gradient descent.</span></li>
+<li><span style=color:red>Vulnerable to meta-overfitting</span></li>
+<li><span style=color:red>Challenging to optimize in practice.</span></li>
+</ul>
+<h2 id=model-based-meta-rl>Model-Based Meta-RL</h2>
+<p>Remember <em>standard</em> model-based RL:</p>
+<blockquote markdown=1>
+Repeat:
+1. Collect data $$\mathcal{B}$$
+2. Use data $$\mathcal{B}$$ to get $$\hat p (s_{t+1} \mid s_t, a)$$
+3. Use $$\hat p (s_{t+1} \mid s_t, a)$$ to plan actions.
+</blockquote>
+<p><strong>Pros/Cons</strong>:</p>
+<ul>
+<li><span style=color:green>Requires much less data than model-free.</span></li>
+<li><span style=color:green>Can adapt extremely quickly.</span></li>
+<li><span style=color:red>This is <strong>non-adaptive</strong>: If something changes in the environment this algorithm will not be able to respond!</span></li>
+</ul>
+<h3 id=adaptive-model-based-meta-rl>Adaptive Model-Based Meta-RL</h3>
+<p>Let, $$d_\theta (s, a) \rightarrow s^\prime$$ the function which returns the next expected state given a state-action pair $$(s, a)$$.</p>
+<p>{% include end-row.html %}
+{% include start-row.html %}</p>
+<blockquote markdown=1>
+Repeat:
+1. Take 1 step, get $$\{ s, a, s^\prime \}$$
+2. Update model parameters according to the seen changes: $$\theta \leftarrow \theta - \alpha \nabla_\theta \Vert d_\theta (s, a) - s^\prime \Vert^2$$
+3. Use $$d_\theta$$ to select action
+</blockquote>
+<p>{% include annotation.html %}
+This way we are accounting for dynamic changes in the environment.
+In fact, the field of <strong><a href=https://en.wikipedia.org/wiki/Adaptive_control>adaptive control</a></strong> is concerned with this problem, using simple linear models instead of neural nets.
+{% include end-row.html %}
+{% include start-row.html %}</p>
+<p>For this to work though, you need to train considering these possible changes in dynamics.
+The way it is done is by constructing a meta-training dataset:</p>
+<p>\begin{equation}
+\mathcal{D}_{\text{meta-train}} = { (\mathcal{D}^{train}_1, \mathcal{D}^{test}_1), &mldr;, \mathcal{D}^{train}_n, \mathcal{D}^{test}_n)}
+\end{equation}</p>
+<p>Where each dataset is a sampled subsequence of a past experience trajectory (assuming they have different dynamics).</p>
+<p>\begin{equation}
+\mathcal{D}^{train}_i = { ((s^i_1, a^i_1), s^{\prime, i}_1) , &mldr;, ((s^i_k, a^i_k), s^{\prime, i}_k) }
+\end{equation}</p>
+<p>\begin{equation}
+\mathcal{D}^{test}_i = { ((s^i_1, a^i_1), s^{\prime, i}_1) , &mldr;, ((s^i_k, a^i_l), s^{\prime, i}_l) }
+\end{equation}</p>
+<p>Intuitively, given a trajectory, we would sample the dataset as so:</p>
+<p>{% include figure.html url="/_rl/lecture_20/adaptive.png" description=&ldquo;Illustration of datasets in adaptive model-based meta-rl."%}</p>
+<p>More on this idea on: <a href=https://arxiv.org/abs/1803.11347>Learning to Adapt in Dynamic, Real-World Environments Through Meta-Reinforcement Learning</a></p>
+<h2 id=discussion>Discussion</h2>
+<p>Now that we know a bit more on Meta-RL research, it would be interesting to see how related it is to how biological beings learn.
+Biological beings seemingly present multiple learning behaviors:</p>
+<ul>
+<li>Highly efficient but (apparently) model-free RL</li>
+<li>Episodic recall</li>
+<li>Model-based RL</li>
+<li>Causal inference</li>
+</ul>
+<p>Are all of these really separate brain &ldquo;algorithms&rdquo; or could they be emergent phenomena resulting from some meta-RL algorithm?
+The following papers discuss this:</p>
+<ul>
+<li><a href=https://arxiv.org/abs/1805.09692>Been There, Done That: Meta-Learning with Episodic Recall</a></li>
+<li><a href=https://www.nature.com/articles/s41593-018-0147-8>Prefrontal cortex as a meta-reinforcement learning system</a></li>
+<li><a href=https://arxiv.org/abs/1901.08162>Causal Reasoning from Meta-Reinforcement Learning</a></li>
+</ul>
+<br>
+<hr>
+<p>Cited as:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>@article{campusai2021mrl,
+title = &#34;Meta-Reinforcement Learning Basics&#34;,
+author = &#34;Canal, Oleguer&#34;,
+journal = &#34;https://campusai.github.io/&#34;,
+year = &#34;2021&#34;,
+url = &#34;https://campusai.github.io/rl/meta-rl&#34;
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>{% include end-row.html %}</p>
+</div>
+<div class=post-copyright>
+<p class=copyright-item>
+<span class=item-title>Author</span>
+<span class=item-content>Ruchen Xu</span>
+</p>
+<p class=copyright-item>
+<span class=item-title>LastMod</span>
+<span class=item-content>
+0001-01-01
+</span>
+</p>
+</div>
+<div class=post-reward>
+<input type=checkbox name=reward id=reward hidden>
+<label class=reward-button for=reward>Reward</label>
+<div class=qr-code>
+<label class=qr-code-image for=reward>
+<img class=image src=/img/reward/wechat.png>
+<span>wechat</span>
+</label>
+<label class=qr-code-image for=reward>
+<img class=image src=/img/reward/alipay.png>
+<span>alipay</span>
+</label>
+</div>
+</div><footer class=post-footer>
+<nav class=post-nav>
+<a class=prev href=/post/cs285_chapter15/lecture15/>
+<i class="iconfont icon-left"></i>
+<span class="prev-text nav-default">Inverse Reinforcement Learning (IRL)</span>
+<span class="prev-text nav-mobile">Prev</span>
+</a>
+<a class=next href=/post/cs285_chapter12/lecture12/>
+<span class="next-text nav-default">Model-based Policy Learning</span>
+<span class="next-text nav-mobile">Next</span>
+<i class="iconfont icon-right"></i>
+</a>
+</nav>
+</footer>
+</article>
+</div>
+</div>
+</main>
+<footer id=footer class=footer>
+<div class=social-links>
+<a href=mailto:ruchenxucs@gmail.com class="iconfont icon-email" title=email></a>
+<a href=https://github.com/FireLandDS class="iconfont icon-github" title=github></a>
+<a href=http://localhost:1313/index.xml type=application/rss+xml class="iconfont icon-rss" title=rss></a>
+</div>
+<div class=copyright>
+<span class=power-by>
+Powered by <a class=hexo-link href=https://gohugo.io>Hugo</a>
+</span>
+<span class=division>|</span>
+<span class=theme-info>
+Theme -
+<a class=theme-link href=https://github.com/olOwOlo/hugo-theme-even>Even</a>
+</span>
+<div class=busuanzi-footer>
+<span id=busuanzi_container_site_pv> site pv: <span id=busuanzi_value_site_pv><img src=/img/spinner.svg alt=spinner.svg></span> </span>
+<span class=division>|</span>
+<span id=busuanzi_container_site_uv> site uv: <span id=busuanzi_value_site_uv><img src=/img/spinner.svg alt=spinner.svg></span> </span>
+</div>
+<span class=copyright-year>
+&copy;
+2017 -
+2021<span class=heart><i class="iconfont icon-heart"></i></span><span>Ruchen Xu</span>
+</span>
+</div>
+</footer>
+<div class=back-to-top id=back-to-top>
+<i class="iconfont icon-up"></i>
+</div>
+</div>
+<script src=https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin=anonymous></script>
+<script type=text/javascript src=/js/main.min.c99b103c33d1539acf3025e1913697534542c4a5aa5af0ccc20475ed2863603b.js></script>
+<script type=text/javascript>window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']],tags:'ams'}}</script>
+<script async src=https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin=anonymous></script>
+</body>
+</html>
