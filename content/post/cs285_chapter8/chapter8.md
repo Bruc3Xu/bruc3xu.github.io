@@ -158,7 +158,7 @@ $$
 
 ## Trajectory optimization
 
-**IDEA:** Use derivatives information. To do so we'll formulate the problem as a control one: ($x_t$ for states, $u_t$ for actions, $c$ for cost) and we want to solve an optimization problem with constraints:
+**IDEA:**将问题表示为控制问题($x_t$代表状态，$u_t$代表动作，$c$代表cost)，然后我们来求解具有约束的优化问题：
 
 $$
 min_{u_1,...u_T} \sum_t c(x_t, u_t) \space \space \space \space s.t. \space x_t=f(x_{t_1}, u_{t-1})
@@ -180,11 +180,6 @@ min_{u_1,...u_T} \sum_t
 c(x_1, u_1) + c(f(x_1, u_1), u_2) + ... + c(f(f(...)), u_T)
 $$
 
-If we had $df, dc$, could we just do Gradient Descent (GD) at this point?\\
-Not always.
-These problems are very ill-conditioned: first actions have a huge impact on final states.
-This makes easy for 1st order methods like GD get stuck, 2nd derivatives methods can help:
-
 #### If open-loop, deterministic env, linear $f$, quadratic $c$:
 
 ![](/post/cs285_chapter8/lq.png)
@@ -194,23 +189,16 @@ This makes easy for 1st order methods like GD get stuck, 2nd derivatives methods
 ![](/post/cs285_chapter8/linear_lqr.png)
 
 #### If open-loop, stochastic env, linear $f$, quadratic $c$:
-如果来自高斯策略：$x_{t+1} \sim \mathcal{N} \left( F_t \begin{vmatrix}
+选择高斯分布作为dynamics：$x_{t+1} \sim \mathcal{N} \left( F_t \begin{vmatrix}
 x_t,\\
 u_t 
 \end{vmatrix} + f_t, \Sigma_t\right)$, the exact same algorithm will yield the optimal result.
 
-
-#### If closed-loop, stochastic env, linear $f$, quadratic $c$:
-相同，使用时变线性控制器$K_t s_t + k_t$.
+动作为$K_t s_t + k_t$
 
 #### Non-linear case:
 使用**iterative LQR (iLQR)**或者**Differential Dynamic Programming (DDP)**。
 
-The idea is to estimate local linear approximation of the dynamics and quadratic approximation of the cost by doing Taylor expansions. This way we can frame the problem as in simple LQR:
-
-
 ![](/post/cs285_chapter8/ilqr.png)
 
-
-This is equivalent to Newton's minimization method (but applied to trajectory optimization). More on it in this [paper](https://homes.cs.washington.edu/~todorov/papers/TassaIROS12.pdf).
-
+等价于Newton法，具体见[paper](https://homes.cs.washington.edu/~todorov/papers/TassaIROS12.pdf).
