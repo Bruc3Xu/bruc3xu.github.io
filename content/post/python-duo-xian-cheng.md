@@ -1,5 +1,5 @@
 ---
-title: 'python多线程'
+title: 'Python多线程'
 date: 2019-11-24 17:04:39
 tags: [Python]
 published: true
