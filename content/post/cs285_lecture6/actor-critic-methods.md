@@ -1,5 +1,5 @@
 ---
-title: 'cs285 DRL notes chapter 4: Actor-Critic methods'
+title: 'cs285 DRL notes lecture 6: Actor-Critic methods'
 date: 2020-09-08 17:18:48
 tags: [reinforcement learning]
 categories: [cs285]
@@ -127,14 +127,14 @@ $$\begin{aligned}
 ***
 
 ## actor-critic算法结构设计
-![](/post/cs285_chapter4/two-network-design.png)
+![](/post/cs285_lecture6/two-network-design.png)
 
 使用两个神经网络分别来近似值函数和策略函数，优点：简单、有效，易于使用；缺点：在一些情况下，值函数和策略函数需要共享特征，特别在特征比较复杂时。
 
-![](/post/cs285_chapter4/shared_network_design.png)
+![](/post/cs285_lecture6/shared_network_design.png)
 
 另一方面是使用并行的worker来批次更新效果会更好。值得注意的是，异步并行的actor-critic算法，行为策略会落后于学习策略，这回出现一些问题，具体在A3C算法中有描述。
-![](/post/cs285_chapter4/batch-online-ac.png)
+![](/post/cs285_lecture6/batch-online-ac.png)
 
 ## critic作为baseline
 actor-critic算法：有偏的，低方差
@@ -178,7 +178,7 @@ $$
 
 我们希望结合这两种方法，使用Monte-Carlo方法来计算近期的值估计，使用actor-critic方法来计算将来的值估计。结合下图，我们希望在方差变的过大之前截断轨迹，只使用
 n步数据。
-![traj_Var](/post/cs285_chapter4/traj_var.png)
+![traj_Var](/post/cs285_lecture6/traj_var.png)
 
 $$
 \begin{aligned}

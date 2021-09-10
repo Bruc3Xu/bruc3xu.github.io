@@ -1,5 +1,5 @@
 ---
-title: "cs285 DRL notes chapter 6: Deep RL with Q-Functions"
+title: "cs285 DRL notes lecture 8: Deep RL with Q-Functions"
 date: 2020-09-18T15:46:38+08:00
 lastmod: 2020-09-18T15:46:38+08:00
 draft: false
@@ -83,10 +83,10 @@ For $K$ times\
 
 ## target network
 我们希望目标值能够固定，一种方式是使用Q神经网络，固定其参数，用来计算目标值。目标网络会在神经网络更新后每隔一段时间进行更新，然后重复这一过程。
-![](/post/cs285_chapter6/qlearning_with_target.png)
+![](/post/cs285_lecture8/qlearning_with_target.png)
 
 当N=1，K=1，是上述算法就成为了经典DQN算法。
-![](/post/cs285_chapter6/dqn.png)
+![](/post/cs285_lecture8/dqn.png)
 
 为了避免Q函数和目标函数的lag变化过大，可以使用soft update
 $$\phi \'=\tau\phi ' + (1-\tau)\phi \quad \ \tau=0.999$$
@@ -165,7 +165,7 @@ $$
 ### Easily Maximizable Q Functions
 第二大类则是引入一些容易取max的Q-function。例如在NAF(Normalized Advantage Functions)中，将网络的输出分成三部分：
 
-![](/post/cs285_chapter6/NAF.png)
+![](/post/cs285_lecture8/NAF.png)
 
 此时max操作和argmax操作都可以用其中的head来表示： 
 $$
@@ -195,5 +195,5 @@ $$
 
 **DDPG** 算法：
 
-![](/post/cs285_chapter6/ddpg.png)
+![](/post/cs285_lecture8/ddpg.png)
 

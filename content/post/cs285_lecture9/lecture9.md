@@ -1,5 +1,5 @@
 ---
-title: "cs285 DRL notes chapter 7: Advanced Policy Gradients"
+title: "cs285 DRL notes lecture 9: Advanced Policy Gradients"
 date: 2020-09-23T09:34:56+08:00
 lastmod: 2020-09-23T09:34:56+08:00
 draft: false
@@ -236,7 +236,7 @@ $$
 其中$\pmb{F}$代表[Fischer Information Matrix](https://en.wikipedia.org/wiki/Fisher_information_metric#Relation_to_the_Kullback%E2%80%93Leibler_divergence)，
 让我们的优化区域变成了一个椭圆。
 
-![](/post/cs285_chapter7/gradients.png)
+![](/post/cs285_lecture9/gradients.png)
 上图是使用欧式距离约束（左）和使用近似KL散度约束的对比图。
  
 We transform our objective by $\pmb{F}$ inverse, such that the optimiation region becomes
@@ -293,7 +293,7 @@ $$
 
 下图展示了$L^{CLIP}$在正的优势值和负优势值的情况。
 
-![](/post/cs285_chapter7/ppo_objective.png)
+![](/post/cs285_lecture9/ppo_objective.png)
 
 但最近的文章如[Engstrom et al., Implementation Matters in Deep Policy Gradients](https://openreview.net/pdf?id=r1etN1rtPB)
 截断机制并没有阻止梯度步进破坏KL限制，提升点主要来自于

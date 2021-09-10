@@ -1,5 +1,5 @@
 ---
-title: "cs285 DRL notes chapter 5: value function methods"
+title: "cs285 DRL notes lecture 7: value function methods"
 date: 2020-09-16T09:43:42+08:00
 lastmod: 2020-09-16T09:43:42+08:00
 draft: false
@@ -60,7 +60,7 @@ $$
 
 ## 策略更新
 策略$\pi^{'}$优于$\pi$，我们可以不断更新策略，如图。
-![](/post/cs285_chapter5/policy_iter.png)
+![](/post/cs285_lecture7/policy_iter.png)
 
 **policy iteration**
 ***
@@ -142,7 +142,7 @@ $$y_i\leftarrow r(s_i,a_i)+\gamma\mathbb{E}[V(s_i^{'})]$$
 - $V(s_i^{'})\leftarrow max_aQ(s_i^{'},a_i^{'})$
 
 这样就得到**fitted Q iteration**
-![](/post/cs285_chapter5/fitted_q_iteration.png)
+![](/post/cs285_lecture7/fitted_q_iteration.png)
 
 优缺点：
 - 可以使用off-policy样本。

@@ -1,5 +1,5 @@
 ---
-title: 'cs285 DRL notes chapter 2: imitation learning'
+title: 'cs285 DRL notes lecture 2: imitation learning'
 date: 2020-08-23 15:13:48
 tags: [reinforcement learning]
 categories: [cs285]
@@ -14,7 +14,7 @@ isTop: false
 2. 强化学习并没有准确的标签，只有奖励值这一弱监督信号。
 
 模仿学习的一个问题是泛化能力差。例如，在状态$s_t$，智能体做出了一个错误决策（因为学习得到的策略分布与专家策略分布不能完全相同，这个问题是无法避免的），到达一个新的状态$s_t'$。这个状态对于智能体来说是没有见过的，即没有学习到的，那么智能体就会选择一个随机的动作，偏离学习到的轨迹。整个过程如下图所示。
-![](/post/cs285_chapter2/distribution_shift.png)
+![](/post/cs285_lecture2/distribution_shift.png)
 
 ## DAgger(Dataset Aggregation)
 DAgger的思想是：既然没有见过的状态不在原有分布之内，那么我们使用专家策略对这个状态进行动作选择，并将其加入数据集进行训练，那么就可以解决上文提到的分布偏移问题。

@@ -1,5 +1,5 @@
 ---
-title: 'cs285 DRL notes chapter 1: introduction'
+title: 'cs285 DRL notes lecture 4: RL introduction'
 date: 2020-08-03 10:58:41
 tags: [reinforcement learning]
 categories: [cs285]
@@ -12,7 +12,7 @@ isTop: false
 强化学习是一种目标导向的学习方法，通过不断试错，奖励或惩罚智能体从而使其未来更容易重复或者放弃某一动作。
 ## 强化学习中的术语介绍。
 强化学习的主要角色是智能体和环境，环境是智能体存在和互动的世界。智能体在每一步的交互中，如图所示，
-![RL diagram](/post/cs285_chapter1/rl_diagram.png)
+![RL diagram](/post/cs285_lecture4/rl_diagram.png)
 都会获得对于所处环境状态的观察（可能只是部分环境状态），
 然后决定下一步要执行的动作。环境的状态会在智能体执行动作后发生变化，但也可能会自行发生改变。
 智能体还感知来自环境的奖励信号，奖励信号告诉了智能体当前环境状态的好坏。智能体的目标是最大化其累积奖励，称为回报(return)。
@@ -28,7 +28,7 @@ isTop: false
 
 在大部分强化学习环境中，认为状态转换具有马尔可夫性质{Markovian}，即在$t+1$时刻的状态只依赖于$t$时刻的状态。
 如图解释了马尔可夫链，箭头代表着因果关系。
-![Markov Chain](/post/cs285_chapter1/markov_chain.png)
+![Markov Chain](/post/cs285_lecture4/markov_chain.png)
 
 强化学习的目标是最大化累计奖励值。定义轨迹概率分布为$p_\theta(\tau)$，根据贝叶斯定理：
 $$ p(\tau)= p(s_1,a_1,...,s_T,a_T) = p(s_1)\prod_{t=1}^T\pi_\theta(a_t|s_t)p(s_{t+1}|s_t,a_t)$$
@@ -59,5 +59,5 @@ $\mathbb{E}_{s_1\sim p(s_1)}[V^\pi(s_1)]$，其中$p(s_1)$代表所有可能的�
 
 ## Reinforcement Learning Anatomy
 如图，强化学习过程主要分为3个步骤：1）生成数据：根据不同的算法可以使用各种策略与环境交互；2）估计回报或者拟合环境模型（model based）；3）改进当前策略；
-![RL anatomy](/post/cs285_chapter1/rl_anatomy.png)
+![RL anatomy](/post/cs285_lecture4/rl_anatomy.png)
 强化学习的关键就在于正确高效地完成这三个步骤。

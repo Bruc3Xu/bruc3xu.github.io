@@ -177,7 +177,7 @@ copyright = ""            # default: author.name ↓        # 默认为下面配
     pagePV = true
 
   [params.reward]                                         # 文章打赏
-    enable = true
+    enable = false
     wechat = "/img/reward/wechat.png"           # 微信二维码
     alipay = "/img/reward/alipay.png"           # 支付宝二维码
 

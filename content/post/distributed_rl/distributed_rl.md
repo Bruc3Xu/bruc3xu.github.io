@@ -18,7 +18,7 @@ If considering to use the text please cite the original author/s of the lecture/
 Furthermore, please acknowledge our work by adding a link to our website: https://campusai.github.io/ and citing our names: Oleguer Canal and Federico Taschin.
 -->
 
-{% include start-row.html %}
+
 
 The main bottleneck of creating distributed RL algorithms is that we need to create our own datasets with improved policies. Unlike SL where the datasets are given.
 This means we need to create algorithmic changes alongside system changes when designing new parallel architectures.
@@ -37,9 +37,9 @@ If you need a reminder, take a look at [lecture 8](/lectures/lecture8).
 
 This paper has a lot of margin of improvement but was the first distributed approach taken. 
 They split the algorithm into 4 components to be replicated and run on multiple nodes:
-- The **replay buffer/memory**: Stores $$(s, a, r, s^\prime)$$ samples from the environment.
+- The **replay buffer/memory**: Stores $(s, a, r, s^\prime)$ samples from the environment.
 - The **learner**: Pulls data from the replay memory and updates the Q networks.
-- The **actor**: Gets a copy of the policy network and provides $$(s, a, r, s^\prime)$$ samples to the memory buffer.
+- The **actor**: Gets a copy of the policy network and provides $(s, a, r, s^\prime)$ samples to the memory buffer.
 - The **parameter server**: Holds a copy of the Q network and allows the learner to update the network at very high throughput.
 
 {% include figure.html url="/_rl/lecture_17/gorila.png" description="GORILA distributed architecture structure."%}

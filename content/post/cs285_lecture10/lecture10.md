@@ -1,5 +1,5 @@
 ---
-title: "cs285 DRL notes chapter 8: Model-based Planning"
+title: "cs285 DRL notes lecture 10: Model-based Planning"
 date: 2020-09-29T09:34:56+08:00
 lastmod: 2020-09-30T09:34:56+08:00
 draft: false
@@ -9,32 +9,8 @@ tags: [reinforcement learning]
 categories: [cs285]
 author: ""
 
-# You can also close(false) or open(true) something for this content.
-# P.S. comment can only be closed
 comment: false
 toc: true
-autoCollapseToc: false
-postMetaInFooter: false
-hiddenFromHomePage: false
-# You can also define another contentCopyright. e.g. contentCopyright: "This is another copyright."
-contentCopyright: false
-reward: false
-
-
-# You unlisted posts you might want not want the header or footer to show
-hideHeaderAndFooter: false
-
-# You can enable or disable out-of-date content warning for individual post.
-# Comment this out to use the global config.
-#enableOutdatedInfoWarning: false
-
-flowchartDiagrams:
-  enable: false
-  options: ""
-
-sequenceDiagrams: 
-  enable: false
-  options: ""
 
 ---
 
@@ -52,7 +28,7 @@ model-free强化学习忽略了状态转移概率$p(s_{t+1}|s_t,a_t)$，并且�
 2. 利用观察得到的transition数据来学习特定的模型
 
 ## open-loop vs closed-loop
-![](/post/cs285_chapter8/openloop_closed_loop.jpg)
+![](/post/cs285_lecture10/openloop_closed_loop.jpg)
 - open-loop：只在t=1时，给与智能体初始状态$s_1$，之后智能体根据模型规划处一系列动作。
 - closed-loop：智能体会与环境不断交互，一般意义上的RL。
 
@@ -126,7 +102,7 @@ CEM方法采用回报高的轨迹进行训练，提高对应动作发生概率�
 
 如果把MDP看做一棵树（节点代表状态，边代表动作），那么我们可以将discrete planning问题转化为搜索问题，即遍历这棵树找到每个状态的价值，进而得到最优的策略。 
 
-![](/post/cs285_chapter8/mcts.png)
+![](/post/cs285_lecture10/mcts.png)
 
 然而，随着动作空间增大，节点的数量以指数级递增，完全遍历无法实现。
 因此，MCTS提出有选择地遍历，即对树进行剪枝。MTCS就是基于对**叶节点的好坏评估以及探索次数的平衡**做的剪枝。
@@ -134,7 +110,7 @@ CEM方法采用回报高的轨迹进行训练，提高对应动作发生概率�
 
 **MCTS Algorithm:**
 
-![](/post/cs285_chapter8/mcts_algo.png)
+![](/post/cs285_lecture10/mcts_algo.png)
 
 TreePolicy：来到一个状态$s_t$后如何选择哪一个分支做拓展。
 DefaultPolicy：探索时的行为策略。
@@ -182,11 +158,11 @@ $$
 
 #### If open-loop, deterministic env, linear $f$, quadratic $c$:
 
-![](/post/cs285_chapter8/lq.png)
+![](/post/cs285_lecture10/lq.png)
 
 **Linear Quadratic Regulator (LQR):** 建立二阶导数矩阵(Hessian)代价太大，LQR选择逐步解决这个问题：
 
-![](/post/cs285_chapter8/linear_lqr.png)
+![](/post/cs285_lecture10/linear_lqr.png)
 
 #### If open-loop, stochastic env, linear $f$, quadratic $c$:
 选择高斯分布作为dynamics：$x_{t+1} \sim \mathcal{N} \left( F_t \begin{vmatrix}
@@ -199,6 +175,6 @@ u_t
 #### Non-linear case:
 使用**iterative LQR (iLQR)**或者**Differential Dynamic Programming (DDP)**。
 
-![](/post/cs285_chapter8/ilqr.png)
+![](/post/cs285_lecture10/ilqr.png)
 
 等价于Newton法，具体见[paper](https://homes.cs.washington.edu/~todorov/papers/TassaIROS12.pdf).
