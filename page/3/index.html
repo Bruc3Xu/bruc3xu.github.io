@@ -22,7 +22,7 @@
 <link rel=manifest href=/manifest.json>
 <link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5>
 <script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
-<link href=/sass/main.min.f92fd13721ddf72129410fd8250e73152cc6f2438082b6c0208dc24ee7c13fc4.css rel=stylesheet>
+<link href=/sass/main.min.2e81bbed97b8b282c1aeb57488cc71c8d8c8ec559f3931531bd396bf31e0d4dd.css rel=stylesheet>
 <link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin=anonymous>
 <meta property="og:title" content="RuChen Xu's Blog">
 <meta property="og:description" content="Hugo theme even example site.">
@@ -83,92 +83,88 @@
 <section id=posts class=posts>
 <article class=post>
 <header class=post-header>
-<h1 class=post-title><a class=post-link href=/post/python-duo-xian-cheng/>python多线程</a></h1>
+<h1 class=post-title><a class=post-link href=/post/pytorch_cookbook/>PyTorch Cookbook</a></h1>
 <div class=post-meta>
-<span class=post-time> 2019-11-24 </span>
+<span class=post-time> 2020-09-01 </span>
 </div>
 </header>
 <div class=post-content>
 <div class=post-summary>
-由于GIL的存在，Python的多线程实际上是伪多线程，在同一时刻只有一个线程。因此Python的多线程适用于IO密集型任务（文件读写，网络
 </div>
 <div class=read-more>
-<a href=/post/python-duo-xian-cheng/ class=read-more-link>Read more...</a>
+<a href=/post/pytorch_cookbook/ class=read-more-link>Read more...</a>
 </div>
 </div>
 </article>
 <article class=post>
 <header class=post-header>
-<h1 class=post-title><a class=post-link href=/post/cs285_chapter17/lecture17/>Distributed RL</a></h1>
+<h1 class=post-title><a class=post-link href=/post/cs285_lecture5/pg/>cs285 DRL notes chapter 3: policy gradient methods</a></h1>
 <div class=post-meta>
-<span class=post-time> 0001-01-01 </span>
+<span class=post-time> 2020-08-29 </span>
+<div class=post-category>
+<a href=/categories/cs285/> cs285 </a>
+</div>
 </div>
 </header>
 <div class=post-content>
 <div class=post-summary>
-{% include start-row.html %}
-The main bottleneck of creating distributed RL algorithms is that we need to create our own datasets with improved policies. Unlike SL where the datasets are given. This means we need to create algorithmic changes alongside system changes when designing new parallel architectures.
-History of large scale distributed RL 2013. Original DQN DQN parallelisation was not DeepMinds main focus when first presented in 2013. Nevertheless, understanding its implementation helps to get an idea of how the others work.
+回顾强化学习的目标，我们希望获得策略的最优参数$\theta^*$， $$ \theta^*=\underset{\theta}{argmax}\mathbb{E}_{\tau\sim p_{\theta}(\tau)}[\sum_{t=1}^{t=T}r(s_t, a_t)] $$ 这实际上是一个优化问题，因此我们可以使用多种优化方法来优化这个
 </div>
 <div class=read-more>
-<a href=/post/cs285_chapter17/lecture17/ class=read-more-link>Read more...</a>
+<a href=/post/cs285_lecture5/pg/ class=read-more-link>Read more...</a>
 </div>
 </div>
 </article>
 <article class=post>
 <header class=post-header>
-<h1 class=post-title><a class=post-link href=/post/cs285_chapter15/lecture15/>Inverse Reinforcement Learning (IRL)</a></h1>
+<h1 class=post-title><a class=post-link href=/post/pybind11_cmake_tutorial/>Pybind11 Cmake tutorial</a></h1>
 <div class=post-meta>
-<span class=post-time> 0001-01-01 </span>
+<span class=post-time> 2020-08-25 </span>
 </div>
 </header>
 <div class=post-content>
 <div class=post-summary>
-{% include start-row.html %}
-Until now we had to manually design the reward function. IRL automatically learns the reward function from expert demonstrations. In this case, instead of hard-coding a reward we would provide demonstrations.
-{% include annotation.html %} This is different from imitation learning (IL) since IL does not reason about the outcome of actions, it just tries to mimic the demonstrations. {% include end-row.html %} {% include start-row.html %}
 </div>
 <div class=read-more>
-<a href=/post/cs285_chapter15/lecture15/ class=read-more-link>Read more...</a>
+<a href=/post/pybind11_cmake_tutorial/ class=read-more-link>Read more...</a>
 </div>
 </div>
 </article>
 <article class=post>
 <header class=post-header>
-<h1 class=post-title><a class=post-link href=/post/cs285_chapter18/lecture20/>Meta-Reinforcement Learning</a></h1>
+<h1 class=post-title><a class=post-link href=/post/cs285_lecture2/lecture2/>cs285 DRL notes lecture 2: imitation learning</a></h1>
 <div class=post-meta>
-<span class=post-time> 0001-01-01 </span>
+<span class=post-time> 2020-08-23 </span>
+<div class=post-category>
+<a href=/categories/cs285/> cs285 </a>
+</div>
 </div>
 </header>
 <div class=post-content>
 <div class=post-summary>
-{% include start-row.html %}
-So far we&rsquo;ve seen: Standard RL: Learn an optimal policy (optimal action given a state) for a single task. I.e. fit network parameters for a given MDP: {% include end-row.html %} {% include start-row.html %}
-Forward Transfer: Train on one task, transfer to a new one.
-Multi-task learning: Train on multiple tasks, transfer to a new one.
-{% include annotation.
+模仿学习是一种监督学习方法，行为克隆是其中的一类方法。其基本思想是从专家演示数据中学习到一个尽可能接近专家策略的行为策略。我们的数据集是依据
 </div>
 <div class=read-more>
-<a href=/post/cs285_chapter18/lecture20/ class=read-more-link>Read more...</a>
+<a href=/post/cs285_lecture2/lecture2/ class=read-more-link>Read more...</a>
 </div>
 </div>
 </article>
 <article class=post>
 <header class=post-header>
-<h1 class=post-title><a class=post-link href=/post/cs285_chapter12/lecture12/>Model-based Policy Learning</a></h1>
+<h1 class=post-title><a class=post-link href=/post/cs285_lecture4/lecture3/>cs285 DRL notes lecture 4: RL introduction</a></h1>
 <div class=post-meta>
-<span class=post-time> 0001-01-01 </span>
+<span class=post-time> 2020-08-03 </span>
+<div class=post-category>
+<a href=/categories/cs285/> cs285 </a>
+</div>
 </div>
 </header>
 <div class=post-content>
 <div class=post-summary>
-{% include start-row.html %}
-In the previous lecture: Model-based RL, we where planning trajectories (stochastic open-loop), by maximizing the expected reward over a sequence of actions: \begin{equation} a_1,&mldr;,a_T = \arg \max_{a_1,&mldr;,a_T} E \left[ \sum_t r(s_t, a_t) \mid a_1,&mldr;, a_T \right] \end{equation}
-Now we will build a policies capable of adapting to the situation (stochastic closed-loop), by maximizing a reward expectation:
-\begin{equation} \pi = \arg \max_{\pi} E_{\tau \sim p(\tau)} \left[ \sum_t r(s_t, a_t) \right] \end{equation}
+强化学习是一种目标导向的学习方法，通过不断试错，奖励或惩罚智能体从而使其未来更容易重复或者放弃某一动作。 强化学习中的术语介绍。 强化学习的主要
 </div>
 <div class=read-more>
-<a href=/post/cs285_chapter12/lecture12/ class=read-more-link>Read more...</a>
+<a href=/post/cs285_lecture4/lecture3/ class=read-more-link>Read more...</a>
 </div>
 </div>
 </article>

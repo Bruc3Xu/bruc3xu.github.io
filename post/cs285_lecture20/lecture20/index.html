@@ -1,0 +1,341 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
+<title>cs285 DRL notes lecture 20: Inverse Reinforcement Learning (IRL) - RuChen Xu's Blog</title>
+<meta name=renderer content="webkit">
+<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta http-equiv=cache-control content="no-transform">
+<meta http-equiv=cache-control content="no-siteapp">
+<meta name=theme-color content="#f8f5ec">
+<meta name=msapplication-navbutton-color content="#f8f5ec">
+<meta name=apple-mobile-web-app-capable content="yes">
+<meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec">
+<meta name=author content="Ruchen Xu"><meta name=description content><meta name=keywords content="Hugo,theme,even">
+<meta name=generator content="Hugo 0.88.1 with theme even">
+<link rel=canonical href=http://localhost:1313/post/cs285_lecture20/lecture20/>
+<link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png>
+<link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
+<link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png>
+<link rel=manifest href=/manifest.json>
+<link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5>
+<script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<link href=/sass/main.min.2e81bbed97b8b282c1aeb57488cc71c8d8c8ec559f3931531bd396bf31e0d4dd.css rel=stylesheet>
+<link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin=anonymous>
+<meta property="og:title" content="cs285 DRL notes lecture 20: Inverse Reinforcement Learning (IRL)">
+<meta property="og:description" content>
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://localhost:1313/post/cs285_lecture20/lecture20/"><meta property="article:section" content="post">
+<meta property="article:published_time" content="2020-10-20T09:34:56+08:00">
+<meta property="article:modified_time" content="2020-10-30T09:34:56+08:00">
+<meta itemprop=name content="cs285 DRL notes lecture 20: Inverse Reinforcement Learning (IRL)">
+<meta itemprop=description content><meta itemprop=datePublished content="2020-10-20T09:34:56+08:00">
+<meta itemprop=dateModified content="2020-10-30T09:34:56+08:00">
+<meta itemprop=wordCount content="1325">
+<meta itemprop=keywords content="reinforcement learning,"><meta name=twitter:card content="summary">
+<meta name=twitter:title content="cs285 DRL notes lecture 20: Inverse Reinforcement Learning (IRL)">
+<meta name=twitter:description content><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
+<script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]-->
+</head>
+<body>
+<div id=mobile-navbar class=mobile-navbar>
+<div class=mobile-header-logo>
+<a href=/ class=logo>Blog</a>
+</div>
+<div class=mobile-navbar-icon>
+<span></span>
+<span></span>
+<span></span>
+</div>
+</div>
+<nav id=mobile-menu class="mobile-menu slideout-menu">
+<ul class=mobile-menu-list>
+<a href=/>
+<li class=mobile-menu-item>Home</li>
+</a><a href=/post/>
+<li class=mobile-menu-item>Archives</li>
+</a><a href=/tags/>
+<li class=mobile-menu-item>Tags</li>
+</a><a href=/categories/>
+<li class=mobile-menu-item>Categories</li>
+</a>
+</ul>
+</nav>
+<div class=container id=mobile-panel>
+<header id=header class=header>
+<div class=logo-wrapper>
+<a href=/ class=logo>Blog</a>
+</div>
+<nav class=site-navbar>
+<ul id=menu class=menu>
+<li class=menu-item>
+<a class=menu-item-link href=/>Home</a>
+</li><li class=menu-item>
+<a class=menu-item-link href=/post/>Archives</a>
+</li><li class=menu-item>
+<a class=menu-item-link href=/tags/>Tags</a>
+</li><li class=menu-item>
+<a class=menu-item-link href=/categories/>Categories</a>
+</li>
+</ul>
+</nav>
+</header>
+<main id=main class=main>
+<div class=content-wrapper>
+<div id=content class=content>
+<article class=post>
+<header class=post-header>
+<h1 class=post-title>cs285 DRL notes lecture 20: Inverse Reinforcement Learning (IRL)</h1>
+<div class=post-meta>
+<span class=post-time> 2020-10-20 </span>
+<div class=post-category>
+<a href=/categories/cs285/> cs285 </a>
+</div>
+<span id=busuanzi_container_page_pv class=more-meta> <span id=busuanzi_value_page_pv><img src=/img/spinner.svg alt=spinner.svg></span> times read </span>
+</div>
+</header>
+<div class=post-toc id=post-toc>
+<h2 class=post-toc-title>Contents</h2>
+<div class="post-toc-content always-active">
+<nav id=TableOfContents>
+<ul>
+<li><a href=#feature-matching-irl>Feature matching IRL</a></li>
+<li><a href=#maximum-entropy-irl-maxentr-irl>Maximum Entropy IRL (MaxEntr IRL)</a>
+<ul>
+<li><a href=#learning-the-optimality-variable-rin-small-spaces>Learning the optimality variable $r$in small spaces</a>
+<ul>
+<li><a href=#estimating-the-expectation-second-term-in-eq-refgrad>Estimating the expectation (second term in eq. \ref{grad}):</a></li>
+</ul>
+</li>
+<li><a href=#learning-the-optimality-variable-rin-big-spaces>Learning the optimality variable $$r$in big spaces</a>
+<ul>
+<li><a href=#unknown-dynamics--large-state-action-spaces>Unknown dynamics & large state-action spaces</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+<div class=post-content>
+<p>Until now we had to manually design the reward function.
+IRL automatically learns the reward function from expert demonstrations.
+In this case, instead of hard-coding a reward we would provide demonstrations.</p>
+<p>This is different from imitation learning (IL) since IL does not reason about the outcome of actions, it just tries to mimic the demonstrations.</p>
+<p><strong>Problem</strong>: Learning the reward is an <strong>underspecified</strong> problem, multiple reward functions may explain the same expert behavior.</p>
+<h1 id=feature-matching-irl>Feature matching IRL</h1>
+<p>We can model the reward function with any approximator (linear, GP, ANNs&mldr;), if using <strong>linear</strong>:</p>
+<p>$$
+r_\psi (s, a) = \sum_i \psi_i f_i (s, a) = \psi^T f(s, a)
+$$</p>
+<p>Where $f$are the state-action features. In this case, if $\pi^{r_\psi}$is the optimal policy for $r_\psi$, we want to pick $\psi$such that the expectations of features our own and the expert policies match (thus the name of feature matching):</p>
+<p>$$
+E_{\pi^{r_\psi}} [f(s, a)] = E_{\pi^*} [f(s, a)]
+$$</p>
+<p>We can estimate the RHS by:
+$$E_{\pi^*} [f(s, a)] = \sum_{(s, a)} f(s, a) \cdot prop((s, a))$$
+for all $(s, a)$observed.
+Where $prop((s, a))$is the proportion of times the pair $(s, a)$appears in the dataset.\<br>
+For the LHS, if the **env. dynamics are unknown** we can produce samples and do the same (very costly but works).
+Otherwise, for **known small env. dynamics** we could apply dynamic programming to learn it.</p>
+<p>To find the optimal parameters we can get inspiration from SVM optimization and use hte <strong>maximum margin principle</strong>: Maximize the parameters $\psi$which provide a larger margin $m$between</p>
+<p>$$
+max_{\psi, m} m \space \space \space s.t.
+\psi^T E_{\pi^\star} [f(s, a)] \geq max_{\pi \in \Pi} \psi^T E_{\pi} [f(s, a)] + m
+$$</p>
+<p>Where we can apply the SVM trick, and instead of using a margin of 1, use some distance between policies so that we do not force a margin on very similar policies:</p>
+<p>$$
+max_{\psi} \frac{1}{2} \Vert \psi \Vert^2 \space \space \space s.t.
+\psi^T E_{\pi^*} [f(s, a)] \geq
+max_{\pi \in \Pi} \psi^T E_{\pi} [f(s, a)] +
+D ( \pi, \pi^\star )
+$$</p>
+<p><strong>Problems</strong>:</p>
+<ul>
+<li>Maximizing the margin is a bit arbitrary</li>
+<li>What if the &ldquo;expert&rdquo; demonstrations are suboptimal? We could add slack variables as in a SVM setup.</li>
+<li>It might be ok for this linear case but become very messy for ANN reward approximation.</li>
+</ul>
+<h1 id=maximum-entropy-irl-maxentr-irl>Maximum Entropy IRL (MaxEntr IRL)</h1>
+<p>This framework accounts for the uncertainty in the demonstrators examples.</p>
+<h2 id=learning-the-optimality-variable-rin-small-spaces>Learning the optimality variable $r$in small spaces</h2>
+<p>As we saw in <a href=/lectures/lecture14>Lecture 14: Control as Inference</a>, we can design probabilistic models to describe near-optimal behavior.
+We can <strong>infer</strong> the optimality by seeing how probable a trajectory is.\<br>
+In this section we&rsquo;ll apply same idea to <strong>learn</strong> the reward function instead: $r_\psi (s, a)$, where $\psi$are the parameters which describe $r$.
+Remember that:</p>
+<p>$$
+p(O_t \mid s_t, a_t, \psi) = exp \left( r_\psi (s_t, a_t) \right)
+$$</p>
+<p>$$
+p(\tau \mid O_{1:T}, \psi) \propto p(\tau) exp \left( \sum_t r_\psi (s_t, a_t) \right)
+$$</p>
+<p>Therefore, if we apply <strong>maximum likelihood learning</strong>, we need to maximize:</p>
+<p>$$
+max_\psi \frac{1}{N} \sum_i \log p(\tau_i \mid O_{1:T}, \psi)
+$$</p>
+<p>Where if we ignore the transition probabilities (since they are independent from $\psi$):</p>
+<p>$$
+max_\psi \frac{1}{N} \sum_i r_\psi ( \tau_i ) - \log (Z)
+$$</p>
+<p>Where $Z$is the partition function (makes the computation way harder):</p>
+<p>$$
+Z = \int p(\tau) exp(r_\psi (\tau)) d \tau
+$$</p>
+<p>Which can be interpreted as &ldquo;make the reward on the seen trajectories (expert demonstrations) big w.r.t the other possible trajectories that the expert did not execute&rdquo;.\</p>
+<p>Substituting and taking derivatives:</p>
+<p>$$
+\nabla_\psi \mathcal{L} = \frac{1}{N} \sum_i \nabla_\psi r_\psi (\tau_i) - \frac{1}{Z} \int p(\tau) exp(r_\psi(\tau)) \nabla_\psi r_\psi(\tau) d \tau
+$$</p>
+<p>Which can be nicely re-written as:</p>
+<p>$$
+\nabla_\psi \mathcal{L} =
+E_{\tau \sim \pi^\star (\tau)} \left[ \nabla_\psi r_\psi (\tau_i) \right] -
+E_{\tau \sim p(\tau \mid O_{1:T}, \psi)} \left[ \nabla_\psi r_\psi(\tau) \right]
+$$</p>
+<p>The gradient of the likelihood points into the positive direction for the trajectories that come from the expert.
+And negative direction for the samples of the policy corresponding to the current reward. Cancelling to zero when both distributions are equal.</p>
+<p>Computing the first expectation is easy using the experts samples, so now we&rsquo;ll focus on computing the soft optimal policy under current reward.</p>
+<h3 id=estimating-the-expectation-second-term-in-eq-refgrad>Estimating the expectation (second term in eq. \ref{grad}):</h3>
+<p>Using the linearity of the expectation:</p>
+<p>$$
+\begin{aligned}
+E_{\tau \sim p(\tau \mid O_{1:T}, \psi)} \left[ \nabla_\psi r_\psi(\tau) \right] &=</p>
+\sum_t E_{(s_t, a_t) \sim p(s_t, a_t \mid O_{1:T}, \psi)} \left[ \nabla_\psi r_\psi(s_t, a_t) \right]
+<p>\end{aligned}
+$$</p>
+<p>Where if we break $$p(s_t, a_t \mid O_{1:T}, \psi) = p(a_t \mid O_{1:T}, \psi) p(s_t \mid O_{1:T}, \psi)$$,
+which as we saw in <a href=/lectures/lecture14>Lecture 14: Control as Inference</a>,
+$$p(a_t \mid O_{1:T}, \psi) p(s_t \mid O_{1:T}, \psi) \propto \beta(s_t, a_t) \alpha(s_t)$$where $\beta$ is the backward message, and $\alpha$ the forward message.</p>
+<p>This requires the state-action space to be small enough so you can go through every single state and action (still much better than working with trajectories, which grow exponentially with the number of states-actions). This is instead linear in time-horizon, state, and action space.</p>
+<p>Defining $\mu_t(s_t, a_t) \propto \beta(s_t, a_t) \alpha(s_t)$(normalized) we get:</p>
+<p>$$
+E_{\tau \sim p(\tau \mid O_{1:T}, \psi)} \left[ \nabla_\psi r_\psi(\tau) \right] =
+\sum_t \int \int
+\mu_t(s_t, a_t) \nabla_\psi r_\psi(\tau)
+ds_t da_t =
+\sum_t \vec{\mu_t}^T \cdot \vec{r}_\psi
+$$</p>
+<p>$\vec{\mu_t}$is the state-action visitation probability for each $(s_t, a_t)$.</p>
+<p>With this, we can finally define the <a href=https://www.aaai.org/Papers/AAAI/2008/AAAI08-227.pdf>MaxEnt IRL algorithm</a> ():</p>
+<p><img src=/post/cs285_lecture20/maxentr_irl.png alt></p>
+<p>This works well for small (tabular) state-action spaces with known transitions.</p>
+<p>This framework is called max-entropy because it can be shown in the case where: $$r_\psi (s_t, a_t) = \psi^T f(s_t, a_t)$$, it optimizes:
+$$
+max_\psi \mathcal{H} \left( \pi^{r_\psi} \right)
+\space \space s.t.
+E_{\pi^{r_\psi}}[f] = E_{\pi^\star} [f]
+$$.
+Which is like saying &ldquo;get the most random policy which matches the expert&rdquo;. It is good because it doesn&rsquo;t do any more assumptions on the behavior other than this one.</p>
+<h2 id=learning-the-optimality-variable-rin-big-spaces>Learning the optimality variable $$r$in big spaces</h2>
+<p>So far MaxEnt IRL required:</p>
+<ul>
+<li>Solving for soft optimal policy in the inner loop</li>
+<li>Enumerating all state-action tuples (to get visitation frequency and gradient).</li>
+</ul>
+<p>For practical problems we need:</p>
+<ul>
+<li>Large and continuous spaces</li>
+<li>States obtained via sampling only</li>
+<li>Unknown dynamics</li>
+</ul>
+<h3 id=unknown-dynamics--large-state-action-spaces>Unknown dynamics & large state-action spaces</h3>
+<p>Under the assumption we do not know the dynamics but we can sample from the env., we can use any maximum-entropy RL algorithm seen in previous lectures to learn $$p(a_t \mid s_t, O_{1:T}, \psi)$$.</p>
+<p>Which could be done as :</p>
+<p>$$
+\nabla_\psi \mathcal{L} \simeq
+\frac{1}{N} \sum_i \nabla_\psi r_\psi (\tau_i) -
+\frac{1}{M} \sum_j \nabla_\psi r_\psi (\tau_j)
+$$</p>
+<p>Where the first term are expert demonstrations and the second one policy samples.</p>
+<p><strong>Problem</strong>: We need to make the learning of $p(a_t \mid s_t, O_{1:T}, \psi)$converge for every step of the $\psi$ optimization $\Rightarrow$Very slow!</p>
+<p><strong>Solution</strong>: Instead of re-learning a policy after each step of $\psi$ optimization, we can have a single one and do single steps to optimize it. For instance, we can use <strong>importance sampling</strong>:</p>
+<p>$$
+\nabla_\psi \mathcal{L} \simeq
+\frac{1}{N} \sum_i \nabla_\psi r_\psi (\tau_i) -
+\frac{1}{\sum_j w_j} \sum_j w_j \nabla_\psi r_\psi (\tau_j)
+$$</p>
+<p>Where: $$w_j = \frac{p(\tau) exp ( r_\psi (\tau_j) ) }{\pi(\tau_j)}$$, which if we expand using trajectory probabilities a lot gets cancelled out:
+$$
+w_j = \frac{exp \left( \sum_t r_\psi (s_t, a_t)\right)}{\prod_t \pi (a_t \mid s_t)}
+$$.</p>
+<p>This lazy update of the policy samples w.r.t $r_\psi$ brings us closer to the target distribution!</p>
+<p><strong>Guided cost learning</strong> algorithm exemplifies how to use this approach:</p>
+<p><img src=/post/cs285_lecture20/gcl.png alt></p>
+<p>Reward and policy are sort of &ldquo;<strong>competing</strong>&rdquo; against each other: Policy demos are made less likely by the reward optimization, and then the policy optimization adapts to the new reward to create better policies in an iterative manner. Once everything converges the policy is indistinct from the demonstration policy. This idea is very similar to the one of <a href=https://arxiv.org/abs/1406.2661>Generative Adversarial Networks (GANs)</a>. Where the generator can be seen as our policy and the discriminator as our reward function.</p>
+<p>More on this connection between GANs and IRL in this <a href=https://arxiv.org/abs/1611.03852>paper</a>.</p>
+<p>Another GAN IRL algorithm in this <a href=https://arxiv.org/abs/1710.11248>paper</a>.</p>
+<p>Yet another which even takes the similarities in a more direct way: <a href=https://arxiv.org/abs/1606.03476>paper</a>.</p>
+</div>
+<div class=post-copyright>
+<p class=copyright-item>
+<span class=item-title>Author</span>
+<span class=item-content>Ruchen Xu</span>
+</p>
+<p class=copyright-item>
+<span class=item-title>LastMod</span>
+<span class=item-content>
+2020-10-30
+</span>
+</p>
+</div>
+<footer class=post-footer>
+<div class=post-tags>
+<a href=/tags/reinforcement-learning/>reinforcement learning</a>
+</div>
+<nav class=post-nav>
+<a class=prev href=/post/cs285_lecture21/lecture21/>
+<i class="iconfont icon-left"></i>
+<span class="prev-text nav-default">cs285 DRL notes lecture 21: Transfer and multi-task RL</span>
+<span class="prev-text nav-mobile">Prev</span>
+</a>
+<a class=next href=/post/cs285_lecture12/lecture12/>
+<span class="next-text nav-default">cs285 DRL notes lecture 12: Model-based Policy Learning</span>
+<span class="next-text nav-mobile">Next</span>
+<i class="iconfont icon-right"></i>
+</a>
+</nav>
+</footer>
+</article>
+</div>
+</div>
+</main>
+<footer id=footer class=footer>
+<div class=social-links>
+<a href=mailto:ruchenxucs@gmail.com class="iconfont icon-email" title=email></a>
+<a href=https://github.com/FireLandDS class="iconfont icon-github" title=github></a>
+<a href=http://localhost:1313/index.xml type=application/rss+xml class="iconfont icon-rss" title=rss></a>
+</div>
+<div class=copyright>
+<span class=power-by>
+Powered by <a class=hexo-link href=https://gohugo.io>Hugo</a>
+</span>
+<span class=division>|</span>
+<span class=theme-info>
+Theme -
+<a class=theme-link href=https://github.com/olOwOlo/hugo-theme-even>Even</a>
+</span>
+<div class=busuanzi-footer>
+<span id=busuanzi_container_site_pv> site pv: <span id=busuanzi_value_site_pv><img src=/img/spinner.svg alt=spinner.svg></span> </span>
+<span class=division>|</span>
+<span id=busuanzi_container_site_uv> site uv: <span id=busuanzi_value_site_uv><img src=/img/spinner.svg alt=spinner.svg></span> </span>
+</div>
+<span class=copyright-year>
+&copy;
+2017 -
+2021<span class=heart><i class="iconfont icon-heart"></i></span><span>Ruchen Xu</span>
+</span>
+</div>
+</footer>
+<div class=back-to-top id=back-to-top>
+<i class="iconfont icon-up"></i>
+</div>
+</div>
+<script src=https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin=anonymous></script>
+<script type=text/javascript src=/js/main.min.c99b103c33d1539acf3025e1913697534542c4a5aa5af0ccc20475ed2863603b.js></script>
+<script type=text/javascript>window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']],tags:'ams'}}</script>
+<script async src=https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin=anonymous></script>
+</body>
+</html>

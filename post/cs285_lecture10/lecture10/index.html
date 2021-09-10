@@ -1,0 +1,326 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
+<title>cs285 DRL notes lecture 10: Model-based Planning - RuChen Xu's Blog</title>
+<meta name=renderer content="webkit">
+<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta http-equiv=cache-control content="no-transform">
+<meta http-equiv=cache-control content="no-siteapp">
+<meta name=theme-color content="#f8f5ec">
+<meta name=msapplication-navbutton-color content="#f8f5ec">
+<meta name=apple-mobile-web-app-capable content="yes">
+<meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec">
+<meta name=author content="Ruchen Xu"><meta name=description content><meta name=keywords content="Hugo,theme,even">
+<meta name=generator content="Hugo 0.88.1 with theme even">
+<link rel=canonical href=http://localhost:1313/post/cs285_lecture10/lecture10/>
+<link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png>
+<link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
+<link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png>
+<link rel=manifest href=/manifest.json>
+<link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5>
+<script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<link href=/sass/main.min.2e81bbed97b8b282c1aeb57488cc71c8d8c8ec559f3931531bd396bf31e0d4dd.css rel=stylesheet>
+<link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin=anonymous>
+<meta property="og:title" content="cs285 DRL notes lecture 10: Model-based Planning">
+<meta property="og:description" content>
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://localhost:1313/post/cs285_lecture10/lecture10/"><meta property="article:section" content="post">
+<meta property="article:published_time" content="2020-09-29T09:34:56+08:00">
+<meta property="article:modified_time" content="2020-09-30T09:34:56+08:00">
+<meta itemprop=name content="cs285 DRL notes lecture 10: Model-based Planning">
+<meta itemprop=description content><meta itemprop=datePublished content="2020-09-29T09:34:56+08:00">
+<meta itemprop=dateModified content="2020-09-30T09:34:56+08:00">
+<meta itemprop=wordCount content="1632">
+<meta itemprop=keywords content="reinforcement learning,"><meta name=twitter:card content="summary">
+<meta name=twitter:title content="cs285 DRL notes lecture 10: Model-based Planning">
+<meta name=twitter:description content><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
+<script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]-->
+</head>
+<body>
+<div id=mobile-navbar class=mobile-navbar>
+<div class=mobile-header-logo>
+<a href=/ class=logo>Blog</a>
+</div>
+<div class=mobile-navbar-icon>
+<span></span>
+<span></span>
+<span></span>
+</div>
+</div>
+<nav id=mobile-menu class="mobile-menu slideout-menu">
+<ul class=mobile-menu-list>
+<a href=/>
+<li class=mobile-menu-item>Home</li>
+</a><a href=/post/>
+<li class=mobile-menu-item>Archives</li>
+</a><a href=/tags/>
+<li class=mobile-menu-item>Tags</li>
+</a><a href=/categories/>
+<li class=mobile-menu-item>Categories</li>
+</a>
+</ul>
+</nav>
+<div class=container id=mobile-panel>
+<header id=header class=header>
+<div class=logo-wrapper>
+<a href=/ class=logo>Blog</a>
+</div>
+<nav class=site-navbar>
+<ul id=menu class=menu>
+<li class=menu-item>
+<a class=menu-item-link href=/>Home</a>
+</li><li class=menu-item>
+<a class=menu-item-link href=/post/>Archives</a>
+</li><li class=menu-item>
+<a class=menu-item-link href=/tags/>Tags</a>
+</li><li class=menu-item>
+<a class=menu-item-link href=/categories/>Categories</a>
+</li>
+</ul>
+</nav>
+</header>
+<main id=main class=main>
+<div class=content-wrapper>
+<div id=content class=content>
+<article class=post>
+<header class=post-header>
+<h1 class=post-title>cs285 DRL notes lecture 10: Model-based Planning</h1>
+<div class=post-meta>
+<span class=post-time> 2020-09-29 </span>
+<div class=post-category>
+<a href=/categories/cs285/> cs285 </a>
+</div>
+<span id=busuanzi_container_page_pv class=more-meta> <span id=busuanzi_value_page_pv><img src=/img/spinner.svg alt=spinner.svg></span> times read </span>
+</div>
+</header>
+<div class=post-toc id=post-toc>
+<h2 class=post-toc-title>Contents</h2>
+<div class="post-toc-content always-active">
+<nav id=TableOfContents>
+<ul>
+<li>
+<ul>
+<li><a href=#open-loop-vs-closed-loop>open-loop vs closed-loop</a>
+<ul>
+<li><a href=#deterministic-environments>Deterministic environments:</a></li>
+<li><a href=#stochastic-environment-open-loop>Stochastic environment open-loop:</a></li>
+<li><a href=#stochastic-environment-closed-loop>Stochastic environment closed-loop:</a></li>
+</ul>
+</li>
+<li><a href=#open-loop-planning>Open-Loop planning</a>
+<ul>
+<li><a href=#stochastic-optimization-methods>Stochastic optimization methods</a></li>
+</ul>
+</li>
+<li><a href=#monte-carlo-tree-search-mcts>Monte Carlo Tree Search (MCTS)</a></li>
+<li><a href=#trajectory-optimization>Trajectory optimization</a>
+<ul>
+<li><a href=#collocation-method>Collocation method</a></li>
+<li><a href=#shooting-method>Shooting method</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+<div class=post-content>
+<p>model-free强化学习忽略了状态转移概率$p(s_{t+1}|s_t,a_t)$，并且不会学习它，因为实际情况环境的模型往往无法获得或者学习。但也有一些环境是例外：</p>
+<p>模型已知</p>
+<ol>
+<li>游戏(e.g., Atari games, chess, Go)</li>
+<li>模型简单系统</li>
+<li>仿真环境(e.g., 仿真机器人)</li>
+</ol>
+<p>模型可以学习</p>
+<ol>
+<li>系统识别（学习已知系统模型的参数）</li>
+<li>利用观察得到的transition数据来学习特定的模型</li>
+</ol>
+<h2 id=open-loop-vs-closed-loop>open-loop vs closed-loop</h2>
+<p><img src=/post/cs285_lecture10/openloop_closed_loop.jpg alt></p>
+<ul>
+<li>open-loop：只在t=1时，给与智能体初始状态$s_1$，之后智能体根据模型规划处一系列动作。</li>
+<li>closed-loop：智能体会与环境不断交互，一般意义上的RL。</li>
+</ul>
+<h3 id=deterministic-environments>Deterministic environments:</h3>
+<p>给定初始状态$s_1$，然后就可以根据模型执行一系列动作${a_1, &mldr;, a_T}$，我们希望根据这些动作得到的轨迹奖励最大：</p>
+<p>$$
+a_1, &mldr;, a_T = \arg \max_{a_1, &mldr;, a_T} \sum_t r(s_t, a_t)
+\space \space \space \space s.t. \space
+s_{t+1} = \mathcal{T} (s_t, a_t)
+$$</p>
+<h3 id=stochastic-environment-open-loop>Stochastic environment open-loop:</h3>
+<p>对于随机环境，我们可以得到轨迹概率：</p>
+<p>$$
+p_\theta(s_1, &mldr;, s_T \mid a_1, &mldr;, a_T) =
+p(s_1) \prod_t p(s_{t+1} \mid s_t, a_t)
+$$</p>
+<p>目标是最大化期望轨迹奖励：</p>
+<p>$$
+a_1, &mldr;, a_T = \arg \max_{a_1, &mldr;, a_T}
+E \left[ \sum_t r(s_t, a_t) \mid a_1, &mldr;, a_T \right]
+$$</p>
+<h3 id=stochastic-environment-closed-loop>Stochastic environment closed-loop:</h3>
+<p>在closed-loop中，我们需要一个策略$\pi$来根据环境的反馈来做决策：</p>
+<p>$$
+\pi = \arg \max_{\pi} E_{\tau \sim p(\tau)} \left[ \sum_t r(s_t, a_t) \right]
+$$</p>
+<h2 id=open-loop-planning>Open-Loop planning</h2>
+<p>${a_1, &mldr;, a_T}$写作$A$，回报为$J$，我们优化的目标是：</p>
+<p>$$
+A = \arg \max_A J(A)
+$$</p>
+<h3 id=stochastic-optimization-methods>Stochastic optimization methods</h3>
+<p>Black-box优化方法。</p>
+<h4 id=guess--check-random-search>Guess & Check (Random Search)</h4>
+<p><strong>Algorithm:</strong></p>
+<ol>
+<li>从一个分布$p(A)$ (e.g. uniform)采样得到$A_1,&mldr;, A_N$</li>
+<li>依据$\arg \max_i J(A_i)$选择$A_i$</li>
+</ol>
+<p>样本越多，结果越准确。</p>
+<h4 id=cross-entropy-method-cem>Cross-Entropy Method (CEM)</h4>
+<p>CEM方法采用回报高的轨迹进行训练，提高对应动作发生概率，在不断接近最优策略的同时，
+样本的质量也随之提高。</p>
+<p><strong>Algorithm:</strong></p>
+<ol>
+<li>从一个分布$p(A)$（Gaussian distribution）采样得到$A_1,&mldr;, A_N$</li>
+<li>选择$M$个奖励最大的$A^1,&mldr;,A^M$ <em>elites samples</em></li>
+<li>使用$A^1,&mldr;,A^M$来近似$p(A)$</li>
+</ol>
+<p>特点：</p>
+<ul>
+<li>易于实现和并行化</li>
+<li>对于低维系统（小于64）和短的time-horizon任务表现较好</li>
+</ul>
+<p><strong>Improvements:</strong> CMA-ES, implements momentum into CEM.</p>
+<h2 id=monte-carlo-tree-search-mcts>Monte Carlo Tree Search (MCTS)</h2>
+<p>如果把MDP看做一棵树（节点代表状态，边代表动作），那么我们可以将discrete planning问题转化为搜索问题，即遍历这棵树找到每个状态的价值，进而得到最优的策略。</p>
+<p><img src=/post/cs285_lecture10/mcts.png alt></p>
+<p>然而，随着动作空间增大，节点的数量以指数级递增，完全遍历无法实现。
+因此，MCTS提出有选择地遍历，即对树进行剪枝。MTCS就是基于对<strong>叶节点的好坏评估以及探索次数的平衡</strong>做的剪枝。</p>
+<p><strong>MCTS Algorithm:</strong></p>
+<p><img src=/post/cs285_lecture10/mcts_algo.png alt></p>
+<p>TreePolicy：来到一个状态$s_t$后如何选择哪一个分支做拓展。
+DefaultPolicy：探索时的行为策略。</p>
+<p>一般TreePolicy: <strong>UCT</strong> (Upper Confidence bounds applied to Trees):</p>
+<ul>
+<li>如果$s_t$没有完全探索，选择一个新动作$a_t$。</li>
+<li>否则，选择$Score(s_t)$最大的子节点。</li>
+</ul>
+<p>$Score(s_t)$计算如下：
+$$
+Score(s_t) = \frac{Q(s_t)}{N(s_t)} + 2C\sqrt{\frac{2\log N(s_{t-1})}{N(s_{t-1})}}
+$$</p>
+<p>其中$Q(s_t)$代表状态的"Quality"，$N(s_t)$代表被访问过的次数，$C$表示我们对于较少访问到的节点的偏重。</p>
+<p>更多资料：</p>
+<ul>
+<li>MCTS-survey <a href=http://www.incompleteideas.net/609%20dropbox/other%20readings%20and%20resources/MCTS-survey.pdf>here</a></li>
+<li>在DAgger中替代手工标注<a href=https://papers.nips.cc/paper/5421-deep-learning-for-real-time-atari-game-play-using-offline-monte-carlo-tree-search-planning>paper</a></li>
+</ul>
+<h2 id=trajectory-optimization>Trajectory optimization</h2>
+<p>**IDEA:**将问题表示为控制问题($x_t$代表状态，$u_t$代表动作，$c$代表cost)，然后我们来求解具有约束的优化问题：</p>
+<p>$$
+min_{u_1,&mldr;u_T} \sum_t c(x_t, u_t) \space \space \space \space s.t. \space x_t=f(x_{t_1}, u_{t-1})
+$$</p>
+<h3 id=collocation-method>Collocation method</h3>
+<p>同时优化actions和states，具有约束。</p>
+<p>$$
+min_{u_1,&mldr;u_T, x_1,&mldr;,x_T} \sum_t c(x_t, u_t) \space \space \space \space s.t. \space x_t=f(x_{t_1}, u_{t-1})
+$$</p>
+<h3 id=shooting-method>Shooting method</h3>
+<p><strong>IDEA:</strong> 通过替换$f$将有约束问题转化为无约束问题，只针对action进行优化${u_1,&mldr;,u_T}$：</p>
+<p>$$
+min_{u_1,&mldr;u_T} \sum_t
+c(x_1, u_1) + c(f(x_1, u_1), u_2) + &mldr; + c(f(f(&mldr;)), u_T)
+$$</p>
+<h4 id=if-open-loop-deterministic-env-linear-f-quadratic-c>If open-loop, deterministic env, linear $f$, quadratic $c$:</h4>
+<p><img src=/post/cs285_lecture10/lq.png alt></p>
+<p><strong>Linear Quadratic Regulator (LQR):</strong> 建立二阶导数矩阵(Hessian)代价太大，LQR选择逐步解决这个问题：</p>
+<p><img src=/post/cs285_lecture10/linear_lqr.png alt></p>
+<h4 id=if-open-loop-stochastic-env-linear-f-quadratic-c>If open-loop, stochastic env, linear $f$, quadratic $c$:</h4>
+<p>选择高斯分布作为dynamics：$x_{t+1} \sim \mathcal{N} \left( F_t \begin{vmatrix}
+x_t,\<br>
+u_t
+\end{vmatrix} + f_t, \Sigma_t\right)$, the exact same algorithm will yield the optimal result.</p>
+<p>动作为$K_t s_t + k_t$</p>
+<h4 id=non-linear-case>Non-linear case:</h4>
+<p>使用<strong>iterative LQR (iLQR)<strong>或者</strong>Differential Dynamic Programming (DDP)</strong>。</p>
+<p><img src=/post/cs285_lecture10/ilqr.png alt></p>
+<p>等价于Newton法，具体见<a href=https://homes.cs.washington.edu/~todorov/papers/TassaIROS12.pdf>paper</a>.</p>
+</div>
+<div class=post-copyright>
+<p class=copyright-item>
+<span class=item-title>Author</span>
+<span class=item-content>Ruchen Xu</span>
+</p>
+<p class=copyright-item>
+<span class=item-title>LastMod</span>
+<span class=item-content>
+2020-09-30
+</span>
+</p>
+</div>
+<footer class=post-footer>
+<div class=post-tags>
+<a href=/tags/reinforcement-learning/>reinforcement learning</a>
+</div>
+<nav class=post-nav>
+<a class=prev href=/post/cs285_lecture11/lecture11/>
+<i class="iconfont icon-left"></i>
+<span class="prev-text nav-default">cs285 DRL notes lecture 11: Model-based RL</span>
+<span class="prev-text nav-mobile">Prev</span>
+</a>
+<a class=next href=/post/cs285_lecture9/lecture9/>
+<span class="next-text nav-default">cs285 DRL notes lecture 9: Advanced Policy Gradients</span>
+<span class="next-text nav-mobile">Next</span>
+<i class="iconfont icon-right"></i>
+</a>
+</nav>
+</footer>
+</article>
+</div>
+</div>
+</main>
+<footer id=footer class=footer>
+<div class=social-links>
+<a href=mailto:ruchenxucs@gmail.com class="iconfont icon-email" title=email></a>
+<a href=https://github.com/FireLandDS class="iconfont icon-github" title=github></a>
+<a href=http://localhost:1313/index.xml type=application/rss+xml class="iconfont icon-rss" title=rss></a>
+</div>
+<div class=copyright>
+<span class=power-by>
+Powered by <a class=hexo-link href=https://gohugo.io>Hugo</a>
+</span>
+<span class=division>|</span>
+<span class=theme-info>
+Theme -
+<a class=theme-link href=https://github.com/olOwOlo/hugo-theme-even>Even</a>
+</span>
+<div class=busuanzi-footer>
+<span id=busuanzi_container_site_pv> site pv: <span id=busuanzi_value_site_pv><img src=/img/spinner.svg alt=spinner.svg></span> </span>
+<span class=division>|</span>
+<span id=busuanzi_container_site_uv> site uv: <span id=busuanzi_value_site_uv><img src=/img/spinner.svg alt=spinner.svg></span> </span>
+</div>
+<span class=copyright-year>
+&copy;
+2017 -
+2021<span class=heart><i class="iconfont icon-heart"></i></span><span>Ruchen Xu</span>
+</span>
+</div>
+</footer>
+<div class=back-to-top id=back-to-top>
+<i class="iconfont icon-up"></i>
+</div>
+</div>
+<script src=https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin=anonymous></script>
+<script type=text/javascript src=/js/main.min.c99b103c33d1539acf3025e1913697534542c4a5aa5af0ccc20475ed2863603b.js></script>
+<script type=text/javascript>window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']],tags:'ams'}}</script>
+<script async src=https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin=anonymous></script>
+</body>
+</html>

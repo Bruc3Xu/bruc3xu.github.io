@@ -1,0 +1,273 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
+<title>Distributed RL - RuChen Xu's Blog</title>
+<meta name=renderer content="webkit">
+<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta http-equiv=cache-control content="no-transform">
+<meta http-equiv=cache-control content="no-siteapp">
+<meta name=theme-color content="#f8f5ec">
+<meta name=msapplication-navbutton-color content="#f8f5ec">
+<meta name=apple-mobile-web-app-capable content="yes">
+<meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec">
+<meta name=author content="Ruchen Xu"><meta name=description content="The main bottleneck of creating distributed RL algorithms is that we need to create our own datasets with improved policies. Unlike SL where the datasets are given. This means we need to create algorithmic changes alongside system changes when designing new parallel architectures.
+History of large scale distributed RL 2013. Original DQN DQN parallelisation was not DeepMinds main focus when first presented in 2013. Nevertheless, understanding its implementation helps to get an idea of how the others work."><meta name=keywords content="Hugo,theme,even">
+<meta name=generator content="Hugo 0.88.1 with theme even">
+<link rel=canonical href=http://localhost:1313/post/distributed_rl/distributed_rl/>
+<link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png>
+<link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
+<link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png>
+<link rel=manifest href=/manifest.json>
+<link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5>
+<script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<link href=/sass/main.min.2e81bbed97b8b282c1aeb57488cc71c8d8c8ec559f3931531bd396bf31e0d4dd.css rel=stylesheet>
+<link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin=anonymous>
+<meta property="og:title" content="Distributed RL">
+<meta property="og:description" content="The main bottleneck of creating distributed RL algorithms is that we need to create our own datasets with improved policies. Unlike SL where the datasets are given. This means we need to create algorithmic changes alongside system changes when designing new parallel architectures.
+History of large scale distributed RL 2013. Original DQN DQN parallelisation was not DeepMinds main focus when first presented in 2013. Nevertheless, understanding its implementation helps to get an idea of how the others work.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://localhost:1313/post/distributed_rl/distributed_rl/"><meta property="article:section" content="post">
+<meta itemprop=name content="Distributed RL">
+<meta itemprop=description content="The main bottleneck of creating distributed RL algorithms is that we need to create our own datasets with improved policies. Unlike SL where the datasets are given. This means we need to create algorithmic changes alongside system changes when designing new parallel architectures.
+History of large scale distributed RL 2013. Original DQN DQN parallelisation was not DeepMinds main focus when first presented in 2013. Nevertheless, understanding its implementation helps to get an idea of how the others work.">
+<meta itemprop=wordCount content="1093">
+<meta itemprop=keywords content><meta name=twitter:card content="summary">
+<meta name=twitter:title content="Distributed RL">
+<meta name=twitter:description content="The main bottleneck of creating distributed RL algorithms is that we need to create our own datasets with improved policies. Unlike SL where the datasets are given. This means we need to create algorithmic changes alongside system changes when designing new parallel architectures.
+History of large scale distributed RL 2013. Original DQN DQN parallelisation was not DeepMinds main focus when first presented in 2013. Nevertheless, understanding its implementation helps to get an idea of how the others work."><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
+<script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]-->
+</head>
+<body>
+<div id=mobile-navbar class=mobile-navbar>
+<div class=mobile-header-logo>
+<a href=/ class=logo>Blog</a>
+</div>
+<div class=mobile-navbar-icon>
+<span></span>
+<span></span>
+<span></span>
+</div>
+</div>
+<nav id=mobile-menu class="mobile-menu slideout-menu">
+<ul class=mobile-menu-list>
+<a href=/>
+<li class=mobile-menu-item>Home</li>
+</a><a href=/post/>
+<li class=mobile-menu-item>Archives</li>
+</a><a href=/tags/>
+<li class=mobile-menu-item>Tags</li>
+</a><a href=/categories/>
+<li class=mobile-menu-item>Categories</li>
+</a>
+</ul>
+</nav>
+<div class=container id=mobile-panel>
+<header id=header class=header>
+<div class=logo-wrapper>
+<a href=/ class=logo>Blog</a>
+</div>
+<nav class=site-navbar>
+<ul id=menu class=menu>
+<li class=menu-item>
+<a class=menu-item-link href=/>Home</a>
+</li><li class=menu-item>
+<a class=menu-item-link href=/post/>Archives</a>
+</li><li class=menu-item>
+<a class=menu-item-link href=/tags/>Tags</a>
+</li><li class=menu-item>
+<a class=menu-item-link href=/categories/>Categories</a>
+</li>
+</ul>
+</nav>
+</header>
+<main id=main class=main>
+<div class=content-wrapper>
+<div id=content class=content>
+<article class=post>
+<header class=post-header>
+<h1 class=post-title>Distributed RL</h1>
+<div class=post-meta>
+<span class=post-time> 0001-01-01 </span>
+<span id=busuanzi_container_page_pv class=more-meta> <span id=busuanzi_value_page_pv><img src=/img/spinner.svg alt=spinner.svg></span> times read </span>
+</div>
+</header>
+<div class=post-toc id=post-toc>
+<h2 class=post-toc-title>Contents</h2>
+<div class="post-toc-content always-active">
+<nav id=TableOfContents>
+<ul>
+<li><a href=#history-of-large-scale-distributed-rl>History of large scale distributed RL</a>
+<ul>
+<li><a href=#2013-original-dqnhttpsarxivorgabs13125602>2013. Original <a href=https://arxiv.org/abs/1312.5602>DQN</a></a></li>
+<li><a href=#2015-general-reinforcement-learning-architecture-gorilahttpsarxivorgabs150704296>2015. General Reinforcement Learning Architecture (<a href=https://arxiv.org/abs/1507.04296>GORILA</a>)</a></li>
+<li><a href=#2016-asynchronous-advantage-actor-critic-a3chttpsarxivorgpdf160201783pdf>2016. Asynchronous Advantage Actor Critic (<a href=https://arxiv.org/pdf/1602.01783.pdf>A3C</a>)</a></li>
+<li><a href=#2017-importance-weighted-actor-learner-architectures-impalahttpsarxivorgabs180201561>2017. Importance Weighted Actor-Learner Architectures (<a href=https://arxiv.org/abs/1802.01561>IMPALA</a>)</a></li>
+<li><a href=#2018-ape-xhttpsarxivorgabs180300933--r2d2httpsopenreviewnetpdfidr1lytjaqyx>2018. <a href=https://arxiv.org/abs/1803.00933>Ape-X</a> / <a href="https://openreview.net/pdf?id=r1lyTjAqYX">R2D2</a></a></li>
+<li><a href=#2019-using-expert-demonstrations-r2d3httpsarxivorgabs190901387>2019. Using expert demonstrations <a href=https://arxiv.org/abs/1909.01387>R2D3</a></a></li>
+<li><a href=#others>Others:</a>
+<ul>
+<li><a href=#qt-opthttpsarxivorgpdf180610293pdf><a href=https://arxiv.org/pdf/1806.10293.pdf>QT-Opt</a></a></li>
+<li><a href=#evolution-strategieshttpsarxivorgabs170303864><a href=https://arxiv.org/abs/1703.03864>Evolution Strategies</a></a></li>
+<li><a href=#population-based-traininghttpsdeepmindcomblogarticlepopulation-based-training-neural-networks><a href=https://deepmind.com/blog/article/population-based-training-neural-networks>Population-based Training</a></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+<div class=post-content>
+<p>The main bottleneck of creating distributed RL algorithms is that we need to create our own datasets with improved policies. Unlike SL where the datasets are given.
+This means we need to create algorithmic changes alongside system changes when designing new parallel architectures.</p>
+<h1 id=history-of-large-scale-distributed-rl>History of large scale distributed RL</h1>
+<h2 id=2013-original-dqnhttpsarxivorgabs13125602>2013. Original <a href=https://arxiv.org/abs/1312.5602>DQN</a></h2>
+<p>DQN parallelisation was not DeepMinds main focus when first presented in 2013.
+Nevertheless, understanding its implementation helps to get an idea of how the others work.
+If you need a reminder, take a look at <a href=/lectures/lecture8>lecture 8</a>.</p>
+<p>{% include figure.html url="/_rl/lecture_17/dqn.png" description=&ldquo;DQN algorithm basic structure."%}</p>
+<h2 id=2015-general-reinforcement-learning-architecture-gorilahttpsarxivorgabs150704296>2015. General Reinforcement Learning Architecture (<a href=https://arxiv.org/abs/1507.04296>GORILA</a>)</h2>
+<p>This paper has a lot of margin of improvement but was the first distributed approach taken.
+They split the algorithm into 4 components to be replicated and run on multiple nodes:</p>
+<ul>
+<li>The <strong>replay buffer/memory</strong>: Stores $(s, a, r, s^\prime)$ samples from the environment.</li>
+<li>The <strong>learner</strong>: Pulls data from the replay memory and updates the Q networks.</li>
+<li>The <strong>actor</strong>: Gets a copy of the policy network and provides $(s, a, r, s^\prime)$ samples to the memory buffer.</li>
+<li>The <strong>parameter server</strong>: Holds a copy of the Q network and allows the learner to update the network at very high throughput.</li>
+</ul>
+<p>{% include figure.html url="/_rl/lecture_17/gorila.png&rdquo; description=&ldquo;GORILA distributed architecture structure."%}</p>
+<p><strong>Bottleneck</strong>:
+The way they implemented it, they only sample from the actors one step and then update the networks. This makes the data generation pace to be too slow: They update the network too frequently and sample from the environment too infrequently.</p>
+<p>Still, this approach outperformed most Atari games benchmarks set by the original DQN paper.</p>
+<h2 id=2016-asynchronous-advantage-actor-critic-a3chttpsarxivorgpdf160201783pdf>2016. Asynchronous Advantage Actor Critic (<a href=https://arxiv.org/pdf/1602.01783.pdf>A3C</a>)</h2>
+<p>While not significantly different from the previous one, this was one of the most influential works on efficient RL.
+The main difference is that it runs on a <strong>single machine</strong>, which allows us to mitigate the network communication overhead.
+Thus, deprecate the replay buffer and use an on-policy training and compute gradient with the steps each worker generates and not from random times.</p>
+<p>{% include figure.html url="/_rl/lecture_17/a3c.png&rdquo; description=&ldquo;A3C structure."%}</p>
+<p>All workers has access to a global set of weights stored in shared memory (master process).
+For each iteration they update their own weights from the master ones.
+Subsequently, we can make each worker collect some samples (e.g. 5) from their copy of the environment and compute the network gradient loss from those.
+Then, we can take this gradient and send it to the global network to update its weights.</p>
+<p>Additionally, this allows us to set different exploration policies to each worker and have a faster learning process. Compared to GORILA, we can increase the rate of update by:</p>
+<ul>
+<li>Reducing network communication by having everything into one machine.</li>
+<li>Compute more experiences before the network update.</li>
+</ul>
+<p>This architecture also easied the parallelisation of policy gradient techniques and not only Q-learning which was dominating at that point.
+Performance-wise it achieves 3 times better results than DQN in less time and machines (see <a href=https://arxiv.org/pdf/1602.01783.pdf>paper</a> for full analysis).</p>
+<p><strong>Problem</strong>: It does not scale well on the number of actors due to <strong>Policy Lag</strong>.
+If you have say 400 actors sequentially updating the global NN, the samples from the last one are going to be so out of date that its parameter update does not make sense any more.</p>
+<h2 id=2017-importance-weighted-actor-learner-architectures-impalahttpsarxivorgabs180201561>2017. Importance Weighted Actor-Learner Architectures (<a href=https://arxiv.org/abs/1802.01561>IMPALA</a>)</h2>
+<p>IMPALA marges the learnings acquired from distributed Deep Learning and RL.
+In this case we also lack the data buffer and have the separation of actors and learners:</p>
+<ul>
+<li><strong>Learners</strong>: Implement a parallelised gradient descent mechanism to efficiently update the network weights across multiple machines.</li>
+<li><strong>Actors</strong>: Can act independently from the learning process and generate samples faster.</li>
+</ul>
+<p>In previous approach you first need to generate some data and then wait until the network gets updated, while now this gets decoupled.</p>
+<p><strong>Policy Lag Problem:</strong> Decoupling acting and learning can make the actors follow policies which are quite older than the latest computed by the learners.
+This means they produce samples from a different distribution (policy) than the one that will get updated.</p>
+<p><strong>Solution:</strong> V-trace: weight the network updates inversely proportional to the policy distance which generated them. In the <a href=https://arxiv.org/abs/1802.01561>paper</a>, they show how this mitigates the issue.</p>
+<p>{% include figure.html url="/_rl/lecture_17/impala.png&rdquo; description=&ldquo;IMPALA structure."%}</p>
+<h2 id=2018-ape-xhttpsarxivorgabs180300933--r2d2httpsopenreviewnetpdfidr1lytjaqyx>2018. <a href=https://arxiv.org/abs/1803.00933>Ape-X</a> / <a href="https://openreview.net/pdf?id=r1lyTjAqYX">R2D2</a></h2>
+<p>This method takes a step back into GORILA and uses again the replay buffer mechanism.
+Similarly, the actors are separated from the learning process and generate data asynchronously feeding the data points into the replay buffer.
+This approach is very scalable, you can have multiple actors sampling independently feeding the buffer.</p>
+<p>The main novelty of this work is the sorting of the data in the replay buffer using <strong>distributed prioritization</strong>.
+This technique works by setting a priority to each data point fed into the buffer.
+This allows the learner to sample from this scoring distribution which should be designed to facilitate the learning process.
+For instance you can assign a higher priority to new samples.
+Once the learner evaluates a point assigns a lower priority so chances it gets re-sampled are lower.</p>
+<p><strong>Problem</strong>: You end up sampling too much recent data and becomes a bit myopic.</p>
+<p><strong>Solution</strong>: The same actor ANN assigns priorities avoiding the recency bias.</p>
+<p>{% include figure.html url="/_rl/lecture_17/apex.png&rdquo; description=&ldquo;Ape-X architecture."%}</p>
+<p>Performance-wise greatly outperformed all other SOTA algorithms by that time.</p>
+<p><strong>OBS</strong>: R2D2 (Recurrent Ape-X algorithm) is essentially the same with an LSTM.</p>
+<h2 id=2019-using-expert-demonstrations-r2d3httpsarxivorgabs190901387>2019. Using expert demonstrations <a href=https://arxiv.org/abs/1909.01387>R2D3</a></h2>
+<p>This algorithm uses both expert demonstrations and agent&rsquo;s trajectories.
+It sets some sampling probability to each datapoint depending on its origin.</p>
+<p>{% include figure.html url="/_rl/lecture_17/r2d3.png&rdquo; description=&ldquo;R2D3 architecture."%}</p>
+<h2 id=others>Others:</h2>
+<h3 id=qt-opthttpsarxivorgpdf180610293pdf><a href=https://arxiv.org/pdf/1806.10293.pdf>QT-Opt</a></h3>
+<p>This distributed architecture main feature is that it interfaces with the real world.
+Moreover, its weight update happens asynchronously.
+Meaning it can be easily heavily parallelized into multiple cores (can be <strong>independently scaled</strong>).
+It was designed for robotic grasping, using a setup of 7 robots creating samples.</p>
+<p>{% include figure.html url="/_rl/lecture_17/qt_opt.png&rdquo; description=&ldquo;QT-Opt architecture."%}</p>
+<h3 id=evolution-strategieshttpsarxivorgabs170303864><a href=https://arxiv.org/abs/1703.03864>Evolution Strategies</a></h3>
+<p>Gradient-free approach by OpenAI.
+Essentially uses an evolutionary algorithm on the ANN weights.
+It works by having multiple instances of the network where it applies some random noise.
+The idea is then to run the policies and perform a weighted average parameter update based on the performance of each policy.</p>
+<p>{% include figure.html url="/_rl/lecture_17/evolution.png&rdquo; description=&ldquo;Evolution architecture."%}</p>
+<h3 id=population-based-traininghttpsdeepmindcomblogarticlepopulation-based-training-neural-networks><a href=https://deepmind.com/blog/article/population-based-training-neural-networks>Population-based Training</a></h3>
+<p>Technique for hyperparameter optimization.
+Merges the idea of a grid search but instead of the networks training independently, it uses information from the rest of the population to refine the hyperparameters and direct computational resources to models which show promise.</p>
+<p>Using this technique one can improve the performance of any hyperparam-dependent algorithm.</p>
+<p>{% include end-row.html %}</p>
+</div>
+<div class=post-copyright>
+<p class=copyright-item>
+<span class=item-title>Author</span>
+<span class=item-content>Ruchen Xu</span>
+</p>
+<p class=copyright-item>
+<span class=item-title>LastMod</span>
+<span class=item-content>
+0001-01-01
+</span>
+</p>
+</div>
+<footer class=post-footer>
+<nav class=post-nav>
+<a class=prev href=/post/python-duo-xian-cheng/>
+<i class="iconfont icon-left"></i>
+<span class="prev-text nav-default">python多线程</span>
+<span class="prev-text nav-mobile">Prev</span>
+</a>
+</nav>
+</footer>
+</article>
+</div>
+</div>
+</main>
+<footer id=footer class=footer>
+<div class=social-links>
+<a href=mailto:ruchenxucs@gmail.com class="iconfont icon-email" title=email></a>
+<a href=https://github.com/FireLandDS class="iconfont icon-github" title=github></a>
+<a href=http://localhost:1313/index.xml type=application/rss+xml class="iconfont icon-rss" title=rss></a>
+</div>
+<div class=copyright>
+<span class=power-by>
+Powered by <a class=hexo-link href=https://gohugo.io>Hugo</a>
+</span>
+<span class=division>|</span>
+<span class=theme-info>
+Theme -
+<a class=theme-link href=https://github.com/olOwOlo/hugo-theme-even>Even</a>
+</span>
+<div class=busuanzi-footer>
+<span id=busuanzi_container_site_pv> site pv: <span id=busuanzi_value_site_pv><img src=/img/spinner.svg alt=spinner.svg></span> </span>
+<span class=division>|</span>
+<span id=busuanzi_container_site_uv> site uv: <span id=busuanzi_value_site_uv><img src=/img/spinner.svg alt=spinner.svg></span> </span>
+</div>
+<span class=copyright-year>
+&copy;
+2017 -
+2021<span class=heart><i class="iconfont icon-heart"></i></span><span>Ruchen Xu</span>
+</span>
+</div>
+</footer>
+<div class=back-to-top id=back-to-top>
+<i class="iconfont icon-up"></i>
+</div>
+</div>
+<script src=https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin=anonymous></script>
+<script type=text/javascript src=/js/main.min.c99b103c33d1539acf3025e1913697534542c4a5aa5af0ccc20475ed2863603b.js></script>
+<script type=text/javascript>window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']],tags:'ams'}}</script>
+<script async src=https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin=anonymous></script>
+</body>
+</html>
