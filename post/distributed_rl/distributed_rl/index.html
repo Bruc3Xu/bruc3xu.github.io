@@ -11,8 +11,7 @@
 <meta name=msapplication-navbutton-color content="#f8f5ec">
 <meta name=apple-mobile-web-app-capable content="yes">
 <meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec">
-<meta name=author content="Ruchen Xu"><meta name=description content="The main bottleneck of creating distributed RL algorithms is that we need to create our own datasets with improved policies. Unlike SL where the datasets are given. This means we need to create algorithmic changes alongside system changes when designing new parallel architectures.
-History of large scale distributed RL 2013. Original DQN DQN parallelisation was not DeepMinds main focus when first presented in 2013. Nevertheless, understanding its implementation helps to get an idea of how the others work."><meta name=keywords content="Hugo,theme,even">
+<meta name=author content="Ruchen Xu"><meta name=description content><meta name=keywords content="Hugo,theme,even">
 <meta name=generator content="Hugo 0.88.1 with theme even">
 <link rel=canonical href=http://localhost:1313/post/distributed_rl/distributed_rl/>
 <link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png>
@@ -24,18 +23,18 @@ History of large scale distributed RL 2013. Original DQN DQN parallelisation was
 <link href=/sass/main.min.2e81bbed97b8b282c1aeb57488cc71c8d8c8ec559f3931531bd396bf31e0d4dd.css rel=stylesheet>
 <link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin=anonymous>
 <meta property="og:title" content="Distributed RL">
-<meta property="og:description" content="The main bottleneck of creating distributed RL algorithms is that we need to create our own datasets with improved policies. Unlike SL where the datasets are given. This means we need to create algorithmic changes alongside system changes when designing new parallel architectures.
-History of large scale distributed RL 2013. Original DQN DQN parallelisation was not DeepMinds main focus when first presented in 2013. Nevertheless, understanding its implementation helps to get an idea of how the others work.">
+<meta property="og:description" content>
 <meta property="og:type" content="article">
 <meta property="og:url" content="http://localhost:1313/post/distributed_rl/distributed_rl/"><meta property="article:section" content="post">
+<meta property="article:published_time" content="2020-10-21T09:34:56+08:00">
+<meta property="article:modified_time" content="2020-10-30T09:34:56+08:00">
 <meta itemprop=name content="Distributed RL">
-<meta itemprop=description content="The main bottleneck of creating distributed RL algorithms is that we need to create our own datasets with improved policies. Unlike SL where the datasets are given. This means we need to create algorithmic changes alongside system changes when designing new parallel architectures.
-History of large scale distributed RL 2013. Original DQN DQN parallelisation was not DeepMinds main focus when first presented in 2013. Nevertheless, understanding its implementation helps to get an idea of how the others work.">
+<meta itemprop=description content><meta itemprop=datePublished content="2020-10-21T09:34:56+08:00">
+<meta itemprop=dateModified content="2020-10-30T09:34:56+08:00">
 <meta itemprop=wordCount content="1093">
-<meta itemprop=keywords content><meta name=twitter:card content="summary">
+<meta itemprop=keywords content="reinforcement learning,"><meta name=twitter:card content="summary">
 <meta name=twitter:title content="Distributed RL">
-<meta name=twitter:description content="The main bottleneck of creating distributed RL algorithms is that we need to create our own datasets with improved policies. Unlike SL where the datasets are given. This means we need to create algorithmic changes alongside system changes when designing new parallel architectures.
-History of large scale distributed RL 2013. Original DQN DQN parallelisation was not DeepMinds main focus when first presented in 2013. Nevertheless, understanding its implementation helps to get an idea of how the others work."><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
+<meta name=twitter:description content><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
 <script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]-->
 </head>
 <body>
@@ -88,7 +87,10 @@ History of large scale distributed RL 2013. Original DQN DQN parallelisation was
 <header class=post-header>
 <h1 class=post-title>Distributed RL</h1>
 <div class=post-meta>
-<span class=post-time> 0001-01-01 </span>
+<span class=post-time> 2020-10-21 </span>
+<div class=post-category>
+<a href=/categories/cs285/> cs285 </a>
+</div>
 <span id=busuanzi_container_page_pv class=more-meta> <span id=busuanzi_value_page_pv><img src=/img/spinner.svg alt=spinner.svg></span> times read </span>
 </div>
 </header>
@@ -215,16 +217,24 @@ Merges the idea of a grid search but instead of the networks training independen
 <p class=copyright-item>
 <span class=item-title>LastMod</span>
 <span class=item-content>
-0001-01-01
+2020-10-30
 </span>
 </p>
 </div>
 <footer class=post-footer>
+<div class=post-tags>
+<a href=/tags/reinforcement-learning/>reinforcement learning</a>
+</div>
 <nav class=post-nav>
-<a class=prev href=/post/python-duo-xian-cheng/>
+<a class=prev href=/post/cs285_lecture21/lecture21/>
 <i class="iconfont icon-left"></i>
-<span class="prev-text nav-default">python多线程</span>
+<span class="prev-text nav-default">cs285 DRL notes lecture 21: Transfer and multi-task RL</span>
 <span class="prev-text nav-mobile">Prev</span>
+</a>
+<a class=next href=/post/cs285_lecture20/lecture20/>
+<span class="next-text nav-default">cs285 DRL notes lecture 20: Inverse Reinforcement Learning (IRL)</span>
+<span class="next-text nav-mobile">Next</span>
+<i class="iconfont icon-right"></i>
 </a>
 </nav>
 </footer>

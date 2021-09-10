@@ -1,0 +1,346 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
+<title>Python Dataclass - RuChen Xu's Blog</title>
+<meta name=renderer content="webkit">
+<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta http-equiv=cache-control content="no-transform">
+<meta http-equiv=cache-control content="no-siteapp">
+<meta name=theme-color content="#f8f5ec">
+<meta name=msapplication-navbutton-color content="#f8f5ec">
+<meta name=apple-mobile-web-app-capable content="yes">
+<meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec">
+<meta name=author content="Ruchen Xu"><meta name=description content><meta name=keywords content="Hugo,theme,even">
+<meta name=generator content="Hugo 0.88.1 with theme even">
+<link rel=canonical href=http://localhost:1313/post/python_dataclass/>
+<link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png>
+<link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
+<link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png>
+<link rel=manifest href=/manifest.json>
+<link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5>
+<script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<link href=/sass/main.min.2e81bbed97b8b282c1aeb57488cc71c8d8c8ec559f3931531bd396bf31e0d4dd.css rel=stylesheet>
+<link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin=anonymous>
+<meta property="og:title" content="Python Dataclass">
+<meta property="og:description" content>
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://localhost:1313/post/python_dataclass/"><meta property="article:section" content="post">
+<meta property="article:published_time" content="2020-10-10T13:59:38+08:00">
+<meta property="article:modified_time" content="2020-10-10T13:59:38+08:00">
+<meta itemprop=name content="Python Dataclass">
+<meta itemprop=description content><meta itemprop=datePublished content="2020-10-10T13:59:38+08:00">
+<meta itemprop=dateModified content="2020-10-10T13:59:38+08:00">
+<meta itemprop=wordCount content="466">
+<meta itemprop=keywords content="python,"><meta name=twitter:card content="summary">
+<meta name=twitter:title content="Python Dataclass">
+<meta name=twitter:description content><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
+<script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]-->
+</head>
+<body>
+<div id=mobile-navbar class=mobile-navbar>
+<div class=mobile-header-logo>
+<a href=/ class=logo>Blog</a>
+</div>
+<div class=mobile-navbar-icon>
+<span></span>
+<span></span>
+<span></span>
+</div>
+</div>
+<nav id=mobile-menu class="mobile-menu slideout-menu">
+<ul class=mobile-menu-list>
+<a href=/>
+<li class=mobile-menu-item>Home</li>
+</a><a href=/post/>
+<li class=mobile-menu-item>Archives</li>
+</a><a href=/tags/>
+<li class=mobile-menu-item>Tags</li>
+</a><a href=/categories/>
+<li class=mobile-menu-item>Categories</li>
+</a>
+</ul>
+</nav>
+<div class=container id=mobile-panel>
+<header id=header class=header>
+<div class=logo-wrapper>
+<a href=/ class=logo>Blog</a>
+</div>
+<nav class=site-navbar>
+<ul id=menu class=menu>
+<li class=menu-item>
+<a class=menu-item-link href=/>Home</a>
+</li><li class=menu-item>
+<a class=menu-item-link href=/post/>Archives</a>
+</li><li class=menu-item>
+<a class=menu-item-link href=/tags/>Tags</a>
+</li><li class=menu-item>
+<a class=menu-item-link href=/categories/>Categories</a>
+</li>
+</ul>
+</nav>
+</header>
+<main id=main class=main>
+<div class=content-wrapper>
+<div id=content class=content>
+<article class=post>
+<header class=post-header>
+<h1 class=post-title>Python Dataclass</h1>
+<div class=post-meta>
+<span class=post-time> 2020-10-10 </span>
+<span id=busuanzi_container_page_pv class=more-meta> <span id=busuanzi_value_page_pv><img src=/img/spinner.svg alt=spinner.svg></span> times read </span>
+</div>
+</header>
+<div class=post-content>
+<p>dataclass是python3.7的新特性，是一个主要包含数据的类。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=kn>from</span> <span class=nn>dataclasses</span> <span class=kn>import</span> <span class=n>dataclass</span><span class=p>,</span> <span class=n>make_dataclass</span>
+
+<span class=nd>@dataclass</span>
+<span class=k>class</span> <span class=nc>DataClassCard</span><span class=p>:</span>
+  <span class=n>rank</span><span class=p>:</span> <span class=nb>str</span>
+  <span class=n>suit</span><span class=p>:</span> <span class=nb>str</span>
+
+
+<span class=n>DataClassCard2</span> <span class=o>=</span> <span class=n>make_dataclass</span><span class=p>(</span><span class=s1>&#39;DataClassCard2&#39;</span><span class=p>,</span> <span class=p>[</span><span class=s1>&#39;rank&#39;</span><span class=p>,</span> <span class=s1>&#39;suit&#39;</span><span class=p>])</span>
+
+<span class=o>&gt;&gt;&gt;</span> <span class=n>queen_of_hearts</span> <span class=o>=</span> <span class=n>DataClassCard</span><span class=p>(</span><span class=s1>&#39;Q&#39;</span><span class=p>,</span> <span class=s1>&#39;Hearts&#39;</span><span class=p>)</span>
+<span class=o>&gt;&gt;&gt;</span> <span class=n>queen_of_hearts</span><span class=o>.</span><span class=n>rank</span>
+<span class=s1>&#39;Q&#39;</span>
+<span class=o>&gt;&gt;&gt;</span> <span class=n>queen_of_hearts</span>
+<span class=n>DataClassCard</span><span class=p>(</span><span class=n>rank</span><span class=o>=</span><span class=s1>&#39;Q&#39;</span><span class=p>,</span> <span class=n>suit</span><span class=o>=</span><span class=s1>&#39;Hearts&#39;</span><span class=p>)</span>
+<span class=o>&gt;&gt;&gt;</span> <span class=n>queen_of_hearts</span> <span class=o>==</span> <span class=n>DataClassCard</span><span class=p>(</span><span class=s1>&#39;Q&#39;</span><span class=p>,</span> <span class=s1>&#39;Hearts&#39;</span><span class=p>)</span>
+<span class=kc>True</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><p>如果我们使用一般方法来创建一个类，</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=k>class</span> <span class=nc>RegularCard</span><span class=p>:</span>
+  <span class=k>def</span> <span class=fm>__init__</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>rank</span><span class=p>,</span> <span class=n>suit</span><span class=p>):</span>
+    <span class=bp>self</span><span class=o>.</span><span class=n>rank</span> <span class=o>=</span> <span class=n>rank</span>
+    <span class=bp>self</span><span class=o>.</span><span class=n>suit</span> <span class=o>=</span> <span class=n>suit</span>
+
+<span class=o>&gt;&gt;&gt;</span> <span class=n>queen_of_hearts</span> <span class=o>=</span> <span class=n>RegularCard</span><span class=p>(</span><span class=s1>&#39;Q&#39;</span><span class=p>,</span> <span class=s1>&#39;Hearts&#39;</span><span class=p>)</span>
+<span class=o>&gt;&gt;&gt;</span> <span class=n>queen_of_hearts</span><span class=o>.</span><span class=n>rank</span>
+<span class=s1>&#39;Q&#39;</span>
+<span class=o>&gt;&gt;&gt;</span> <span class=n>queen_of_hearts</span>
+<span class=o>&lt;</span><span class=n>__main__</span><span class=o>.</span><span class=n>RegularCard</span> <span class=nb>object</span> <span class=n>at</span> <span class=mh>0x7fb6eee35d30</span><span class=o>&gt;</span>
+<span class=o>&gt;&gt;&gt;</span> <span class=n>queen_of_hearts</span> <span class=o>==</span> <span class=n>RegularCard</span><span class=p>(</span><span class=s1>&#39;Q&#39;</span><span class=p>,</span> <span class=s1>&#39;Hearts&#39;</span><span class=p>)</span>
+<span class=kc>False</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><p>python使用dataclass创建的类，内部已经重写了<code>__init__, __repr__, __eq__</code>等方法。</p>
+<p>如果我们要实现这些功能</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=k>class</span> <span class=nc>RegularCard</span>
+    <span class=k>def</span> <span class=fm>__init__</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>rank</span><span class=p>,</span> <span class=n>suit</span><span class=p>):</span>
+        <span class=bp>self</span><span class=o>.</span><span class=n>rank</span> <span class=o>=</span> <span class=n>rank</span>
+        <span class=bp>self</span><span class=o>.</span><span class=n>suit</span> <span class=o>=</span> <span class=n>suit</span>
+
+    <span class=k>def</span> <span class=fm>__repr__</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
+        <span class=k>return</span> <span class=p>(</span><span class=sa>f</span><span class=s1>&#39;</span><span class=si>{</span><span class=bp>self</span><span class=o>.</span><span class=vm>__class__</span><span class=o>.</span><span class=vm>__name__</span><span class=si>}</span><span class=s1>&#39;</span>
+                <span class=sa>f</span><span class=s1>&#39;(rank=</span><span class=si>{</span><span class=bp>self</span><span class=o>.</span><span class=n>rank</span><span class=si>!r}</span><span class=s1>, suit=</span><span class=si>{</span><span class=bp>self</span><span class=o>.</span><span class=n>suit</span><span class=si>!r}</span><span class=s1>)&#39;</span><span class=p>)</span>
+
+    <span class=k>def</span> <span class=fm>__eq__</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>other</span><span class=p>):</span>
+        <span class=k>if</span> <span class=n>other</span><span class=o>.</span><span class=vm>__class__</span> <span class=ow>is</span> <span class=ow>not</span> <span class=bp>self</span><span class=o>.</span><span class=vm>__class__</span><span class=p>:</span>
+            <span class=k>return</span> <span class=bp>NotImplemented</span>
+        <span class=k>return</span> <span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>rank</span><span class=p>,</span> <span class=bp>self</span><span class=o>.</span><span class=n>suit</span><span class=p>)</span> <span class=o>==</span> <span class=p>(</span><span class=n>other</span><span class=o>.</span><span class=n>rank</span><span class=p>,</span> <span class=n>other</span><span class=o>.</span><span class=n>suit</span><span class=p>)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>dataclass可以看做是对namedtuple的替代</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=kn>from</span> <span class=nn>collections</span> <span class=kn>import</span> <span class=n>namedtuple</span>
+
+<span class=n>NamedTupleCard</span> <span class=o>=</span> <span class=n>namedtuple</span><span class=p>(</span><span class=s1>&#39;NamedTupleCard&#39;</span><span class=p>,</span> <span class=p>[</span><span class=s1>&#39;rank&#39;</span><span class=p>,</span> <span class=s1>&#39;suit&#39;</span><span class=p>])</span>
+
+<span class=o>&gt;&gt;&gt;</span> <span class=n>queen_of_hearts</span> <span class=o>=</span> <span class=n>NamedTupleCard</span><span class=p>(</span><span class=s1>&#39;Q&#39;</span><span class=p>,</span> <span class=s1>&#39;Hearts&#39;</span><span class=p>)</span>
+<span class=o>&gt;&gt;&gt;</span> <span class=n>queen_of_hearts</span><span class=o>.</span><span class=n>rank</span>
+<span class=s1>&#39;Q&#39;</span>
+<span class=o>&gt;&gt;&gt;</span> <span class=n>queen_of_hearts</span>
+<span class=n>NamedTupleCard</span><span class=p>(</span><span class=n>rank</span><span class=o>=</span><span class=s1>&#39;Q&#39;</span><span class=p>,</span> <span class=n>suit</span><span class=o>=</span><span class=s1>&#39;Hearts&#39;</span><span class=p>)</span>
+<span class=o>&gt;&gt;&gt;</span> <span class=n>queen_of_hearts</span> <span class=o>==</span> <span class=n>NamedTupleCard</span><span class=p>(</span><span class=s1>&#39;Q&#39;</span><span class=p>,</span> <span class=s1>&#39;Hearts&#39;</span><span class=p>)</span>
+<span class=kc>True</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>namedtuple有很多限制，因为其本身实质上是tuple，无法修改，无法设置默认值，无法继承等。</p>
+<p>设置默认值和类型提示</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=kn>from</span> <span class=nn>dataclasses</span> <span class=kn>import</span> <span class=n>dataclass</span>
+
+<span class=nd>@dataclass</span>
+<span class=k>class</span> <span class=nc>CName</span><span class=p>:</span>
+    <span class=n>name</span><span class=p>:</span> <span class=nb>str</span>
+
+
+<span class=nd>@dataclass</span>
+<span class=k>class</span> <span class=nc>Position</span><span class=p>:</span>
+    <span class=n>name</span><span class=p>:</span> <span class=nb>str</span>
+    <span class=n>lon</span><span class=p>:</span> <span class=nb>float</span> <span class=o>=</span> <span class=mf>0.0</span>
+    <span class=n>lat</span><span class=p>:</span> <span class=nb>float</span> <span class=o>=</span> <span class=mf>0.0</span>
+    <span class=n>names</span><span class=p>:</span> <span class=n>List</span><span class=p>[</span><span class=n>CName</span><span class=p>]</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>默认工厂函数（dataclass可变数据类型必须使用）</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-python data-lang=python>
+<span class=nd>@dataclass</span>
+<span class=k>class</span> <span class=nc>D</span><span class=p>:</span>
+    <span class=n>x</span><span class=p>:</span> <span class=nb>list</span> <span class=o>=</span> <span class=n>field</span><span class=p>(</span><span class=n>default_factory</span><span class=o>=</span><span class=nb>list</span><span class=p>)</span>
+
+<span class=k>assert</span> <span class=n>D</span><span class=p>()</span><span class=o>.</span><span class=n>x</span> <span class=ow>is</span> <span class=ow>not</span> <span class=n>D</span><span class=p>()</span><span class=o>.</span><span class=n>x</span>
+</code></pre></td></tr></table>
+</div>
+</div>
+</div>
+<footer class=post-footer>
+<div class=post-tags>
+<a href=/tags/python/>python</a>
+</div>
+<nav class=post-nav>
+<a class=prev href=/post/cs285_lecture12/lecture12/>
+<i class="iconfont icon-left"></i>
+<span class="prev-text nav-default">cs285 DRL notes lecture 12: Model-based Policy Learning</span>
+<span class="prev-text nav-mobile">Prev</span>
+</a>
+<a class=next href=/post/cs285_lecture11/lecture11/>
+<span class="next-text nav-default">cs285 DRL notes lecture 11: Model-based RL</span>
+<span class="next-text nav-mobile">Next</span>
+<i class="iconfont icon-right"></i>
+</a>
+</nav>
+</footer>
+</article>
+</div>
+</div>
+</main>
+<footer id=footer class=footer>
+<div class=social-links>
+<a href=mailto:ruchenxucs@gmail.com class="iconfont icon-email" title=email></a>
+<a href=https://github.com/FireLandDS class="iconfont icon-github" title=github></a>
+<a href=http://localhost:1313/index.xml type=application/rss+xml class="iconfont icon-rss" title=rss></a>
+</div>
+<div class=copyright>
+<span class=power-by>
+Powered by <a class=hexo-link href=https://gohugo.io>Hugo</a>
+</span>
+<span class=division>|</span>
+<span class=theme-info>
+Theme -
+<a class=theme-link href=https://github.com/olOwOlo/hugo-theme-even>Even</a>
+</span>
+<div class=busuanzi-footer>
+<span id=busuanzi_container_site_pv> site pv: <span id=busuanzi_value_site_pv><img src=/img/spinner.svg alt=spinner.svg></span> </span>
+<span class=division>|</span>
+<span id=busuanzi_container_site_uv> site uv: <span id=busuanzi_value_site_uv><img src=/img/spinner.svg alt=spinner.svg></span> </span>
+</div>
+<span class=copyright-year>
+&copy;
+2017 -
+2021<span class=heart><i class="iconfont icon-heart"></i></span><span>Ruchen Xu</span>
+</span>
+</div>
+</footer>
+<div class=back-to-top id=back-to-top>
+<i class="iconfont icon-up"></i>
+</div>
+</div>
+<script src=https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin=anonymous></script>
+<script type=text/javascript src=/js/main.min.c99b103c33d1539acf3025e1913697534542c4a5aa5af0ccc20475ed2863603b.js></script>
+</body>
+</html>
