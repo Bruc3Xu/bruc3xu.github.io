@@ -22,7 +22,7 @@
 <link rel=manifest href=/manifest.json>
 <link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5>
 <script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
-<link href=/sass/main.min.2e81bbed97b8b282c1aeb57488cc71c8d8c8ec559f3931531bd396bf31e0d4dd.css rel=stylesheet>
+<link href=/sass/main.min.f92fd13721ddf72129410fd8250e73152cc6f2438082b6c0208dc24ee7c13fc4.css rel=stylesheet>
 <link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin=anonymous>
 <meta property="og:title" content="RuChen Xu's Blog">
 <meta property="og:description" content="Hugo theme even example site.">
@@ -83,60 +83,6 @@
 <section id=posts class=posts>
 <article class=post>
 <header class=post-header>
-<h1 class=post-title><a class=post-link href=/post/python_dataclass/>Python Dataclass</a></h1>
-<div class=post-meta>
-<span class=post-time> 2020-10-10 </span>
-</div>
-</header>
-<div class=post-content>
-<div class=post-summary>
-</div>
-<div class=read-more>
-<a href=/post/python_dataclass/ class=read-more-link>Read more...</a>
-</div>
-</div>
-</article>
-<article class=post>
-<header class=post-header>
-<h1 class=post-title><a class=post-link href=/post/cs285_lecture11/lecture11/>cs285 DRL notes lecture 11: Model-based RL</a></h1>
-<div class=post-meta>
-<span class=post-time> 2020-10-02 </span>
-<div class=post-category>
-<a href=/categories/cs285/> cs285 </a>
-</div>
-</div>
-</header>
-<div class=post-content>
-<div class=post-summary>
-Idea: If we learn $f(s_t, a_t) = s_{t+1}$ (or $p(s_{t+1} \mid s_t, a_t)$ in stochastic envs.) we can apply last lecture techniques to get a policy.
-Basic approaches System identification in classical robotics: Does it work? Yes, if we design a good base policy and we hand hand-engineer a dynamics representation of the environment (using physics knowledge) and we just fit few parameters.
-Distribution mismatch problem: When we design a policy, we might be extrapolating beyond the data distribution used to learn the physics model, making results to be far off.
-</div>
-<div class=read-more>
-<a href=/post/cs285_lecture11/lecture11/ class=read-more-link>Read more...</a>
-</div>
-</div>
-</article>
-<article class=post>
-<header class=post-header>
-<h1 class=post-title><a class=post-link href=/post/cs285_lecture10/lecture10/>cs285 DRL notes lecture 10: Model-based Planning</a></h1>
-<div class=post-meta>
-<span class=post-time> 2020-09-29 </span>
-<div class=post-category>
-<a href=/categories/cs285/> cs285 </a>
-</div>
-</div>
-</header>
-<div class=post-content>
-<div class=post-summary>
-</div>
-<div class=read-more>
-<a href=/post/cs285_lecture10/lecture10/ class=read-more-link>Read more...</a>
-</div>
-</div>
-</article>
-<article class=post>
-<header class=post-header>
 <h1 class=post-title><a class=post-link href=/post/cs285_lecture9/lecture9/>cs285 DRL notes lecture 9: Advanced Policy Gradients</a></h1>
 <div class=post-meta>
 <span class=post-time> 2020-09-23 </span>
@@ -168,6 +114,58 @@ Distribution mismatch problem: When we design a policy, we might be extrapolatin
 </div>
 <div class=read-more>
 <a href=/post/cs285_lecture8/lecture8/ class=read-more-link>Read more...</a>
+</div>
+</div>
+</article>
+<article class=post>
+<header class=post-header>
+<h1 class=post-title><a class=post-link href=/post/cs285_lecture7/lecture7/>cs285 DRL notes lecture 7: value function methods</a></h1>
+<div class=post-meta>
+<span class=post-time> 2020-09-16 </span>
+<div class=post-category>
+<a href=/categories/cs285/> cs285 </a>
+</div>
+</div>
+</header>
+<div class=post-content>
+<div class=post-summary>
+</div>
+<div class=read-more>
+<a href=/post/cs285_lecture7/lecture7/ class=read-more-link>Read more...</a>
+</div>
+</div>
+</article>
+<article class=post>
+<header class=post-header>
+<h1 class=post-title><a class=post-link href=/post/python_debug/>Python调试</a></h1>
+<div class=post-meta>
+<span class=post-time> 2020-09-10 </span>
+</div>
+</header>
+<div class=post-content>
+<div class=post-summary>
+</div>
+<div class=read-more>
+<a href=/post/python_debug/ class=read-more-link>Read more...</a>
+</div>
+</div>
+</article>
+<article class=post>
+<header class=post-header>
+<h1 class=post-title><a class=post-link href=/post/cs285_lecture6/actor-critic-methods/>cs285 DRL notes lecture 6: Actor-Critic methods</a></h1>
+<div class=post-meta>
+<span class=post-time> 2020-09-08 </span>
+<div class=post-category>
+<a href=/categories/cs285/> cs285 </a>
+</div>
+</div>
+</header>
+<div class=post-content>
+<div class=post-summary>
+回顾策略梯度算法， $$\nabla_\theta J(\theta) \simeq \frac{1}{N}\sum_{i=1}^N\left(\sum_{t=1}^T\nabla_\theta \log\pi_\theta(a_{i,t}|s_{i,t})\right)\left(\sum_{t'=t}^T r(s_{i,t'},a_{i,t'})\right)$$ 我们使用'&lsquo;reward-to-go&rsquo;' 来近似在状态$s_{i,t}$采取动作 $a_{
+</div>
+<div class=read-more>
+<a href=/post/cs285_lecture6/actor-critic-methods/ class=read-more-link>Read more...</a>
 </div>
 </div>
 </article>
