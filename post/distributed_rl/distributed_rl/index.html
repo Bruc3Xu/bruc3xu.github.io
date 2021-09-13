@@ -31,7 +31,7 @@
 <meta itemprop=name content="Distributed RL">
 <meta itemprop=description content><meta itemprop=datePublished content="2020-10-21T09:34:56+08:00">
 <meta itemprop=dateModified content="2020-10-30T09:34:56+08:00">
-<meta itemprop=wordCount content="874">
+<meta itemprop=wordCount content="785">
 <meta itemprop=keywords content="reinforcement learning,"><meta name=twitter:card content="summary">
 <meta name=twitter:title content="Distributed RL">
 <meta name=twitter:description content><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
@@ -152,34 +152,20 @@ actor拉取频率过快影响采样速度。</p>
 <li>policy lag：不同worker的网络参数差距过大，总的梯度计算就会不准确。</li>
 </ul>
 <h2 id=2017-importance-weighted-actor-learner-architectures-impalahttpsarxivorgabs180201561>2017. Importance Weighted Actor-Learner Architectures (<a href=https://arxiv.org/abs/1802.01561>IMPALA</a>)</h2>
-<p>IMPALA marges the learnings acquired from distributed Deep Learning and RL.
-In this case we also lack the data buffer and have the separation of actors and learners:</p>
+<p>主要包括：</p>
 <ul>
-<li><strong>Learners</strong>: Implement a parallelised gradient descent mechanism to efficiently update the network weights across multiple machines.</li>
-<li><strong>Actors</strong>: Can act independently from the learning process and generate samples faster.</li>
+<li><strong>Learners</strong>: 并行梯度更新算法，需要等待收集一个batch的样本学习</li>
+<li><strong>Actors</strong>: 独立于learner，互相不关联，异步更新。</li>
 </ul>
-<p>In previous approach you first need to generate some data and then wait until the network gets updated, while now this gets decoupled.</p>
-<p><strong>Policy Lag Problem:</strong> Decoupling acting and learning can make the actors follow policies which are quite older than the latest computed by the learners.
-This means they produce samples from a different distribution (policy) than the one that will get updated.</p>
-<p><strong>Solution:</strong> V-trace: weight the network updates inversely proportional to the policy distance which generated them. In the <a href=https://arxiv.org/abs/1802.01561>paper</a>, they show how this mitigates the issue.</p>
+<p><strong>Solution:</strong> V-trace机制纠正了新旧策略之间的差异，解决了policy lag问题。<a href=https://arxiv.org/abs/1802.01561>paper</a></p>
 <p><img src=/post/distributed_rl/impala.png alt></p>
 <h2 id=2018-ape-xhttpsarxivorgabs180300933--r2d2httpsopenreviewnetpdfidr1lytjaqyx>2018. <a href=https://arxiv.org/abs/1803.00933>Ape-X</a> / <a href="https://openreview.net/pdf?id=r1lyTjAqYX">R2D2</a></h2>
-<p>This method takes a step back into GORILA and uses again the replay buffer mechanism.
-Similarly, the actors are separated from the learning process and generate data asynchronously feeding the data points into the replay buffer.
-This approach is very scalable, you can have multiple actors sampling independently feeding the buffer.</p>
-<p>The main novelty of this work is the sorting of the data in the replay buffer using <strong>distributed prioritization</strong>.
-This technique works by setting a priority to each data point fed into the buffer.
-This allows the learner to sample from this scoring distribution which should be designed to facilitate the learning process.
-For instance you can assign a higher priority to new samples.
-Once the learner evaluates a point assigns a lower priority so chances it gets re-sampled are lower.</p>
-<p><strong>Problem</strong>: You end up sampling too much recent data and becomes a bit myopic.</p>
-<p><strong>Solution</strong>: The same actor ANN assigns priorities avoiding the recency bias.</p>
+<p>与GORILA类似，replay buffer，actors和learner位于不同的节点，actors异步更新。不同的是提出了
+<strong>distributed prioritization</strong>，认为不同样本的学习优先级不同，可以适用于分布式的样本。</p>
 <p><img src=/post/distributed_rl/apex.png alt></p>
-<p>Performance-wise greatly outperformed all other SOTA algorithms by that time.</p>
-<p><strong>OBS</strong>: R2D2 (Recurrent Ape-X algorithm) is essentially the same with an LSTM.</p>
+<p>R2D2 (Recurrent Ape-X algorithm)使用了LSTM结构。</p>
 <h2 id=2019-using-expert-demonstrations-r2d3httpsarxivorgabs190901387>2019. Using expert demonstrations <a href=https://arxiv.org/abs/1909.01387>R2D3</a></h2>
-<p>This algorithm uses both expert demonstrations and agent&rsquo;s trajectories.
-It sets some sampling probability to each datapoint depending on its origin.</p>
+<p>同时使用专家经验和策略与环境交互数据，并分配不同的比重。</p>
 <p><img src=/post/distributed_rl/r2d3.png alt></p>
 <h2 id=others>Others:</h2>
 <h3 id=qt-opthttpsarxivorgpdf180610293pdf><a href=https://arxiv.org/pdf/1806.10293.pdf>QT-Opt</a></h3>
