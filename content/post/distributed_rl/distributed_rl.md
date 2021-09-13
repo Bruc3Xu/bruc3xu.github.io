@@ -57,46 +57,27 @@ actor拉取频率过快影响采样速度。
 
 ## 2017. Importance Weighted Actor-Learner Architectures ([IMPALA](https://arxiv.org/abs/1802.01561))
 
-IMPALA marges the learnings acquired from distributed Deep Learning and RL.
-In this case we also lack the data buffer and have the separation of actors and learners:
-- **Learners**: Implement a parallelised gradient descent mechanism to efficiently update the network weights across multiple machines.
-- **Actors**: Can act independently from the learning process and generate samples faster.
+主要包括：
+- **Learners**: 并行梯度更新算法，需要等待收集一个batch的样本学习
+- **Actors**: 独立于learner，互相不关联，异步更新。
 
-In previous approach you first need to generate some data and then wait until the network gets updated, while now this gets decoupled.
-
-**Policy Lag Problem:** Decoupling acting and learning can make the actors follow policies which are quite older than the latest computed by the learners.
-This means they produce samples from a different distribution (policy) than the one that will get updated.
-
-**Solution:** V-trace: weight the network updates inversely proportional to the policy distance which generated them. In the [paper](https://arxiv.org/abs/1802.01561), they show how this mitigates the issue.
+**Solution:** V-trace机制纠正了新旧策略之间的差异，解决了policy lag问题。[paper](https://arxiv.org/abs/1802.01561)
 
 ![](/post/distributed_rl/impala.png)
 
 ## 2018. [Ape-X](https://arxiv.org/abs/1803.00933) / [R2D2](https://openreview.net/pdf?id=r1lyTjAqYX)
 
-This method takes a step back into GORILA and uses again the replay buffer mechanism.
-Similarly, the actors are separated from the learning process and generate data asynchronously feeding the data points into the replay buffer.
-This approach is very scalable, you can have multiple actors sampling independently feeding the buffer.
-
-The main novelty of this work is the sorting of the data in the replay buffer using **distributed prioritization**.
-This technique works by setting a priority to each data point fed into the buffer.
-This allows the learner to sample from this scoring distribution which should be designed to facilitate the learning process.
-For instance you can assign a higher priority to new samples.
-Once the learner evaluates a point assigns a lower priority so chances it gets re-sampled are lower.
-
-**Problem**: You end up sampling too much recent data and becomes a bit myopic.
-
-**Solution**: The same actor ANN assigns priorities avoiding the recency bias.
+与GORILA类似，replay buffer，actors和learner位于不同的节点，actors异步更新。不同的是提出了
+**distributed prioritization**，认为不同样本的学习优先级不同，可以适用于分布式的样本。
 
 ![](/post/distributed_rl/apex.png)
 
-Performance-wise greatly outperformed all other SOTA algorithms by that time.
 
-**OBS**: R2D2 (Recurrent Ape-X algorithm) is essentially the same with an LSTM.
+R2D2 (Recurrent Ape-X algorithm)使用了LSTM结构。
 
 ## 2019. Using expert demonstrations [R2D3](https://arxiv.org/abs/1909.01387)
 
-This algorithm uses both expert demonstrations and agent's trajectories.
-It sets some sampling probability to each datapoint depending on its origin.
+同时使用专家经验和策略与环境交互数据，并分配不同的比重。
 
 ![](/post/distributed_rl/r2d3.png)
 
