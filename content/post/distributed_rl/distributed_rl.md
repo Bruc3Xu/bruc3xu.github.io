@@ -16,59 +16,44 @@ toc: true
 
 <!--more-->
 
-
-
-The main bottleneck of creating distributed RL algorithms is that we need to create our own datasets with improved policies. Unlike SL where the datasets are given.
-This means we need to create algorithmic changes alongside system changes when designing new parallel architectures.
+分布式强化学习算法可以大幅提升采样效率，加速学习速度，对于on-policy算法一定程度也能减少方差。
 
 # History of large scale distributed RL
 
 ## 2013. Original [DQN](https://arxiv.org/abs/1312.5602)
 
-DQN parallelisation was not DeepMinds main focus when first presented in 2013.
-Nevertheless, understanding its implementation helps to get an idea of how the others work.
-If you need a reminder, take a look at [lecture 8](/lectures/lecture8).
+2013年DeepMind实现的DQN算法。
 
-{% include figure.html url="/_rl/lecture_17/dqn.png" description="DQN algorithm basic structure."%}
+![](/post/distributed_rl/dqn.png)
 
 ## 2015. General Reinforcement Learning Architecture ([GORILA](https://arxiv.org/abs/1507.04296))
 
-This paper has a lot of margin of improvement but was the first distributed approach taken. 
-They split the algorithm into 4 components to be replicated and run on multiple nodes:
-- The **replay buffer/memory**: Stores $(s, a, r, s^\prime)$ samples from the environment.
-- The **learner**: Pulls data from the replay memory and updates the Q networks.
-- The **actor**: Gets a copy of the policy network and provides $(s, a, r, s^\prime)$ samples to the memory buffer.
-- The **parameter server**: Holds a copy of the Q network and allows the learner to update the network at very high throughput.
+可以分为4个可重复的部分，运行在不同的节点上：
+- **replay buffer/memory**: 存储transition$(s, a, r, s^\prime)$
+- **learner**: 从replay memory拉取数据更新Q网络
+- **actor**: 拉取网络参数，与环境交互得到$(s, a, r, s^\prime)$ 并存入memory buffer
+- The **parameter server**: 不断更新保存Q网络的参数
 
-{% include figure.html url="/_rl/lecture_17/gorila.png" description="GORILA distributed architecture structure."%}
+![](/post/distributed_rl/gorila.png)
 
 **Bottleneck**:
-The way they implemented it, they only sample from the actors one step and then update the networks. This makes the data generation pace to be too slow: They update the network too frequently and sample from the environment too infrequently.
-
-Still, this approach outperformed most Atari games benchmarks set by the original DQN paper.
+actor拉取频率过快影响采样速度。
 
 ## 2016. Asynchronous Advantage Actor Critic ([A3C](https://arxiv.org/pdf/1602.01783.pdf))
 
-While not significantly different from the previous one, this was one of the most influential works on efficient RL.
-The main difference is that it runs on a **single machine**, which allows us to mitigate the network communication overhead.
-Thus, deprecate the replay buffer and use an on-policy training and compute gradient with the steps each worker generates and not from random times.
+![](/post/distributed_rl/a3c.png)
+所有worker在一台机器上，并通过共享内存分享网络权重。
 
-{% include figure.html url="/_rl/lecture_17/a3c.png" description="A3C structure."%}
+每个worker采样更新自身的网络，计算梯度并上传。
 
-All workers has access to a global set of weights stored in shared memory (master process).
-For each iteration they update their own weights from the master ones.
-Subsequently, we can make each worker collect some samples (e.g. 5) from their copy of the environment and compute the network gradient loss from those.
-Then, we can take this gradient and send it to the global network to update its weights.
+每个worker利用反馈的总梯度更新网络。
 
-Additionally, this allows us to set different exploration policies to each worker and have a faster learning process. Compared to GORILA, we can increase the rate of update by:
-- Reducing network communication by having everything into one machine.
-- Compute more experiences before the network update.
+优点：
+- 没有网络开销
+- 异步更新，采样更快
 
-This architecture also easied the parallelisation of policy gradient techniques and not only Q-learning which was dominating at that point.
-Performance-wise it achieves 3 times better results than DQN in less time and machines (see [paper](https://arxiv.org/pdf/1602.01783.pdf) for full analysis).
-
-**Problem**: It does not scale well on the number of actors due to **Policy Lag**.
-If you have say 400 actors sequentially updating the global NN, the samples from the last one are going to be so out of date that its parameter update does not make sense any more.
+缺点：
+- policy lag：不同worker的网络参数差距过大，总的梯度计算就会不准确。
 
 ## 2017. Importance Weighted Actor-Learner Architectures ([IMPALA](https://arxiv.org/abs/1802.01561))
 
@@ -84,7 +69,7 @@ This means they produce samples from a different distribution (policy) than the 
 
 **Solution:** V-trace: weight the network updates inversely proportional to the policy distance which generated them. In the [paper](https://arxiv.org/abs/1802.01561), they show how this mitigates the issue.
 
-{% include figure.html url="/_rl/lecture_17/impala.png" description="IMPALA structure."%}
+![](/post/distributed_rl/impala.png)
 
 ## 2018. [Ape-X](https://arxiv.org/abs/1803.00933) / [R2D2](https://openreview.net/pdf?id=r1lyTjAqYX)
 
@@ -102,7 +87,7 @@ Once the learner evaluates a point assigns a lower priority so chances it gets r
 
 **Solution**: The same actor ANN assigns priorities avoiding the recency bias.
 
-{% include figure.html url="/_rl/lecture_17/apex.png" description="Ape-X architecture."%}
+![](/post/distributed_rl/apex.png)
 
 Performance-wise greatly outperformed all other SOTA algorithms by that time.
 
@@ -113,7 +98,7 @@ Performance-wise greatly outperformed all other SOTA algorithms by that time.
 This algorithm uses both expert demonstrations and agent's trajectories.
 It sets some sampling probability to each datapoint depending on its origin.
 
-{% include figure.html url="/_rl/lecture_17/r2d3.png" description="R2D3 architecture."%}
+![](/post/distributed_rl/r2d3.png)
 
 ## Others:
 
@@ -124,7 +109,7 @@ Moreover, its weight update happens asynchronously.
 Meaning it can be easily heavily parallelized into multiple cores (can be **independently scaled**).
 It was designed for robotic grasping, using a setup of 7 robots creating samples.
 
-{% include figure.html url="/_rl/lecture_17/qt_opt.png" description="QT-Opt architecture."%}
+![](/post/distributed_rl/qt_opt.png)
 
 
 ### [Evolution Strategies](https://arxiv.org/abs/1703.03864)
@@ -134,7 +119,7 @@ Essentially uses an evolutionary algorithm on the ANN weights.
 It works by having  multiple instances of the network where it applies some random noise.
 The idea is then to run the policies and perform a weighted average parameter update based on the performance of each policy.
 
-{% include figure.html url="/_rl/lecture_17/evolution.png" description="Evolution architecture."%}
+![](/post/distributed_rl/evolution.png)
 
 ### [Population-based Training](https://deepmind.com/blog/article/population-based-training-neural-networks)
 
@@ -142,5 +127,3 @@ Technique for hyperparameter optimization.
 Merges the idea of a grid search but instead of the networks training independently, it uses information from the rest of the population to refine the hyperparameters and direct computational resources to models which show promise.
 
 Using this technique one can improve the performance of any hyperparam-dependent algorithm.
-
-{% include end-row.html %}

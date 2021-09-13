@@ -3,7 +3,7 @@ layout: lecture
 title: "cs285 DRL notes lecture 21: Transfer and multi-task RL"
 date: 2020-10-24T09:34:56+08:00
 lastmod: 2020-10-24T09:34:56+08:00
-draft: false
+draft: true
 keywords: []
 description: ""
 tags: [reinforcement learning]

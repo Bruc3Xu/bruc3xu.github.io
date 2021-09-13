@@ -2,7 +2,7 @@
 title: "cs285 DRL notes lecture 12: Model-based Policy Learning"
 date: 2020-10-15T09:34:56+08:00
 lastmod: 2020-10-30T09:34:56+08:00
-draft: false
+draft: true
 keywords: []
 description: ""
 tags: [reinforcement learning]
