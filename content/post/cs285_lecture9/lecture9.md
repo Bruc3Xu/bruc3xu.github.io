@@ -37,13 +37,11 @@ sequenceDiagrams:
   options: ""
 
 ---
-
+本章会深入策略梯度算法，进一步学习
+**Natural Policy Gradient**, **Trust Region Policy Optimization**, **Proximal Policy
+Optimization**等算法。
 <!--more-->
 
-
-本章会深入策略梯度算法，进一步学习
-**Natural Policy Gradient**, **Trust Region Policy Optimization**, or **Proximal Policy
-Optimization**等算法。
 
 ## Policy Gradient as Policy Iteration
 回顾Policy Gradient和Actor-Critic算法，

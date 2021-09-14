@@ -2,7 +2,7 @@
 title: "cs285 DRL notes lecture 11: Model-based RL"
 date: 2020-10-02T09:34:56+08:00
 lastmod: 2020-10-02T09:34:56+08:00
-draft: false
+draft: true
 keywords: []
 description: ""
 tags: [reinforcement learning]

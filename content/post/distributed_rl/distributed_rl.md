@@ -6,17 +6,15 @@ draft: false
 keywords: []
 description: ""
 tags: [reinforcement learning]
-categories: [cs285]
 author: ""
 
 comment: false
 toc: true
 
 ---
-
+分布式强化学习算法可以大幅提升采样效率，加速学习速度，对于on-policy算法一定程度也能减少方差。
 <!--more-->
 
-分布式强化学习算法可以大幅提升采样效率，加速学习速度，对于on-policy算法一定程度也能减少方差。
 
 # History of large scale distributed RL
 
@@ -84,27 +82,41 @@ R2D2 (Recurrent Ape-X algorithm)使用了LSTM结构。
 ## Others:
 
 ### [QT-Opt](https://arxiv.org/pdf/1806.10293.pdf)
-
-This distributed architecture main feature is that it interfaces with the real world.
-Moreover, its weight update happens asynchronously.
-Meaning it can be easily heavily parallelized into multiple cores (can be **independently scaled**).
-It was designed for robotic grasping, using a setup of 7 robots creating samples.
+实际中应用与机器手抓取学习的分布式强化学习架构，提出了一种新的
+QLearning算法。
 
 ![](/post/distributed_rl/qt_opt.png)
 
 
 ### [Evolution Strategies](https://arxiv.org/abs/1703.03864)
+进化算法是一种黑盒优化算法，也是启发式的算法。自然进化中每一代都有突变的基因，环境对突变的基因进行评估，重组产生下一代，直至最优。
 
-Gradient-free approach by OpenAI.
-Essentially uses an evolutionary algorithm on the ANN weights.
-It works by having  multiple instances of the network where it applies some random noise.
-The idea is then to run the policies and perform a weighted average parameter update based on the performance of each policy.
+其中，关键点在于：
+- 基因如何表示（神经网络参数）
+- 突变产生（参数优化）
+- 基因重组（参数重组）
+
+黑盒优化的优点：
+- 不关心奖励分布，奖励密集或稀疏都无所谓
+- 不需要反向传播梯度
+- 可以适应长期回报，在长动作序列上有优势
+
 
 ![](/post/distributed_rl/evolution.png)
 
 ### [Population-based Training](https://deepmind.com/blog/article/population-based-training-neural-networks)
+基于种群的训练方法，主要用来自适应调节超参数。
 
-Technique for hyperparameter optimization.
-Merges the idea of a grid search but instead of the networks training independently, it uses information from the rest of the population to refine the hyperparameters and direct computational resources to models which show promise.
+两种常用的自动调参的方式是并行搜索(parallel search)和序列优化(sequential optimisation)。并行搜索就是同时设置多组参数训练，比如网格搜索(grid search)和随机搜索(random search)。序列优化很少用到并行，而是一次次尝试并优化，比如人工调参(hand tuning)和贝叶斯优化(Bayesian optimisation)。并行搜索的缺点在于没有利用相互之间的参数优化信息。而序列优化这种序列化过程显然会耗费大量时间。
 
-Using this technique one can improve the performance of any hyperparam-dependent algorithm.
+文章提出将并行优化和序列优化相结合。既能并行探索，同时也利用其他更好的参数模型，淘汰掉不好的模型。
+
+![](/post/distributed_rl/population.png)
+
+
+如图所示，(a)中的序列优化过程只有一个模型在不断优化，消耗大量时间。(b)中的并行搜索可以节省时间，但是相互之间没有任何交互，不利于信息利用。(c)中的PBT算法结合了二者的优点。
+
+首先PBT算法随机初始化多个模型，每训练一段时间设置一个检查点(checkpoint)，然后根据其他模型的好坏调整自己的模型。worker会定期exploit种群其他的模型参数，得到更优的模型参数，并添加随机扰动再进行explore。其中checkpoint的设置是人为设置每过多少step之后进行检查。扰动要么在原超参数或者参数上加噪声，要么重新采样获得。
+
+![](/post/distributed_rl/population_code.png)
+

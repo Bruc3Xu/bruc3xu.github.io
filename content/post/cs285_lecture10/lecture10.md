@@ -13,9 +13,8 @@ comment: false
 toc: true
 
 ---
-
+model-free强化学习忽略了状态转移概率$p(s_{t+1}|s_t,a_t)$，因为实际情况环境的模型往往无法获得或者学习。但也有一些例外：
 <!--more-->
-model-free强化学习忽略了状态转移概率$p(s_{t+1}|s_t,a_t)$，并且不会学习它，因为实际情况环境的模型往往无法获得或者学习。但也有一些环境是例外：
 
 模型已知
 1. 游戏(e.g., Atari games, chess, Go)

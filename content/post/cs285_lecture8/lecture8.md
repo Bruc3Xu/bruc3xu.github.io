@@ -37,10 +37,11 @@ sequenceDiagrams:
   options: ""
 
 ---
-
-<!--more-->
+fitted q iteration与Q-Learning不同
 - fitted q iteration算法：当前策略收集整个数据集，然后对Q函数进行多次回归近似，接下来收集新的数据集循环这一过程。
 - Q-Learning（online q iteration）：一边收集数据，一边进行学习。
+<!--more-->
+
 ## Q-Learning的问题
 ### Q-learning is not GD
 Q-learning不是梯度下降，公式

@@ -39,7 +39,7 @@ sequenceDiagrams:
   options: ""
 
 ---
-
+本文介绍了使用PDB、GDB等调试方法，并使用cProfile进行性能分析。
 <!--more-->
 ## 使用PDB调试
 代码内调试

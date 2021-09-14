@@ -39,9 +39,9 @@ sequenceDiagrams:
   options: ""
 
 ---
-
-<!--more-->
 dataclass是python3.7的新特性，是一个主要包含数据的类。
+<!--more-->
+
 ```python
 from dataclasses import dataclass, make_dataclass
 
