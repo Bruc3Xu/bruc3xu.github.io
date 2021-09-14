@@ -2,7 +2,7 @@
 <head>
 <meta charset=utf-8>
 <meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
-<title>RuChen Xu's Blog</title>
+<title>Git配置github和gitlab - RuChen Xu's Blog</title>
 <meta name=renderer content="webkit">
 <meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
 <meta http-equiv=cache-control content="no-transform">
@@ -11,11 +11,10 @@
 <meta name=msapplication-navbutton-color content="#f8f5ec">
 <meta name=apple-mobile-web-app-capable content="yes">
 <meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec">
-<meta name=author content="Ruchen Xu"><meta name=description content="Hugo theme even example site."><meta name=keywords content="Hugo,theme,even">
+<meta name=author content="Ruchen Xu"><meta name=description content="在工作中，我们经常会遇到同时使用github、gitlab、自建git服务器等，下面看一下具体如何配置。
+"><meta name=keywords content="Hugo,theme,even">
 <meta name=generator content="Hugo 0.88.1 with theme even">
-<link rel=canonical href=http://localhost:1313/>
-<link href=http://localhost:1313/index.xml rel=alternate type=application/rss+xml title="RuChen Xu's Blog">
-<link href=http://localhost:1313/index.xml rel=feed type=application/rss+xml title="RuChen Xu's Blog">
+<link rel=canonical href=http://localhost:1313/post/git%E9%85%8D%E7%BD%AEgithub%E5%92%8Cgitlab/>
 <link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png>
 <link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
 <link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png>
@@ -24,14 +23,19 @@
 <script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
 <link href=/sass/main.min.2e81bbed97b8b282c1aeb57488cc71c8d8c8ec559f3931531bd396bf31e0d4dd.css rel=stylesheet>
 <link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin=anonymous>
-<meta property="og:title" content="RuChen Xu's Blog">
-<meta property="og:description" content="Hugo theme even example site.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="http://localhost:1313/">
-<meta itemprop=name content="RuChen Xu's Blog">
-<meta itemprop=description content="Hugo theme even example site."><meta name=twitter:card content="summary">
-<meta name=twitter:title content="RuChen Xu's Blog">
-<meta name=twitter:description content="Hugo theme even example site."><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
+<meta property="og:title" content="Git配置github和gitlab">
+<meta property="og:description" content="在工作中，我们经常会遇到同时使用github、gitlab、自建git服务器等，下面看一下具体如何配置。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://localhost:1313/post/git%E9%85%8D%E7%BD%AEgithub%E5%92%8Cgitlab/"><meta property="article:section" content="post">
+<meta property="article:published_time" content="2020-09-20T11:11:27+08:00">
+<meta property="article:modified_time" content="2020-09-20T11:11:27+08:00">
+<meta itemprop=name content="Git配置github和gitlab">
+<meta itemprop=description content="在工作中，我们经常会遇到同时使用github、gitlab、自建git服务器等，下面看一下具体如何配置。"><meta itemprop=datePublished content="2020-09-20T11:11:27+08:00">
+<meta itemprop=dateModified content="2020-09-20T11:11:27+08:00">
+<meta itemprop=wordCount content="227">
+<meta itemprop=keywords content="git,"><meta name=twitter:card content="summary">
+<meta name=twitter:title content="Git配置github和gitlab">
+<meta name=twitter:description content="在工作中，我们经常会遇到同时使用github、gitlab、自建git服务器等，下面看一下具体如何配置。"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
 <script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]-->
 </head>
 <body>
@@ -80,102 +84,68 @@
 <main id=main class=main>
 <div class=content-wrapper>
 <div id=content class=content>
-<section id=posts class=posts>
 <article class=post>
 <header class=post-header>
-<h1 class=post-title><a class=post-link href=/post/python_debug/>Python调试</a></h1>
+<h1 class=post-title>Git配置github和gitlab</h1>
 <div class=post-meta>
-<span class=post-time> 2020-09-10 </span>
+<span class=post-time> 2020-09-20 </span>
+<span id=busuanzi_container_page_pv class=more-meta> <span id=busuanzi_value_page_pv><img src=/img/spinner.svg alt=spinner.svg></span> times read </span>
 </div>
 </header>
 <div class=post-content>
-<div class=post-summary>
-<p>本文介绍了使用PDB、GDB等调试方法，并使用cProfile进行性能分析。</p>
+<p>在工作中，我们经常会遇到同时使用github、gitlab、自建git服务器等，下面看一下具体如何配置。</p>
+<p>这里，我们使用ssh key连接各类服务，更加安全和方便。
+假设我们同时使用GitHub和gitlab。</p>
+<p>生成github private key
+<code>ssh-keygen -t rsa -f ~/.ssh/id_rsa.github -C "xxx@gmail.com"</code></p>
+<p>生成gitlab private key
+<code>ssh-keygen -t rsa -f ~/.ssh/id_rsa.gitlab -C "xxx@foxmail.com"</code></p>
+<p>编辑ssh配置文件，使得不同域名解析正确的配置。
+<code>gedit ~/.ssh/config</code></p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>Host github.com
+  HostName github.com
+  User xxx
+  IdentityFile ~/.ssh/id_rsa.github
+  
+Host gitlab.drive.com
+  HostName gitlab.com
+  User xxx
+  IdentityFile ~/.ssh/id_rsa.gitlab
+</code></pre></td></tr></table>
 </div>
-<div class=read-more>
-<a href=/post/python_debug/ class=read-more-link>Read more...</a>
+</div><p>最后在github和gitlab的设置中添加对应的公钥<code> ~/.ssh/*.pub</code>。</p>
 </div>
+<footer class=post-footer>
+<div class=post-tags>
+<a href=/tags/git/>git</a>
 </div>
-</article>
-<article class=post>
-<header class=post-header>
-<h1 class=post-title><a class=post-link href=/post/cs285_lecture6/actor-critic-methods/>cs285 DRL notes lecture 6: Actor-Critic methods</a></h1>
-<div class=post-meta>
-<span class=post-time> 2020-09-08 </span>
-<div class=post-category>
-<a href=/categories/cs285/> cs285 </a>
-</div>
-</div>
-</header>
-<div class=post-content>
-<div class=post-summary>
-回顾策略梯度算法， $$\nabla_\theta J(\theta) \simeq \frac{1}{N}\sum_{i=1}^N\left(\sum_{t=1}^T\nabla_\theta \log\pi_\theta(a_{i,t}|s_{i,t})\right)\left(\sum_{t'=t}^T r(s_{i,t'},a_{i,t'})\right)$$ 我们使用'&lsquo;reward-to-go&rsquo;' 来近似在状态$s_{i,t}$采取动作 $a_{
-</div>
-<div class=read-more>
-<a href=/post/cs285_lecture6/actor-critic-methods/ class=read-more-link>Read more...</a>
-</div>
-</div>
-</article>
-<article class=post>
-<header class=post-header>
-<h1 class=post-title><a class=post-link href=/post/pytorch_cookbook/>PyTorch Cookbook</a></h1>
-<div class=post-meta>
-<span class=post-time> 2020-09-01 </span>
-</div>
-</header>
-<div class=post-content>
-<div class=post-summary>
-</div>
-<div class=read-more>
-<a href=/post/pytorch_cookbook/ class=read-more-link>Read more...</a>
-</div>
-</div>
-</article>
-<article class=post>
-<header class=post-header>
-<h1 class=post-title><a class=post-link href=/post/cs285_lecture5/pg/>cs285 DRL notes chapter 3: policy gradient methods</a></h1>
-<div class=post-meta>
-<span class=post-time> 2020-08-29 </span>
-<div class=post-category>
-<a href=/categories/cs285/> cs285 </a>
-</div>
-</div>
-</header>
-<div class=post-content>
-<div class=post-summary>
-回顾强化学习的目标，我们希望获得策略的最优参数$\theta^*$， $$ \theta^*=\underset{\theta}{argmax}\mathbb{E}_{\tau\sim p_{\theta}(\tau)}[\sum_{t=1}^{t=T}r(s_t, a_t)] $$ 这实际上是一个优化问题，因此我们可以使用多种优化方法来优化这个
-</div>
-<div class=read-more>
-<a href=/post/cs285_lecture5/pg/ class=read-more-link>Read more...</a>
-</div>
-</div>
-</article>
-<article class=post>
-<header class=post-header>
-<h1 class=post-title><a class=post-link href=/post/pybind11_cmake_tutorial/>Pybind11 Cmake tutorial</a></h1>
-<div class=post-meta>
-<span class=post-time> 2020-08-25 </span>
-</div>
-</header>
-<div class=post-content>
-<div class=post-summary>
-</div>
-<div class=read-more>
-<a href=/post/pybind11_cmake_tutorial/ class=read-more-link>Read more...</a>
-</div>
-</div>
-</article>
-</section>
-<nav class=pagination>
-<a class=prev href=/page/2/>
+<nav class=post-nav>
+<a class=prev href=/post/cs285_lecture9/lecture9/>
 <i class="iconfont icon-left"></i>
-<span class=prev-text>Prev</span>
+<span class="prev-text nav-default">cs285 DRL notes lecture 9: Advanced Policy Gradients</span>
+<span class="prev-text nav-mobile">Prev</span>
 </a>
-<a class=next href=/page/4/>
-<span class=next-text>Next</span>
+<a class=next href=/post/cs285_lecture8/lecture8/>
+<span class="next-text nav-default">cs285 DRL notes lecture 8: Deep RL with Q-Functions</span>
+<span class="next-text nav-mobile">Next</span>
 <i class="iconfont icon-right"></i>
 </a>
 </nav>
+</footer>
+</article>
 </div>
 </div>
 </main>
@@ -214,7 +184,5 @@ Theme -
 <script src=https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin=anonymous></script>
 <script src=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin=anonymous></script>
 <script type=text/javascript src=/js/main.min.c99b103c33d1539acf3025e1913697534542c4a5aa5af0ccc20475ed2863603b.js></script>
-<script type=text/javascript>window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']],tags:'ams'}}</script>
-<script async src=https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin=anonymous></script>
 </body>
 </html>

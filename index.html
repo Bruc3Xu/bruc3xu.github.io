@@ -22,7 +22,7 @@
 <link rel=manifest href=/manifest.json>
 <link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5>
 <script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
-<link href=/sass/main.min.f92fd13721ddf72129410fd8250e73152cc6f2438082b6c0208dc24ee7c13fc4.css rel=stylesheet>
+<link href=/sass/main.min.2e81bbed97b8b282c1aeb57488cc71c8d8c8ec559f3931531bd396bf31e0d4dd.css rel=stylesheet>
 <link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin=anonymous>
 <meta property="og:title" content="RuChen Xu's Blog">
 <meta property="og:description" content="Hugo theme even example site.">
@@ -83,6 +83,22 @@
 <section id=posts class=posts>
 <article class=post>
 <header class=post-header>
+<h1 class=post-title><a class=post-link href=/post/%E4%BD%BF%E7%94%A8gitflow%E6%A8%A1%E5%BC%8F%E5%BC%80%E5%8F%91/>使用gitflow模式开发</a></h1>
+<div class=post-meta>
+<span class=post-time> 2021-04-24 </span>
+</div>
+</header>
+<div class=post-content>
+<div class=post-summary>
+<p>Gitflow工作流通过为功能开发、发布准备和维护分配独立的分支，让发布迭代过程更流畅，非常适合用来管理大型项目的发布和维护</p>
+</div>
+<div class=read-more>
+<a href=/post/%E4%BD%BF%E7%94%A8gitflow%E6%A8%A1%E5%BC%8F%E5%BC%80%E5%8F%91/ class=read-more-link>Read more...</a>
+</div>
+</div>
+</article>
+<article class=post>
+<header class=post-header>
 <h1 class=post-title><a class=post-link href=/post/soft_actor_critic/soft-actor-critic/>Soft Actor Critic</a></h1>
 <div class=post-meta>
 <span class=post-time> 2020-11-13 </span>
@@ -90,6 +106,10 @@
 </header>
 <div class=post-content>
 <div class=post-summary>
+<p>现有深度强化学习算法主要的问题有：</p>
+<ul>
+<li>采样难，样本利用率低：对于一般的强化学习问题，学习得到想要的策略需要的样本以百万、千万记，而绝大多数on-policy算法在策略更新后丢弃旧的样本。</li>
+</ul>
 </div>
 <div class=read-more>
 <a href=/post/soft_actor_critic/soft-actor-critic/ class=read-more-link>Read more...</a>
@@ -101,13 +121,11 @@
 <h1 class=post-title><a class=post-link href=/post/distributed_rl/distributed_rl/>Distributed RL</a></h1>
 <div class=post-meta>
 <span class=post-time> 2020-10-21 </span>
-<div class=post-category>
-<a href=/categories/cs285/> cs285 </a>
-</div>
 </div>
 </header>
 <div class=post-content>
 <div class=post-summary>
+<p>分布式强化学习算法可以大幅提升采样效率，加速学习速度，对于on-policy算法一定程度也能减少方差。</p>
 </div>
 <div class=read-more>
 <a href=/post/distributed_rl/distributed_rl/ class=read-more-link>Read more...</a>
@@ -123,30 +141,10 @@
 </header>
 <div class=post-content>
 <div class=post-summary>
+<p>dataclass是python3.7的新特性，是一个主要包含数据的类。</p>
 </div>
 <div class=read-more>
 <a href=/post/python_dataclass/ class=read-more-link>Read more...</a>
-</div>
-</div>
-</article>
-<article class=post>
-<header class=post-header>
-<h1 class=post-title><a class=post-link href=/post/cs285_lecture11/lecture11/>cs285 DRL notes lecture 11: Model-based RL</a></h1>
-<div class=post-meta>
-<span class=post-time> 2020-10-02 </span>
-<div class=post-category>
-<a href=/categories/cs285/> cs285 </a>
-</div>
-</div>
-</header>
-<div class=post-content>
-<div class=post-summary>
-Idea: If we learn $f(s_t, a_t) = s_{t+1}$ (or $p(s_{t+1} \mid s_t, a_t)$ in stochastic envs.) we can apply last lecture techniques to get a policy.
-Basic approaches System identification in classical robotics: Does it work? Yes, if we design a good base policy and we hand hand-engineer a dynamics representation of the environment (using physics knowledge) and we just fit few parameters.
-Distribution mismatch problem: When we design a policy, we might be extrapolating beyond the data distribution used to learn the physics model, making results to be far off.
-</div>
-<div class=read-more>
-<a href=/post/cs285_lecture11/lecture11/ class=read-more-link>Read more...</a>
 </div>
 </div>
 </article>
@@ -162,6 +160,7 @@ Distribution mismatch problem: When we design a policy, we might be extrapolatin
 </header>
 <div class=post-content>
 <div class=post-summary>
+<p>model-free强化学习忽略了状态转移概率$p(s_{t+1}|s_t,a_t)$，因为实际情况环境的模型往往无法获得或者学习。但也有一些例外：</p>
 </div>
 <div class=read-more>
 <a href=/post/cs285_lecture10/lecture10/ class=read-more-link>Read more...</a>

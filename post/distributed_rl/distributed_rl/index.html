@@ -11,7 +11,8 @@
 <meta name=msapplication-navbutton-color content="#f8f5ec">
 <meta name=apple-mobile-web-app-capable content="yes">
 <meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec">
-<meta name=author content="Ruchen Xu"><meta name=description content><meta name=keywords content="Hugo,theme,even">
+<meta name=author content="Ruchen Xu"><meta name=description content="分布式强化学习算法可以大幅提升采样效率，加速学习速度，对于on-policy算法一定程度也能减少方差。
+"><meta name=keywords content="Hugo,theme,even">
 <meta name=generator content="Hugo 0.88.1 with theme even">
 <link rel=canonical href=http://localhost:1313/post/distributed_rl/distributed_rl/>
 <link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png>
@@ -20,21 +21,21 @@
 <link rel=manifest href=/manifest.json>
 <link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5>
 <script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
-<link href=/sass/main.min.f92fd13721ddf72129410fd8250e73152cc6f2438082b6c0208dc24ee7c13fc4.css rel=stylesheet>
+<link href=/sass/main.min.2e81bbed97b8b282c1aeb57488cc71c8d8c8ec559f3931531bd396bf31e0d4dd.css rel=stylesheet>
 <link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin=anonymous>
 <meta property="og:title" content="Distributed RL">
-<meta property="og:description" content>
+<meta property="og:description" content="分布式强化学习算法可以大幅提升采样效率，加速学习速度，对于on-policy算法一定程度也能减少方差。">
 <meta property="og:type" content="article">
 <meta property="og:url" content="http://localhost:1313/post/distributed_rl/distributed_rl/"><meta property="article:section" content="post">
 <meta property="article:published_time" content="2020-10-21T09:34:56+08:00">
 <meta property="article:modified_time" content="2020-10-30T09:34:56+08:00">
 <meta itemprop=name content="Distributed RL">
-<meta itemprop=description content><meta itemprop=datePublished content="2020-10-21T09:34:56+08:00">
+<meta itemprop=description content="分布式强化学习算法可以大幅提升采样效率，加速学习速度，对于on-policy算法一定程度也能减少方差。"><meta itemprop=datePublished content="2020-10-21T09:34:56+08:00">
 <meta itemprop=dateModified content="2020-10-30T09:34:56+08:00">
-<meta itemprop=wordCount content="785">
+<meta itemprop=wordCount content="1418">
 <meta itemprop=keywords content="reinforcement learning,"><meta name=twitter:card content="summary">
 <meta name=twitter:title content="Distributed RL">
-<meta name=twitter:description content><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
+<meta name=twitter:description content="分布式强化学习算法可以大幅提升采样效率，加速学习速度，对于on-policy算法一定程度也能减少方差。"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
 <script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]-->
 </head>
 <body>
@@ -88,9 +89,6 @@
 <h1 class=post-title>Distributed RL</h1>
 <div class=post-meta>
 <span class=post-time> 2020-10-21 </span>
-<div class=post-category>
-<a href=/categories/cs285/> cs285 </a>
-</div>
 <span id=busuanzi_container_page_pv class=more-meta> <span id=busuanzi_value_page_pv><img src=/img/spinner.svg alt=spinner.svg></span> times read </span>
 </div>
 </header>
@@ -169,21 +167,32 @@ actor拉取频率过快影响采样速度。</p>
 <p><img src=/post/distributed_rl/r2d3.png alt></p>
 <h2 id=others>Others:</h2>
 <h3 id=qt-opthttpsarxivorgpdf180610293pdf><a href=https://arxiv.org/pdf/1806.10293.pdf>QT-Opt</a></h3>
-<p>This distributed architecture main feature is that it interfaces with the real world.
-Moreover, its weight update happens asynchronously.
-Meaning it can be easily heavily parallelized into multiple cores (can be <strong>independently scaled</strong>).
-It was designed for robotic grasping, using a setup of 7 robots creating samples.</p>
+<p>实际中应用与机器手抓取学习的分布式强化学习架构，提出了一种新的
+QLearning算法。</p>
 <p><img src=/post/distributed_rl/qt_opt.png alt></p>
 <h3 id=evolution-strategieshttpsarxivorgabs170303864><a href=https://arxiv.org/abs/1703.03864>Evolution Strategies</a></h3>
-<p>Gradient-free approach by OpenAI.
-Essentially uses an evolutionary algorithm on the ANN weights.
-It works by having multiple instances of the network where it applies some random noise.
-The idea is then to run the policies and perform a weighted average parameter update based on the performance of each policy.</p>
+<p>进化算法是一种黑盒优化算法，也是启发式的算法。自然进化中每一代都有突变的基因，环境对突变的基因进行评估，重组产生下一代，直至最优。</p>
+<p>其中，关键点在于：</p>
+<ul>
+<li>基因如何表示（神经网络参数）</li>
+<li>突变产生（参数优化）</li>
+<li>基因重组（参数重组）</li>
+</ul>
+<p>黑盒优化的优点：</p>
+<ul>
+<li>不关心奖励分布，奖励密集或稀疏都无所谓</li>
+<li>不需要反向传播梯度</li>
+<li>可以适应长期回报，在长动作序列上有优势</li>
+</ul>
 <p><img src=/post/distributed_rl/evolution.png alt></p>
 <h3 id=population-based-traininghttpsdeepmindcomblogarticlepopulation-based-training-neural-networks><a href=https://deepmind.com/blog/article/population-based-training-neural-networks>Population-based Training</a></h3>
-<p>Technique for hyperparameter optimization.
-Merges the idea of a grid search but instead of the networks training independently, it uses information from the rest of the population to refine the hyperparameters and direct computational resources to models which show promise.</p>
-<p>Using this technique one can improve the performance of any hyperparam-dependent algorithm.</p>
+<p>基于种群的训练方法，主要用来自适应调节超参数。</p>
+<p>两种常用的自动调参的方式是并行搜索(parallel search)和序列优化(sequential optimisation)。并行搜索就是同时设置多组参数训练，比如网格搜索(grid search)和随机搜索(random search)。序列优化很少用到并行，而是一次次尝试并优化，比如人工调参(hand tuning)和贝叶斯优化(Bayesian optimisation)。并行搜索的缺点在于没有利用相互之间的参数优化信息。而序列优化这种序列化过程显然会耗费大量时间。</p>
+<p>文章提出将并行优化和序列优化相结合。既能并行探索，同时也利用其他更好的参数模型，淘汰掉不好的模型。</p>
+<p><img src=/post/distributed_rl/population.png alt></p>
+<p>如图所示，(a)中的序列优化过程只有一个模型在不断优化，消耗大量时间。(b)中的并行搜索可以节省时间，但是相互之间没有任何交互，不利于信息利用。(c)中的PBT算法结合了二者的优点。</p>
+<p>首先PBT算法随机初始化多个模型，每训练一段时间设置一个检查点(checkpoint)，然后根据其他模型的好坏调整自己的模型。worker会定期exploit种群其他的模型参数，得到更优的模型参数，并添加随机扰动再进行explore。其中checkpoint的设置是人为设置每过多少step之后进行检查。扰动要么在原超参数或者参数上加噪声，要么重新采样获得。</p>
+<p><img src=/post/distributed_rl/population_code.png alt></p>
 </div>
 <div class=post-copyright>
 <p class=copyright-item>

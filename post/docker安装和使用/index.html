@@ -1,0 +1,286 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
+<title>Docker安装和使用 - RuChen Xu's Blog</title>
+<meta name=renderer content="webkit">
+<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta http-equiv=cache-control content="no-transform">
+<meta http-equiv=cache-control content="no-siteapp">
+<meta name=theme-color content="#f8f5ec">
+<meta name=msapplication-navbutton-color content="#f8f5ec">
+<meta name=apple-mobile-web-app-capable content="yes">
+<meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec">
+<meta name=author content="Ruchen Xu"><meta name=description content="本文介绍了docker、nvidia-docker安装以及多阶段打包镜像的过程。
+"><meta name=keywords content="docker">
+<meta name=generator content="Hugo 0.88.1 with theme even">
+<link rel=canonical href=http://localhost:1313/post/docker%E5%AE%89%E8%A3%85%E5%92%8C%E4%BD%BF%E7%94%A8/>
+<link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png>
+<link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
+<link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png>
+<link rel=manifest href=/manifest.json>
+<link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5>
+<script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<link href=/sass/main.min.2e81bbed97b8b282c1aeb57488cc71c8d8c8ec559f3931531bd396bf31e0d4dd.css rel=stylesheet>
+<link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin=anonymous>
+<meta property="og:title" content="Docker安装和使用">
+<meta property="og:description" content="本文介绍了docker、nvidia-docker安装以及多阶段打包镜像的过程。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://localhost:1313/post/docker%E5%AE%89%E8%A3%85%E5%92%8C%E4%BD%BF%E7%94%A8/"><meta property="article:section" content="post">
+<meta property="article:published_time" content="2020-09-14T10:15:36+08:00">
+<meta property="article:modified_time" content="2020-09-14T10:15:36+08:00">
+<meta itemprop=name content="Docker安装和使用">
+<meta itemprop=description content="本文介绍了docker、nvidia-docker安装以及多阶段打包镜像的过程。"><meta itemprop=datePublished content="2020-09-14T10:15:36+08:00">
+<meta itemprop=dateModified content="2020-09-14T10:15:36+08:00">
+<meta itemprop=wordCount content="909">
+<meta itemprop=keywords content><meta name=twitter:card content="summary">
+<meta name=twitter:title content="Docker安装和使用">
+<meta name=twitter:description content="本文介绍了docker、nvidia-docker安装以及多阶段打包镜像的过程。"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
+<script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]-->
+</head>
+<body>
+<div id=mobile-navbar class=mobile-navbar>
+<div class=mobile-header-logo>
+<a href=/ class=logo>Blog</a>
+</div>
+<div class=mobile-navbar-icon>
+<span></span>
+<span></span>
+<span></span>
+</div>
+</div>
+<nav id=mobile-menu class="mobile-menu slideout-menu">
+<ul class=mobile-menu-list>
+<a href=/>
+<li class=mobile-menu-item>Home</li>
+</a><a href=/post/>
+<li class=mobile-menu-item>Archives</li>
+</a><a href=/tags/>
+<li class=mobile-menu-item>Tags</li>
+</a><a href=/categories/>
+<li class=mobile-menu-item>Categories</li>
+</a>
+</ul>
+</nav>
+<div class=container id=mobile-panel>
+<header id=header class=header>
+<div class=logo-wrapper>
+<a href=/ class=logo>Blog</a>
+</div>
+<nav class=site-navbar>
+<ul id=menu class=menu>
+<li class=menu-item>
+<a class=menu-item-link href=/>Home</a>
+</li><li class=menu-item>
+<a class=menu-item-link href=/post/>Archives</a>
+</li><li class=menu-item>
+<a class=menu-item-link href=/tags/>Tags</a>
+</li><li class=menu-item>
+<a class=menu-item-link href=/categories/>Categories</a>
+</li>
+</ul>
+</nav>
+</header>
+<main id=main class=main>
+<div class=content-wrapper>
+<div id=content class=content>
+<article class=post>
+<header class=post-header>
+<h1 class=post-title>Docker安装和使用</h1>
+<div class=post-meta>
+<span class=post-time> 2020-09-14 </span>
+<span id=busuanzi_container_page_pv class=more-meta> <span id=busuanzi_value_page_pv><img src=/img/spinner.svg alt=spinner.svg></span> times read </span>
+</div>
+</header>
+<div class=post-toc id=post-toc>
+<h2 class=post-toc-title>Contents</h2>
+<div class="post-toc-content always-active">
+<nav id=TableOfContents>
+<ul>
+<li><a href=#安装docker>安装docker</a>
+<ul>
+<li><a href=#step-1-安装必要的一些系统工具>step 1: 安装必要的一些系统工具</a></li>
+<li><a href=#step-2-安装gpg证书>step 2: 安装GPG证书</a></li>
+<li><a href=#step-3-写入软件源信息>Step 3: 写入软件源信息</a></li>
+<li><a href=#step-4-更新并安装docker-ce>Step 4: 更新并安装Docker-CE</a></li>
+<li><a href=#安装指定版本的docker-ce>安装指定版本的Docker-CE:</a></li>
+<li><a href=#添加docker组>添加docker组</a></li>
+<li><a href=#配置镜像加速器>配置镜像加速器</a></li>
+</ul>
+</li>
+<li><a href=#安装nvidia-docker>安装nvidia-docker</a>
+<ul>
+<li><a href=#添加仓库>添加仓库</a></li>
+<li><a href=#拉取镜像使用>拉取镜像使用</a></li>
+</ul>
+</li>
+<li><a href=#打包镜像>打包镜像</a></li>
+<li><a href=#其他>其他</a></li>
+</ul>
+</nav>
+</div>
+</div>
+<div class=post-content>
+<p>本文介绍了docker、nvidia-docker安装以及多阶段打包镜像的过程。</p>
+<h1 id=安装docker>安装docker</h1>
+<h2 id=step-1-安装必要的一些系统工具>step 1: 安装必要的一些系统工具</h2>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>sudo apt-get update 
+sudo apt-get -y install apt-transport-https ca-certificates curl software-properties-common
+</code></pre></td></tr></table>
+</div>
+</div><h2 id=step-2-安装gpg证书>step 2: 安装GPG证书</h2>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>curl -fsSL https://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg <span class=p>|</span> sudo apt-key add -
+</code></pre></td></tr></table>
+</div>
+</div><h2 id=step-3-写入软件源信息>Step 3: 写入软件源信息</h2>
+<p><code>sudo add-apt-repository "deb [arch=amd64] https://mirrors.aliyun.com/docker-ce/linux/ubuntu $(lsb_release -cs) stable"</code></p>
+<p>如果是基于ubuntu的衍生版本，改成ubuntu版本</p>
+<h2 id=step-4-更新并安装docker-ce>Step 4: 更新并安装Docker-CE</h2>
+<p><code>sudo apt update && sudo apt-get -y install docker-ce</code></p>
+<h2 id=安装指定版本的docker-ce>安装指定版本的Docker-CE:</h2>
+<p><code>sudo apt-get -y install docker-ce=[VERSION]</code></p>
+<h2 id=添加docker组>添加docker组</h2>
+<p><code>sudo usermod -aG docker your-user</code></p>
+<h2 id=配置镜像加速器>配置镜像加速器</h2>
+<p>针对Docker客户端版本大于1.10.0的用户可以通过修改daemon配置文件/etc/docker/daemon.json来使用加速器</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>sudo mkdir -p /etc/docker
+sudo tee /etc/docker/daemon.json <span class=s>&lt;&lt;-&#39;EOF&#39; { &#34;registry-mirrors&#34;: [&#34;https://09sdi3xq.mirror.aliyuncs.com&#34;] }
+</span><span class=s>&lt;EOF</span>
+sudo systemctl daemon-reload
+sudo systemctl restart docker
+</code></pre></td></tr></table>
+</div>
+</div><h1 id=安装nvidia-docker>安装nvidia-docker</h1>
+<h2 id=添加仓库>添加仓库</h2>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=nv>distribution</span><span class=o>=</span><span class=k>$(</span>. /etc/os-release<span class=p>;</span><span class=nb>echo</span> <span class=nv>$ID$VERSION_ID</span><span class=k>)</span>
+  
+curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey <span class=p>|</span> sudo apt-key add -
+  
+curl -s -L https://nvidia.github.io/nvidia-docker/<span class=nv>$distribution</span>/nvidia-docker.list <span class=p>|</span> sudo tee /etc/apt/sources.list.d/nvidia-docker.list
+  
+sudo apt-get update <span class=o>&amp;&amp;</span> sudo apt-get install -y nvidia-container-toolkit
+  
+sudo systemctl restart docker
+</code></pre></td></tr></table>
+</div>
+</div><h2 id=拉取镜像使用>拉取镜像使用</h2>
+<p><code>docker pull ufoym/deepo</code></p>
+<p><code>docker run --gpus --all image_id</code></p>
+<h1 id=打包镜像>打包镜像</h1>
+<p>docker多阶段build 实现原理：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-Dockerfile data-lang=Dockerfile><span class=k>FROM</span><span class=s> image1    </span><span class=err>
+</span><span class=err></span><span class=k>RUN</span> something    get intermediate product    <span class=err>
+</span><span class=err></span><span class=k>COPY</span> product image1_dir FROM image2    <span class=err>
+</span><span class=err></span><span class=k>COPY</span> --from<span class=o>=</span><span class=m>0</span> image1_dir image2_dir<span class=err>
+</span></code></pre></td></tr></table>
+</div>
+</div><p>默认情况下，阶段未命名，可以通过整数来引用它们，从第0个FROM指令开始。</p>
+<p>可以通过向FROM指令添加as NAME来命名阶段。此示例通过命名阶段并使用COPY指令中的名称来改进前一个示例。停在特定的构建阶段构建镜像时，不一定需要构建整个Dockerfile每个阶段。</p>
+<p>可以指定目标构建阶段。以下命令假定使用的是以前的Dockerfile，但在名为builder的阶段停止： <code>$ docker build --target builder -t alexellis2/href-counter:latest .</code>
+使用此功能可能的一些非常适合的场景是：</p>
+<ul>
+<li>调试特定的构建阶段</li>
+<li>在debug阶段，启用所有调试或工具，而在production阶段尽量精简</li>
+<li>在testing阶段，应用程序将填充测试数据，但在production阶段则使用生产数据</li>
+</ul>
+<p>使用外部镜像作为stage使用多阶段构建时，不仅可以从Dockerfile中创建的镜像中进行复制，还可以使用COPY –from指令从单独的image中复制，使用本地image名称，本地或Docker注册表中可用的标记或标记ID。如有必要，Docker会提取image并从那里开始复制。语法是： <code>COPY --from=nginx:latest /etc/nginx/nginx.conf /nginx.conf</code></p>
+<h1 id=其他>其他</h1>
+<p><code>docker run -v</code></p>
+<p>docker挂载目录使用绝对目录，无论是宿主机还是容器，否则挂载后无法同步。</p>
+</div>
+<footer class=post-footer>
+<nav class=post-nav>
+<a class=prev href=/post/cs285_lecture7/lecture7/>
+<i class="iconfont icon-left"></i>
+<span class="prev-text nav-default">cs285 DRL notes lecture 7: value function methods</span>
+<span class="prev-text nav-mobile">Prev</span>
+</a>
+<a class=next href=/post/python_debug/>
+<span class="next-text nav-default">Python调试</span>
+<span class="next-text nav-mobile">Next</span>
+<i class="iconfont icon-right"></i>
+</a>
+</nav>
+</footer>
+</article>
+</div>
+</div>
+</main>
+<footer id=footer class=footer>
+<div class=social-links>
+<a href=mailto:ruchenxucs@gmail.com class="iconfont icon-email" title=email></a>
+<a href=https://github.com/FireLandDS class="iconfont icon-github" title=github></a>
+<a href=http://localhost:1313/index.xml type=application/rss+xml class="iconfont icon-rss" title=rss></a>
+</div>
+<div class=copyright>
+<span class=power-by>
+Powered by <a class=hexo-link href=https://gohugo.io>Hugo</a>
+</span>
+<span class=division>|</span>
+<span class=theme-info>
+Theme -
+<a class=theme-link href=https://github.com/olOwOlo/hugo-theme-even>Even</a>
+</span>
+<div class=busuanzi-footer>
+<span id=busuanzi_container_site_pv> site pv: <span id=busuanzi_value_site_pv><img src=/img/spinner.svg alt=spinner.svg></span> </span>
+<span class=division>|</span>
+<span id=busuanzi_container_site_uv> site uv: <span id=busuanzi_value_site_uv><img src=/img/spinner.svg alt=spinner.svg></span> </span>
+</div>
+<span class=copyright-year>
+&copy;
+2017 -
+2021<span class=heart><i class="iconfont icon-heart"></i></span><span>Ruchen Xu</span>
+</span>
+</div>
+</footer>
+<div class=back-to-top id=back-to-top>
+<i class="iconfont icon-up"></i>
+</div>
+</div>
+<script src=https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin=anonymous></script>
+<script type=text/javascript src=/js/main.min.c99b103c33d1539acf3025e1913697534542c4a5aa5af0ccc20475ed2863603b.js></script>
+</body>
+</html>
