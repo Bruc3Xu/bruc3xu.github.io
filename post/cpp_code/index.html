@@ -1,0 +1,246 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
+<title>Cpp编程规范 - RuChen Xu's Blog</title>
+<meta name=renderer content="webkit">
+<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta http-equiv=cache-control content="no-transform">
+<meta http-equiv=cache-control content="no-siteapp">
+<meta name=theme-color content="#f8f5ec">
+<meta name=msapplication-navbutton-color content="#f8f5ec">
+<meta name=apple-mobile-web-app-capable content="yes">
+<meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec">
+<meta name=author content="Ruchen Xu"><meta name=description content="代码风格检查 1.1. 代码规范 尽量遵循 Google C++ Style Guide
+"><meta name=keywords content="Hugo,theme,even">
+<meta name=generator content="Hugo 0.88.1 with theme even">
+<link rel=canonical href=http://localhost:1313/post/cpp_code/>
+<link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png>
+<link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
+<link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png>
+<link rel=manifest href=/manifest.json>
+<link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5>
+<script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<link href=/sass/main.min.f92fd13721ddf72129410fd8250e73152cc6f2438082b6c0208dc24ee7c13fc4.css rel=stylesheet>
+<link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin=anonymous>
+<meta property="og:title" content="Cpp编程规范">
+<meta property="og:description" content="代码风格检查
+1.1. 代码规范
+尽量遵循 Google C++ Style Guide">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://localhost:1313/post/cpp_code/"><meta property="article:section" content="post">
+<meta property="article:published_time" content="2021-05-23T09:20:09+08:00">
+<meta property="article:modified_time" content="2021-05-23T09:20:09+08:00">
+<meta itemprop=name content="Cpp编程规范">
+<meta itemprop=description content="代码风格检查
+1.1. 代码规范
+尽量遵循 Google C++ Style Guide"><meta itemprop=datePublished content="2021-05-23T09:20:09+08:00">
+<meta itemprop=dateModified content="2021-05-23T09:20:09+08:00">
+<meta itemprop=wordCount content="1060">
+<meta itemprop=keywords content><meta name=twitter:card content="summary">
+<meta name=twitter:title content="Cpp编程规范">
+<meta name=twitter:description content="代码风格检查
+1.1. 代码规范
+尽量遵循 Google C++ Style Guide"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
+<script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]-->
+</head>
+<body>
+<div id=mobile-navbar class=mobile-navbar>
+<div class=mobile-header-logo>
+<a href=/ class=logo>Blog</a>
+</div>
+<div class=mobile-navbar-icon>
+<span></span>
+<span></span>
+<span></span>
+</div>
+</div>
+<nav id=mobile-menu class="mobile-menu slideout-menu">
+<ul class=mobile-menu-list>
+<a href=/>
+<li class=mobile-menu-item>Home</li>
+</a><a href=/post/>
+<li class=mobile-menu-item>Archives</li>
+</a><a href=/tags/>
+<li class=mobile-menu-item>Tags</li>
+</a><a href=/categories/>
+<li class=mobile-menu-item>Categories</li>
+</a>
+</ul>
+</nav>
+<div class=container id=mobile-panel>
+<header id=header class=header>
+<div class=logo-wrapper>
+<a href=/ class=logo>Blog</a>
+</div>
+<nav class=site-navbar>
+<ul id=menu class=menu>
+<li class=menu-item>
+<a class=menu-item-link href=/>Home</a>
+</li><li class=menu-item>
+<a class=menu-item-link href=/post/>Archives</a>
+</li><li class=menu-item>
+<a class=menu-item-link href=/tags/>Tags</a>
+</li><li class=menu-item>
+<a class=menu-item-link href=/categories/>Categories</a>
+</li>
+</ul>
+</nav>
+</header>
+<main id=main class=main>
+<div class=content-wrapper>
+<div id=content class=content>
+<article class=post>
+<header class=post-header>
+<h1 class=post-title>Cpp编程规范</h1>
+<div class=post-meta>
+<span class=post-time> 2021-05-23 </span>
+<span id=busuanzi_container_page_pv class=more-meta> <span id=busuanzi_value_page_pv><img src=/img/spinner.svg alt=spinner.svg></span> times read </span>
+</div>
+</header>
+<div class=post-toc id=post-toc>
+<h2 class=post-toc-title>Contents</h2>
+<div class="post-toc-content always-active">
+<nav id=TableOfContents>
+<ul>
+<li><a href=#代码风格检查>代码风格检查</a>
+<ul>
+<li><a href=#11-代码规范>1.1. 代码规范</a></li>
+<li><a href=#12-工具安装与配置>1.2. 工具安装与配置</a>
+<ul>
+<li><a href=#121-cpplint安装>1.2.1. cpplint安装</a></li>
+<li><a href=#122-vs-code-配置-cpplint>1.2.2. VS Code 配置 cpplint</a></li>
+<li><a href=#123-常见报错类型>1.2.3. 常见报错类型</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href=#2-静态检查>2. 静态检查</a>
+<ul>
+<li><a href=#21-cppcheck检查类型>2.1. Cppcheck检查类型</a></li>
+<li><a href=#22-cppcheck安装与配置>2.2. Cppcheck安装与配置</a>
+<ul>
+<li><a href=#221-windows平台>2.2.1. Windows平台</a></li>
+<li><a href=#222-linux平台>2.2.2. Linux平台</a></li>
+<li><a href=#223-常用ide插件>2.2.3. 常用IDE插件</a></li>
+</ul>
+</li>
+<li><a href=#23-cppcheck使用待补充>2.3. Cppcheck使用（#待补充）</a></li>
+</ul>
+</li>
+<li><a href=#3-动态检查>3. 动态检查</a>
+<ul>
+<li><a href=#31-内存泄漏检查>3.1. 内存泄漏检查</a>
+<ul>
+<li><a href=#311-windows平台待补充>3.1.1. Windows平台（#待补充）</a></li>
+<li><a href=#312-linux平台待补充>3.1.2. Linux平台（#待补充）</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+<div class=post-content>
+<h1 id=代码风格检查>代码风格检查</h1>
+<h2 id=11-代码规范>1.1. 代码规范</h2>
+<p>尽量遵循 Google C++ Style Guide</p>
+<p>[<a href=https://zh-google-styleguide.readthedocs.io/en/latest/google-cpp-styleguide/><strong>中文版</strong></a> ] [<a href=https://google.github.io/styleguide/cppguide.html><strong>英文版</strong></a>]。</p>
+<h2 id=12-工具安装与配置>1.2. 工具安装与配置</h2>
+<p>使用 <strong>[</strong> <a href=https://github.com/cpplint/cpplint><strong>cpplint</strong></a> <strong>]</strong> 工具进行检查，cpplint是Google开发的一个C++风格检测工具，检测代码是否符合Google C++ Style。</p>
+<h3 id=121-cpplint安装>1.2.1. cpplint安装</h3>
+<p>(1) 安装python和包管理工具</p>
+<p>(2) 安装cpplint，如果通过pip安装，输入命令：<code>sudo pip3 install cpplint</code></p>
+<h3 id=122-vs-code-配置-cpplint>1.2.2. VS Code 配置 cpplint</h3>
+<p>VS Code作为一款轻量但是功能非常强大的代码编辑器，可以配置cpplint插件进行风格检查。</p>
+<p>(1) 在 <strong>Extensions Tab</strong> 中，搜索并安装cpplint插件</p>
+<p>(2) 打开 <strong>Extensions Settings</strong> ，配置cpplint路径等设置</p>
+<p>(3) 每次打开C++文件，插件便会自动调用cpplint工具检测代码风格，并将检测结果输出到 <strong>PROBLEMS</strong> 窗口中，双击会定位到具体代码行</p>
+<p>(4) 也可以通过 <strong>F1</strong> 打开命令面板，然后调用cpplint工具</p>
+<h3 id=123-常见报错类型>1.2.3. 常见报错类型</h3>
+<p>(1) 每行长度不得80字符</p>
+<p>(2) 使用更安全的函数</p>
+<p>(3) 注意代码缩进，用空格代替Tab</p>
+<p>(4) &ldquo;{&ldquo;应在上一行结尾，不应另起一行</p>
+<p>(5) &ldquo;else"应在上一行的&rdquo;}&ldquo;后面，不应另起一行</p>
+<p>(6) 使用逗号应与前后字符间距一个空格</p>
+<p>(7) 在代码后添加注释时，"//&ldquo;应与前面的代码间隔两个空格，与后面的注释间隔一个空格</p>
+<p>(8) 删去代码行末尾的空格以及代码间多余的空行</p>
+<h1 id=2-静态检查>2. 静态检查</h1>
+<h2 id=21-cppcheck检查类型>2.1. Cppcheck检查类型</h2>
+<p>Cppcheck是一种C/C++代码缺陷检查工具，不检查语法错误，只检查编译器检查不出来的bug类型，可以作为编译器的一种补充检查。Cppcheck执行的检查包括：</p>
+<p>(1) 空指针检查</p>
+<p>(2) 数据越界</p>
+<p>(3) 内存泄漏</p>
+<p>(4) 野指针</p>
+<p>(5) 逻辑错误，算法函数形参能力集判断，重复的代码分支，bool类型和INT进行比较，表达式永远True或者false等共18类检查</p>
+<p>(6) 可疑代码检查，if判断中含有可疑的=号，自由变量返回局部变量等共计15类检查</p>
+<p>(7) 运算错误，判断无符号数小于0,对bool类型进行++自增，被除数非零判断等，共计11类检查</p>
+<h2 id=22-cppcheck安装与配置>2.2. Cppcheck安装与配置</h2>
+<h3 id=221-windows平台>2.2.1. Windows平台</h3>
+<p>(1) 下载并安装 <strong>[</strong> <a href=https://github.com/danmar/cppcheck/releases/download/2.4.1/cppcheck-2.4.1-x64-Setup.msi><strong>Cppcheck Win64安装包</strong></a> <strong>]</strong></p>
+<h3 id=222-linux平台>2.2.2. Linux平台</h3>
+<p>(1) Debian平台：<code>sudo apt-get install cppcheck</code></p>
+<p>(2) Fedora平台：<code>sudo yum install cppcheck</code></p>
+<h3 id=223-常用ide插件>2.2.3. 常用IDE插件</h3>
+<p>按需 <strong>[</strong> <a href=http://cppcheck.sourceforge.net/><strong>Cppcheck官网</strong></a> <strong>]</strong> 下载安装即可</p>
+<h2 id=23-cppcheck使用待补充>2.3. Cppcheck使用（#待补充）</h2>
+<p>支持Command Line模式、GUI模式、IDE插件模式，具体参考 <strong>[</strong> <a href=http://cppcheck.sourceforge.net/manual.pdf><strong>Cppcheck手册</strong></a> <strong>]</strong></p>
+<h1 id=3-动态检查>3. 动态检查</h1>
+<h2 id=31-内存泄漏检查>3.1. 内存泄漏检查</h2>
+<h3 id=311-windows平台待补充>3.1.1. Windows平台（#待补充）</h3>
+<p><strong>[</strong> <a href=https://kinddragon.github.io/vld/><strong>Visual Leak Detector工具</strong></a> <strong>]</strong></p>
+<h3 id=312-linux平台待补充>3.1.2. Linux平台（#待补充）</h3>
+<p><strong>[</strong> <a href=https://valgrind.org/><strong>Valgrind Memcheck工具</strong></a> <strong>]</strong></p>
+</div>
+<footer class=post-footer>
+<nav class=post-nav>
+<a class=next href=/post/%E4%BD%BF%E7%94%A8gitflow%E6%A8%A1%E5%BC%8F%E5%BC%80%E5%8F%91/>
+<span class="next-text nav-default">使用gitflow模式开发</span>
+<span class="next-text nav-mobile">Next</span>
+<i class="iconfont icon-right"></i>
+</a>
+</nav>
+</footer>
+</article>
+</div>
+</div>
+</main>
+<footer id=footer class=footer>
+<div class=social-links>
+<a href=mailto:ruchenxucs@gmail.com class="iconfont icon-email" title=email></a>
+<a href=https://github.com/FireLandDS class="iconfont icon-github" title=github></a>
+<a href=http://localhost:1313/index.xml type=application/rss+xml class="iconfont icon-rss" title=rss></a>
+</div>
+<div class=copyright>
+<span class=power-by>
+Powered by <a class=hexo-link href=https://gohugo.io>Hugo</a>
+</span>
+<span class=division>|</span>
+<span class=theme-info>
+Theme -
+<a class=theme-link href=https://github.com/olOwOlo/hugo-theme-even>Even</a>
+</span>
+<div class=busuanzi-footer>
+<span id=busuanzi_container_site_pv> site pv: <span id=busuanzi_value_site_pv><img src=/img/spinner.svg alt=spinner.svg></span> </span>
+<span class=division>|</span>
+<span id=busuanzi_container_site_uv> site uv: <span id=busuanzi_value_site_uv><img src=/img/spinner.svg alt=spinner.svg></span> </span>
+</div>
+<span class=copyright-year>
+&copy;
+2017 -
+2021<span class=heart><i class="iconfont icon-heart"></i></span><span>Ruchen Xu</span>
+</span>
+</div>
+</footer>
+<div class=back-to-top id=back-to-top>
+<i class="iconfont icon-up"></i>
+</div>
+</div>
+<script src=https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin=anonymous></script>
+<script type=text/javascript src=/js/main.min.c99b103c33d1539acf3025e1913697534542c4a5aa5af0ccc20475ed2863603b.js></script>
+</body>
+</html>
